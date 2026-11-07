@@ -149,7 +149,7 @@
   .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
   /* suwak minimalnej elewacji: mocny fiolet do kropki, pastelowy dalej (jak pasek postępu przelotu) */
   .elrow { display: flex; align-items: center; gap: 12px; order: -1; }
-  .elval { color: var(--muted); font-size: 13px; line-height: 20px; white-space: nowrap; cursor: pointer; }
+  .elval { position: relative; top: -2px; color: var(--muted); font-size: 13px; line-height: 20px; white-space: nowrap; cursor: pointer; }
   .elval b { color: var(--ink); font-weight: 650; display: inline-block; min-width: 3ch; text-align: right; }
   /* suwak bez gałki: sam pasek, który płynnie grubieje po najechaniu i podczas przeciągania */
   #minel { -webkit-appearance: none; appearance: none; width: 224px; height: 26px; margin: 0; background: transparent; cursor: pointer; touch-action: pan-y; --pct: 0%; }
@@ -440,7 +440,7 @@
     header.top h1, header.top .where { position: relative; top: -4px; }   /* logo + Grid 4 px wyżej, reszta nagłówka bez zmian */
     h1 svg.logo { height: round(down, min(24px, calc((100vw - 160px) / 7.84)), 1px); }   /* logo mieści się obok pola Grid */
     /* nagłówek w dwóch liniach: nazwa | grid, filtry | kompas */
-    header.top { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px 12px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
+    header.top { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px 12px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
     header.top > .brand { display: contents; }
     .list { margin-top: 0; }   /* lista zaczyna się tuż pod linią nagłówka */
     header.top h1 { grid-column: 1; }
