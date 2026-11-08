@@ -283,7 +283,8 @@
   .row { transition: background-color .2s ease; }
   .reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s cubic-bezier(.2, .7, .2, 1); }
   /* stopka: przyciski 2. stopnia (obramowane), linki 3. stopnia (podkreślone) */
-  .ftabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 24px; margin-bottom: -1px; }
+  .ftabs { display: flex; gap: 0; margin-top: 24px; margin-bottom: -1px; }
+  .ftabs .ftab { flex: 1 1 auto; white-space: nowrap; padding-left: 10px; padding-right: 10px; }   /* szerokość według treści + równy zapas – długi napis dostaje więcej miejsca */
   .ticker[hidden] + .ftabs { margin-top: 4px; }
   .ftab, .btn2 { border: 1px solid var(--rule); background: var(--surface); border-radius: 4px; padding: 11px 12px; cursor: pointer; color: var(--ink);
     font: inherit; font-weight: 650; font-size: 14px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; transition: border-color .15s ease, background-color .2s ease; }
@@ -301,7 +302,7 @@
     /* gdy drugi panel jest otwarty: nieaktywna zakładka po najechaniu tylko podkreśla napis */
     .ftabs.has-open .ftab[aria-expanded="false"]:hover > span:first-child { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); }
   }
-  .ftab-n { color: var(--muted); font-weight: 500; letter-spacing: 0; }
+  .ftab-n { display: inline-block; color: var(--muted); font-weight: 500; letter-spacing: 0; text-align: left; font-variant-numeric: tabular-nums; }
   /* strzałka rozwijania: obraca się razem z otwarciem panelu */
   .ftab .chev { display: inline-block; width: 10px; height: 10px; margin-left: 8px; vertical-align: 1px; overflow: visible; transition: rotate .32s cubic-bezier(.2, .7, .2, 1); }
   .ftab .chev path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
@@ -2034,6 +2035,7 @@ function renderSatGrid() {
   for (const b of grid.children) b.setAttribute('aria-pressed', String(!satOff.has(+b.dataset.norad)));
   const on = loaded.filter(s => !satOff.has(s.norad)).length;
   $('satcount').textContent = loaded.length ? `${on}/${loaded.length}` : '';
+  $('satcount').style.minWidth = loaded.length ? `${String(loaded.length).length * 2 + 1}ch` : '';   // stała szerokość licznika – zakładki nie drgają przy 9/33 → 10/33
 }
 function setPanel(name) {
   const box = $('fpanes'), inner = box.firstElementChild;
