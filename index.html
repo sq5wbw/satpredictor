@@ -703,20 +703,23 @@ function parseTLE(text) {
   return out;
 }
 
+// pobieranie z limitem czasu – serwer, który nie odpowiada, nie może zawiesić aplikacji
+async function fetchT(url, ms = 10000) {
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), ms);
+  try { const r = await fetch(url, { cache: 'no-store', signal: ac.signal }); return r.ok ? await r.text() : ''; }
+  catch (e) { return ''; }
+  finally { clearTimeout(to); }
+}
 async function fetchTLE() {
   // wszystkie źródła naraz (równolegle), żeby dane były gotowe jak najszybciej
-  const parts = await Promise.all(TLE_URLS.map(async url => {
-    try { const r = await fetch(url, { cache: 'no-store' }); return r.ok ? await r.text() : ''; } catch (e) { return ''; }
-  }));
+  const parts = await Promise.all(TLE_URLS.map(url => fetchT(url, 12000)));
   let text = '\n' + parts.join('\n');
   // satelity, których nie ma w plikach zbiorczych – dociągnij pojedynczo z CelesTrak po numerze NORAD
   const have = parseTLE(text);
   const missing = SATS.filter(s => !have[s.norad]).map(s => s.norad);
   await Promise.all(missing.map(async n => {
-    try {
-      const r = await fetch(`https://celestrak.org/NORAD/elements/gp.php?CATNR=${n}&FORMAT=tle`, { cache: 'no-store' });
-      if (r.ok) text += '\n' + await r.text();
-    } catch (e) {}
+    const s = await fetchT(`https://celestrak.org/NORAD/elements/gp.php?CATNR=${n}&FORMAT=tle`, 8000);
+    if (s) text += '\n' + s;
   }));
   if (Object.keys(parseTLE(text)).length === 0) throw new Error('brak danych');
   store.set('tle_text', text);
@@ -821,6 +824,7 @@ const I18N = {
     noData: 'Telefon nie przesyła danych z kompasu. Sprawdź uprawnienia przeglądarki do czujników ruchu.',
     langGroup: 'Język', locale: 'pl-PL', toDark: 'Włącz tryb ciemny', toLight: 'Włącz tryb jasny',
     wIntro: 'Przeloty satelitów krótkofalarskich<br>dla Twojej lokalizacji.', wLabel: 'Twój lokator (grid)', wHint: '4 lub 6 znaków, np. KO02 albo KO02OC', wGo: 'Pokaż przeloty', wGps: 'Użyj mojej lokalizacji (GPS)', wLocating: 'Ustalam lokalizację…', wFound: g => `Twoja lokalizacja: ${g}`, wDenied: 'Brak zgody na dostęp do lokalizacji. Wpisz lokator powyżej.', wNoGps: 'Ta przeglądarka nie udostępnia lokalizacji. Wpisz lokator powyżej.', wBad: 'To nie jest poprawny lokator. Wpisz 4 lub 6 znaków, np. KO02 albo KO02OC.', wClose: 'Zamknij', wNeed: 'Wpisz swój lokator albo użyj lokalizacji (GPS).',
+    tleRetrying: 'Nie udało się pobrać danych orbitalnych – serwery nie odpowiadają. Ponawiam automatycznie; możesz też wczytać plik TLE na dole strony.',
     minEl: 'min el', minElAria: 'Minimalna elewacja przelotu', showMore: n => `Pokaż kolejne ${n} ${plPasses(n)}`, showMoreLbl: 'Pokaż kolejne', passUnit: n => plPasses(n), shownOf: (a, b) => `${a} z ${b}`,
   },
   en: {
@@ -850,6 +854,7 @@ const I18N = {
     noData: 'The phone is not sending compass data. Check the browser’s motion sensor permissions.',
     langGroup: 'Language', locale: 'en-GB', toDark: 'Switch to dark mode', toLight: 'Switch to light mode',
     wIntro: 'Amateur radio satellite passes<br>for your location.', wLabel: 'Your grid locator', wHint: '4 or 6 characters, e.g. KO02 or KO02OC', wGo: 'Show passes', wGps: 'Use my location (GPS)', wLocating: 'Getting your location…', wFound: g => `Your location: ${g}`, wDenied: 'Location access was not allowed. Enter your grid locator above.', wNoGps: 'This browser cannot share your location. Enter your grid locator above.', wBad: 'That is not a valid grid locator. Enter 4 or 6 characters, e.g. KO02 or KO02OC.', wClose: 'Close', wNeed: 'Enter your grid locator or use your location (GPS).',
+    tleRetrying: 'Could not download orbital data – the servers are not responding. Retrying automatically; you can also load a TLE file at the bottom of the page.',
     minEl: 'min el', minElAria: 'Minimum pass elevation', showMore: n => `Show next ${n} ${n === 1 ? 'pass' : 'passes'}`, showMoreLbl: 'Show next', passUnit: n => n === 1 ? 'pass' : 'passes', shownOf: (a, b) => `${a} of ${b}`,
   },
 };
@@ -900,7 +905,14 @@ let satrecs = [];      // {sat, satrec, tleName, epoch}
 let passes = [];
 let openRows = new Set();
 let lastCalc = 0;
-let tleLoading = false;   // trwa pobieranie danych TLE (ekran powitalny już je pobiera w tle)
+let tleLoading = false;
+let tleRetry = 0, tleRetryTimer = 0;
+function scheduleTLERetry() {
+  clearTimeout(tleRetryTimer);
+  const wait = Math.min(600000, 30000 * Math.pow(2, tleRetry++));
+  tleRetryTimer = setTimeout(() => store.get('tle_text') ? refreshTLEQuietly() : loadTLE(true), wait);
+}
+window.addEventListener('online', () => { if (tleRetry) { clearTimeout(tleRetryTimer); store.get('tle_text') ? refreshTLEQuietly() : loadTLE(true); } });   // trwa pobieranie danych TLE (ekran powitalny już je pobiera w tle)
 
 const $ = id => document.getElementById(id);
 const pad2 = n => String(n).padStart(2, '0');
@@ -1190,6 +1202,7 @@ function onTiltGlobal(e) {
 }
 function compassFrame(ts) {
   compassRaf = 0;
+  if (compassOn && performance.now() - lastHeadingT > 3000) { compassFail(); return; }   // czujnik milczy – wyłącz po cichu
   if (!compassOn) return;
   if (heading !== null) {
     const target = norm(-(heading + compassCorr));
@@ -1323,7 +1336,7 @@ function setupPlotRotation() {
   if (matchMedia('(pointer: coarse)').matches) { window.addEventListener('deviceorientation', onTiltGlobal, { passive: true }); if ('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', onTiltGlobal, { passive: true }); }
 }
 
-let turnCompassOff = () => {};
+let turnCompassOff = () => {}, compassFail = () => {}, lastHeadingT = 0;
 function setupCompass() {
   const btn = $('compass');
   const wrap = $('compasswrap');
@@ -1336,6 +1349,7 @@ function setupCompass() {
   let sx = 0, sy = 0;
   const onHeading = h => {
     if (h === null || !isFinite(h)) return;
+    lastHeadingT = performance.now();
     const so = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
     h = norm(h + so);
     // lekkie wygładzenie szumu czujnika (średnia wektorowa, żeby 359°→0° nie skakało);
@@ -1365,6 +1379,15 @@ function setupCompass() {
     window.removeEventListener('deviceorientation', onIOS);
   };
 
+  // problem z kompasem: bez komunikatów – kompas po cichu się wyłącza, a wykres i gałka płynnie wracają na północ
+  const failQuietly = () => {
+    const sensorDead = performance.now() - knobSeen > 1500;
+    if (sensorDead) knobH = null;                 // igła w gałce też przestaje działać
+    if (compassOn) turnCompassOff(true);
+    else { manualRot = 0; store.set('plot_rot', '0'); animateRotTo(0); }
+    if (sensorDead) { const sw = document.getElementById('compass'); setKnob(Math.round((sw._k || 0) / 360) * 360, false); }
+  };
+  compassFail = failQuietly;
   turnCompassOff = (resetNorth = false) => {
     compassOn = false; heading = null; stop(); stopCompassLoop(); setBtn(); updateCaptions();
     if (knobH !== null && !knobRaf) { knobSeen = performance.now(); knobRaf = requestAnimationFrame(knobFrame); }
@@ -1373,21 +1396,15 @@ function setupCompass() {
   };
   btn.addEventListener('click', async () => {
     if (compassOn) { turnCompassOff(); return; }
-    if (!window.isSecureContext) {
-      alert(T('needHttps'));
-      return;
-    }
+    if (!window.isSecureContext) { failQuietly(); return; }
     if (typeof DeviceOrientationEvent.requestPermission === 'function') {   // iPhone / iPad
       try {
         const r = await DeviceOrientationEvent.requestPermission();
-        if (r !== 'granted') { alert(T('noPerm')); return; }
-      } catch (err) { alert(T('compassFail')); return; }
+        if (r !== 'granted') { failQuietly(); return; }
+      } catch (err) { failQuietly(); return; }
     }
-    compassOn = true; heading = null; sx = sy = 0; compassCorr = declinationHere();
+    compassOn = true; heading = null; sx = sy = 0; compassCorr = declinationHere(); lastHeadingT = performance.now();
     start(); setBtn(); applyRot(); startCompassLoop();
-    setTimeout(() => {
-      if (compassOn && heading === null) alert(T('noData'));
-    }, 3000);
   });
 }
 
@@ -1622,7 +1639,7 @@ function draw() {
   updateMore(matching.length, shown.length, matching[shown.length]);
   if (!shown.length) {
     rowEls.clear();
-    list.innerHTML = `<p class="empty${tleLoading && !satrecs.length ? ' loading' : ''}">${T(satrecs.length ? 'noPasses' : (tleLoading ? 'tleLoading' : 'noTLE'))}</p>`;
+    list.innerHTML = `<p class="empty${tleLoading && !satrecs.length ? ' loading' : ''}">${T(satrecs.length ? 'noPasses' : (tleLoading ? 'tleLoading' : (tleRetry ? 'tleRetrying' : 'noTLE')))}</p>`;
     return;
   }
   const first = !list.querySelector('.cols');
@@ -1865,23 +1882,39 @@ function setLocatorUI() {
   for (const b of document.querySelectorAll('.flt')) b.setAttribute('aria-pressed', String(!!filter[b.dataset.m]));
 }
 
-async function loadTLE(force) {
+async function loadTLE(force, silent) {
   const cached = store.get('tle_text');
   const age = Date.now() - (+store.get('tle_time') || 0);
-  let text = (!force && cached && age < TLE_MAX_AGE) ? cached : null;
-  if (!text) {
-    $('tleinfo').textContent = T('tleLoading');
-    tleLoading = true;
-    if (locator && !satrecs.length) draw();      // pokaż „pobieram…” zamiast „brak danych”
-    try { text = await fetchTLE(); $('tlefail').hidden = true; }
-    catch (e) {
-      text = cached;   // użyj starych danych, jeśli są
-      $('tlefail').hidden = false;
-    }
+  // są zapisane dane, a odświeżenie nie jest wymuszone ręcznie: pokaż je od razu, nowe pobierz po cichu w tle
+  if (cached && !force) {
+    if (!Object.keys(tleDB).length) { tleDB = parseTLE(cached); calculate(); }
+    if (age >= TLE_MAX_AGE) refreshTLEQuietly();
+    return;
+  }
+  if (cached && silent) { refreshTLEQuietly(); return; }
+  // brak danych (pierwsza wizyta) albo ręczne „Odśwież dane TLE”: pobieranie z komunikatem
+  $('tleinfo').textContent = T('tleLoading');
+  tleLoading = true;
+  if (locator && !satrecs.length) draw();      // pokaż „pobieram…” zamiast „brak danych”
+  let text;
+  try { text = await fetchTLE(); $('tlefail').hidden = true; tleRetry = 0; }
+  catch (e) {
+    text = cached;
+    $('tlefail').hidden = !!cached;
+    scheduleTLERetry();
   }
   tleLoading = false;
   tleDB = text ? parseTLE(text) : {};
   calculate();
+}
+// ciche odświeżenie w tle: żadnych komunikatów; po sukcesie po prostu przeliczamy przeloty
+let tleQuietBusy = false;
+async function refreshTLEQuietly() {
+  if (tleQuietBusy) return;
+  tleQuietBusy = true;
+  try { const text = await fetchTLE(); tleRetry = 0; tleDB = parseTLE(text); calculate(); }
+  catch (e) { scheduleTLERetry(); }
+  finally { tleQuietBusy = false; }
 }
 
 // ---------- start ----------
