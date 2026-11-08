@@ -282,12 +282,73 @@
   .det.open .det-in { opacity: 1; transform: none; transition-delay: .05s; }
   .row { transition: background-color .2s ease; }
   .reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s cubic-bezier(.2, .7, .2, 1); }
+  /* stopka: przyciski 2. stopnia (obramowane), linki 3. stopnia (podkreślone) */
+  .ftabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 24px; margin-bottom: -1px; }
+  .ticker[hidden] + .ftabs { margin-top: 4px; }
+  .ftab, .btn2 { border: 1px solid var(--rule); background: var(--surface); border-radius: 4px; padding: 11px 12px; cursor: pointer; color: var(--ink);
+    font: inherit; font-weight: 650; font-size: 14px; line-height: 20px; letter-spacing: .06em; text-transform: uppercase; transition: border-color .15s ease, background-color .2s ease; }
+  /* zakładki: bez ramek; aktywna ma jasne tło i łączy się z panelem pod nią, nieaktywna – tło strony */
+  .ftab { position: relative; border: 1px solid transparent; border-bottom: 0; border-radius: 4px 4px 0 0; background: transparent; padding: 9px 12px 10px; transition: border-color .2s ease, background-color .2s ease; }
+  .ftab[aria-expanded="true"] { z-index: 1; border-color: var(--rule); background: var(--paper); }
+  /* żaden panel nie jest otwarty: zwykłe obramowane przyciski */
+  .ftabs:not(.has-open) .ftab { border: 1px solid var(--rule); padding-bottom: 9px; margin-bottom: 1px; }
+  /* połączone jak FM/SSB/DIG: wspólna linia podziału pośrodku */
+  .ftabs:not(.has-open) .ftab:first-child { border-radius: 4px 0 0 4px; }
+  .ftabs:not(.has-open) .ftab:last-child { border-radius: 0 4px 4px 0; border-left: 0; }   /* obramowana zakładka; jej tło zakrywa górną linię panelu */
+  @media (hover: hover) {
+    .btn2:hover { border-color: var(--muted); }
+    .ftabs:not(.has-open) .ftab:hover { background: var(--hover); }
+    /* gdy drugi panel jest otwarty: nieaktywna zakładka po najechaniu tylko podkreśla napis */
+    .ftabs.has-open .ftab[aria-expanded="false"]:hover > span:first-child { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); }
+  }
+  .ftab-n { color: var(--muted); font-weight: 500; letter-spacing: 0; }
+  /* strzałka rozwijania: obraca się razem z otwarciem panelu */
+  .ftab .chev { display: inline-block; width: 10px; height: 10px; margin-left: 8px; vertical-align: 1px; overflow: visible; transition: rotate .32s cubic-bezier(.2, .7, .2, 1); }
+  .ftab .chev path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .ftab[aria-expanded="true"] .chev { rotate: 180deg; }
+  .btn2 { padding: 9px 16px; }
+  .lnk3 { border: 0; background: none; padding: 4px 0; cursor: pointer; color: var(--ink); font: inherit; font-weight: 600; font-size: 14px; line-height: 20px;
+    text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); }
+  @media (hover: hover) { .lnk3:hover { text-decoration-color: var(--ink); } }
+  /* zawartość otwartego panelu w ramce – wyraźnie widać, że jesteśmy „w” TLE DATA / SATELLITES */
+  .fpanel { margin-top: 0; padding: 16px; background: none; border: 1px solid var(--rule); border-radius: 4px; }
+  #pan-tle { border-top-left-radius: 0; }   /* narożnik pod aktywną zakładką – zakładka przechodzi w panel */
+  #pan-sats { border-top-right-radius: 0; }
+  .fpanel #tleinfo { margin: 0; }
+  .fpanel .actions:first-child, .fpanel > :first-child { margin-top: 0; }
+  .reveal .fpanel { opacity: 0; transition: opacity .22s ease; }
+  .reveal.open .fpanel { opacity: 1; transition-delay: .05s; }
+  .fpanel .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 12px; }
+  /* wybór obserwowanych satelitów: kafelki o stałym rozmiarze – przełączanie zmienia tylko kolor, nic nie skacze */
+  .satgrid { display: grid; }
+  /* lista satelitów jak zwykłe linki: ✓/✕, etykieta emisji, nazwa – zmienia się tylko kolor i ikona */
+  .satgrid { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 2px 12px; }
+  .satchip { display: flex; align-items: center; gap: 6px; height: 32px; padding: 0; border: 0; background: none; color: var(--muted); cursor: pointer;
+    font: inherit; font-weight: 600; font-size: 13px; line-height: 20px; white-space: nowrap; text-align: left; transition: color .2s ease; }
+  .satchip > .nm { overflow: hidden; text-overflow: ellipsis; }
+  .satchip .mode { flex: none; transition: opacity .2s ease; }
+  .satchip svg { flex: none; width: 12px; height: 12px; overflow: visible; }
+  .satchip svg path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: opacity .2s ease; }
+  .satchip .ic-tick { opacity: 0; } .satchip .ic-cross { opacity: 1; }
+  .satchip[aria-pressed="false"] .mode { opacity: .55; }
+  .satchip[aria-pressed="true"] { color: var(--ink); }
+  .satchip[aria-pressed="true"] .ic-tick { opacity: 1; } .satchip[aria-pressed="true"] .ic-cross { opacity: 0; }
+  @media (hover: hover) { .satchip:hover > .nm { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); } }
+  .satbulk { display: flex; gap: 20px; margin-top: 12px; }
+  /* pasek „wiadomości” o ISS: wielkie litery, przesuwa się płynnie; krawędzie wygaszone */
+  .ticker { position: relative; margin-top: 4px; height: 20px; overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%); }
+  .tk-track { position: absolute; left: 0; top: 0; display: flex; white-space: nowrap; will-change: transform; }
+  .tk-item { flex: none; color: var(--muted); font-size: 14px; line-height: 20px; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .tk-item b { color: var(--ink); font-weight: 650; }
+  .tk-sep { flex: none; display: flex; align-items: center; padding: 0 12px; }
+  .tk-sep svg { width: 12px; height: 12px; }
+  .tk-sep circle { fill: none; stroke: var(--live); stroke-width: 3; }
   .reveal.open { grid-template-rows: 1fr; }
   .reveal > div { overflow: hidden; min-height: 0; }
-  .reveal #satlist { opacity: 0; transition: opacity .22s ease; }
-  .reveal.open #satlist { opacity: 1; transition-delay: .05s; }
   @media (prefers-reduced-motion: reduce) {
-    .det, .det-in, .reveal, .reveal #satlist, .row, .row::after, .mode { transition: none !important; }
+    .det, .det-in, .reveal, .reveal .fpanel, .row, .row::after, .mode { transition: none !important; }
     #minel::-webkit-slider-runnable-track { transition: none; }
     #minel::-moz-range-track { transition: none; }
     .row.on[aria-expanded="false"] { animation: none; background-color: var(--pulse); }
@@ -357,8 +418,6 @@
   footer.data { margin-top: 28px; color: var(--muted); font-size: 14px; line-height: 20px; }
   .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
   /* przyciski stopki w stylu pola „Grid” */
-  .actions button, .actions a, .actions label.btn { display: inline-block; border: 1px solid var(--rule); background: var(--surface); border-radius: 4px; padding: 4px 10px; cursor: pointer; color: var(--ink); font-weight: 600; font-size: 13px; line-height: 18px; text-decoration: none; transition: border-color .15s ease; }
-  .actions button:hover, .actions a:hover, .actions label.btn:hover { border-color: var(--muted); text-decoration: none; }
   .linkbtn { background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink); font-weight: 600; font-size: 14px; }
   .linkbtn:hover { text-decoration: underline; text-underline-offset: 2px; }
   .notice a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
@@ -388,10 +447,6 @@
   .notice ol { margin: 4px 0 0; padding-left: 20px; }
   .satbox { margin-top: 18px; }
   .satbox .linkbtn { color: var(--ink); }
-  #satlist { margin-top: 8px; margin-bottom: 2px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; display: flex; flex-wrap: wrap; gap: 4px 14px; max-width: 80ch; }
-  #satlist a { white-space: nowrap; font-weight: 500; color: var(--ink); }
-  #satlist a:hover { text-decoration: underline; text-underline-offset: 2px; }
-  #satlist a.missing { color: var(--muted); }
   .empty { padding: 18px 12px; color: var(--muted); }
   .empty.loading { animation: ldpulse 1.4s ease-in-out infinite alternate; }
   @keyframes ldpulse { from { opacity: .45; } to { opacity: 1; } }
@@ -523,23 +578,34 @@
 <div class="more" id="more" hidden><div class="peek" id="peek" aria-hidden="true"></div><button id="morebtn" class="morebtn"><span class="mb-label"></span><span class="mb-num num" aria-hidden="true"><span class="mb-d"><span>1</span></span><span class="mb-d"><span>0</span></span></span><span class="mb-unit"></span></button></div>
 
 <footer class="data">
-  <div id="tleinfo"></div>
-  <div class="actions">
-    <button id="reload" data-i18n="reload"></button>
-    <a id="dltle" href="https://www.amsat.org/tle/current/nasabare.txt" download="nasabare.txt" target="_blank" rel="noopener" data-i18n-title="downloadTitle" data-i18n="download"></a>
-    <label class="btn" for="tlefile2" tabindex="0" data-i18n="load"></label><input type="file" id="tlefile2" multiple accept=".txt,.tle,text/plain" hidden>
+  <!-- pasek ISS -->
+  <div class="ticker" id="ticker" hidden><p class="sr-only" id="tickerSr" aria-live="polite"></p><div class="tk-track" id="tkTrack" aria-hidden="true"></div></div>
+  <!-- dwa równe przyciski 2. stopnia rozwijające panele (jeden otwarty naraz) -->
+  <div class="ftabs" role="group">
+    <button class="ftab" id="tab-tle" aria-expanded="false" aria-controls="pan-tle"><span data-i18n="tabTle"></span><svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.8 5 6.8 8 3.8"/></svg></button>
+    <button class="ftab" id="tab-sats" aria-expanded="false" aria-controls="pan-sats"><span data-i18n="tabSats"></span> <span class="ftab-n num" id="satcount"></span><svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.8 5 6.8 8 3.8"/></svg></button>
   </div>
-  <div id="tlefail" class="notice" hidden>
-    <p data-i18n="failHead"></p>
-    <ol>
-      <li data-i18n-html="failStep1"></li>
-      <li><span data-i18n="failStep2"></span> <input type="file" id="tlefile" multiple accept=".txt,.tle,text/plain"></li>
-    </ol>
+  <div class="reveal" id="fpanes"><div>
+  <div class="fpanel" id="pan-tle" hidden>
+    <div id="tleinfo"></div>
+    <div class="actions">
+      <button id="reload" class="btn2" data-i18n="reload"></button>
+      <a id="dltle" class="lnk3" href="https://www.amsat.org/tle/current/nasabare.txt" download="nasabare.txt" target="_blank" rel="noopener" data-i18n-title="downloadTitle" data-i18n="download"></a>
+      <label class="lnk3" for="tlefile2" tabindex="0" data-i18n="load"></label><input type="file" id="tlefile2" multiple accept=".txt,.tle,text/plain" hidden>
+    </div>
+    <div id="tlefail" class="notice" hidden>
+      <p data-i18n="failHead"></p>
+      <ol>
+        <li data-i18n-html="failStep1"></li>
+        <li><span data-i18n="failStep2"></span> <input type="file" id="tlefile" multiple accept=".txt,.tle,text/plain"></li>
+      </ol>
+    </div>
   </div>
-  <div class="satbox">
-    <button class="linkbtn" id="satlist-toggle" aria-expanded="false" aria-controls="satreveal"></button>
-    <div class="reveal" id="satreveal"><div><div id="satlist"></div></div></div>
+  <div class="fpanel" id="pan-sats" hidden>
+    <div class="satgrid" id="satgrid" role="group" data-i18n-aria="satsAria"></div>
+    <div class="satbulk"><button class="lnk3" id="sats-all" data-i18n="satsAll"></button></div>
   </div>
+  </div></div>
   <div class="copyrow"><p class="copy">© SAT° Predictor by SQ5WBW</p><div class="lang lang-foot" role="group" data-i18n-aria="langGroup"><button data-lang="pl" lang="pl">PL</button><button data-lang="en" lang="en">EN</button></div></div>
 </footer>
 
@@ -824,6 +890,10 @@ const I18N = {
     noData: 'Telefon nie przesyła danych z kompasu. Sprawdź uprawnienia przeglądarki do czujników ruchu.',
     langGroup: 'Język', locale: 'pl-PL', toDark: 'Włącz tryb ciemny', toLight: 'Włącz tryb jasny',
     wIntro: 'Przeloty satelitów krótkofalarskich<br>dla Twojej lokalizacji.', wLabel: 'Twój lokator (grid)', wHint: '4 lub 6 znaków, np. KO02 albo KO02OC', wGo: 'Pokaż przeloty', wGps: 'Użyj mojej lokalizacji (GPS)', wLocating: 'Ustalam lokalizację…', wFound: g => `Twoja lokalizacja: ${g}`, wDenied: 'Brak zgody na dostęp do lokalizacji. Wpisz lokator powyżej.', wNoGps: 'Ta przeglądarka nie udostępnia lokalizacji. Wpisz lokator powyżej.', wBad: 'To nie jest poprawny lokator. Wpisz 4 lub 6 znaków, np. KO02 albo KO02OC.', wClose: 'Zamknij', wNeed: 'Wpisz swój lokator albo użyj lokalizacji (GPS).',
+    tkNow: ['ISS jest teraz nad Tobą!', 'Maks. el {el}° o {peak} / LOS {los}'], tkToday: ['Najbliższy przelot ISS', 'o {t} / maks. el {el}°'],
+    tkTomorrow: ['ISS wróci jutro', 'o {t} / maks. el {el}°'], tkLater: ['ISS wróci', '{day} o {t} / maks. el {el}°'],
+    tkFacts: [['ISS okrąża Ziemię', '16 razy na dobę'], ['ISS leci', 'z prędkością około 28\u202f000 km/h'], ['ISS pokonuje', 'około 8 km w każdej sekundzie']],
+    tabTle: 'Dane TLE', tabSats: 'Satelity', satsAll: 'Zaznacz wszystkie', satsNone: 'Odznacz wszystkie', satsAria: 'Obserwowane satelity',
     tleRetrying: 'Nie udało się pobrać danych orbitalnych – serwery nie odpowiadają. Ponawiam automatycznie; możesz też wczytać plik TLE na dole strony.',
     minEl: 'min el', minElAria: 'Minimalna elewacja przelotu', showMore: n => `Pokaż kolejne ${n} ${plPasses(n)}`, showMoreLbl: 'Pokaż kolejne', passUnit: n => plPasses(n), shownOf: (a, b) => `${a} z ${b}`,
   },
@@ -854,6 +924,10 @@ const I18N = {
     noData: 'The phone is not sending compass data. Check the browser’s motion sensor permissions.',
     langGroup: 'Language', locale: 'en-GB', toDark: 'Switch to dark mode', toLight: 'Switch to light mode',
     wIntro: 'Amateur radio satellite passes<br>for your location.', wLabel: 'Your grid locator', wHint: '4 or 6 characters, e.g. KO02 or KO02OC', wGo: 'Show passes', wGps: 'Use my location (GPS)', wLocating: 'Getting your location…', wFound: g => `Your location: ${g}`, wDenied: 'Location access was not allowed. Enter your grid locator above.', wNoGps: 'This browser cannot share your location. Enter your grid locator above.', wBad: 'That is not a valid grid locator. Enter 4 or 6 characters, e.g. KO02 or KO02OC.', wClose: 'Close', wNeed: 'Enter your grid locator or use your location (GPS).',
+    tkNow: ['ISS is above your sky now!', 'Max el {el}° at {peak} / LOS {los}'], tkToday: ['Next ISS pass', 'at {t} / max el {el}°'],
+    tkTomorrow: ['ISS will be back tomorrow', 'at {t} / max el {el}°'], tkLater: ['ISS will be back', '{day} at {t} / max el {el}°'],
+    tkFacts: [['ISS circles the Earth', '16 times a day'], ['ISS flies', 'about 28\u202f000 km/h'], ['ISS travels', 'about 8 km every second']],
+    tabTle: 'TLE data', tabSats: 'Satellites', satsAll: 'Select all', satsNone: 'Clear all', satsAria: 'Watched satellites',
     tleRetrying: 'Could not download orbital data – the servers are not responding. Retrying automatically; you can also load a TLE file at the bottom of the page.',
     minEl: 'min el', minElAria: 'Minimum pass elevation', showMore: n => `Show next ${n} ${n === 1 ? 'pass' : 'passes'}`, showMoreLbl: 'Show next', passUnit: n => n === 1 ? 'pass' : 'passes', shownOf: (a, b) => `${a} of ${b}`,
   },
@@ -892,6 +966,7 @@ function applyLang() {
   for (const b of document.querySelectorAll('.lang button')) b.setAttribute('aria-pressed', String(b.dataset.lang === lang));
   if (typeof showQuote === 'function' && document.getElementById('wQuote') && !document.getElementById('welcome').hidden) { sizeQuote(); showQuote(false); }
   if (typeof snapStatic === 'function' && document.getElementById('loc')) requestAnimationFrame(snapStatic);
+  if (typeof resetTicker === 'function' && document.getElementById('tkTrack')) resetTicker();
   const wh = document.getElementById('wHint'), wl = document.getElementById('welcome');
   if (wh && wl && !wl.hidden && !wh.classList.contains('err') && typeof setHint === 'function') setHint(T('wHint'));
   if (typeof syncThemeUI === 'function' && document.querySelector('.theme')) syncThemeUI();
@@ -1633,7 +1708,7 @@ function draw() {
   const now = Date.now();
   passes = passes.filter(p => p.end > now);
   const list = $('list');
-  const matching = satrecs.length ? passes.filter(p => filter[p.sat.mode] !== false && p.elMax >= minEl) : [];
+  const matching = satrecs.length ? passes.filter(p => filter[p.sat.mode] !== false && p.elMax >= minEl && !satOff.has(p.sat.norad)) : [];
   // liczone przy każdym rysowaniu, więc po zmianie szerokości okna lista sama się dopasowuje
   const shown = matching.slice(0, firstPage() + extraPages * pageStep());
   updateMore(matching.length, shown.length, matching[shown.length]);
@@ -1859,21 +1934,134 @@ function calculate() {
 
   const tt = +store.get('tle_time');
   $('tleinfo').textContent = tt ? `${T('tleFrom')} ${new Date(tt).toLocaleString(T('locale'), { dateStyle: 'medium', timeStyle: 'short' })}` : T('tleNone');
-  const haveTLE = Object.keys(tleDB).length > 0;
-  $('satlist').innerHTML = SATS.map(s => {
-    const miss = haveTLE && missing.includes(s.name);
-    return `<a href="https://www.n2yo.com/satellite/?s=${s.norad}#results" target="_blank" rel="noopener"` +
-           (miss ? ` class="missing" title="${T('missing')}"` : ` title="NORAD ${s.norad}"`) + `>${esc(s.name)}</a>`;
-  }).join('');
-  setSatlistToggle();
+  renderSatGrid();
+  updateTicker();
   draw();
 }
 
-function setSatlistToggle() {
-  const open = $('satreveal').classList.contains('open');
-  const b = $('satlist-toggle');
-  b.textContent = `${open ? '▾' : '▸'} ${T('satlist')} (${SATS.length})`;
-  b.setAttribute('aria-expanded', String(open));
+// ---------- pasek ISS (jak wiadomości w TV) ----------
+const ISS_NORAD = 25544;
+const plMinutes = n => n === 1 ? 'minutę' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 'minuty' : 'minut';
+const PL_DAY = ['w niedzielę', 'w poniedziałek', 'we wtorek', 'w środę', 'w czwartek', 'w piątek', 'w sobotę'];
+let issLater = null;   // przelot ISS spoza 24-godzinnego okna (liczony osobno, gdy w oknie nie ma żadnego)
+function issMessage() {
+  const now = Date.now();
+  let p = passes.filter(q => q.sat.norad === ISS_NORAD && q.end > now).sort((a, b) => a.start - b.start)[0];
+  if (!p) {
+    if (!issLater || issLater.end <= now) {
+      const r = satrecs.find(x => x.sat.norad === ISS_NORAD);
+      try { issLater = r ? findPasses(r.sat, r.satrec, now, now + 4 * 86400000)[0] || null : null; } catch (e) { issLater = null; }
+    }
+    p = issLater;
+  }
+  if (!p) return null;
+  const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k]);
+  const pick = (k, o) => ({ b: T(k)[0], r: fill(T(k)[1], o) });
+  if (p.start <= now) return pick('tkNow', { el: p.elMax, peak: hhmm(p.peak), los: hhmm(p.end) });
+  const d0 = new Date(now), d1 = new Date(p.start), tm = new Date(d0); tm.setDate(d0.getDate() + 1);
+  const o = { t: hhmm(p.start), el: p.elMax };
+  if (d0.toDateString() === d1.toDateString()) return pick('tkToday', o);
+  if (tm.toDateString() === d1.toDateString()) return pick('tkTomorrow', o);
+  o.day = lang === 'pl'
+    ? `${PL_DAY[d1.getDay()]} ${d1.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })}`
+    : d1.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  return pick('tkLater', o);
+}
+const ticker = { x: 0, n: 0, lastFact: -1, raf: 0, last: 0, visible: true };
+function tickerNext() {
+  // kolejność: komunikat o ISS, a co trzeci element – losowy fakt (inny niż poprzedni)
+  ticker.n++;
+  const msg = issMessage();
+  const facts = T('tkFacts');
+  if (!msg || ticker.n % 3 === 0) {
+    let i = Math.floor(Math.random() * facts.length);
+    if (i === ticker.lastFact) i = (i + 1) % facts.length;
+    ticker.lastFact = i;
+    return { b: facts[i][0], r: facts[i][1] };
+  }
+  return msg;
+}
+function tickerAppend() {
+  const m = tickerNext(), tr = $('tkTrack');
+  const s = document.createElement('span'); s.className = 'tk-item';
+  const bb = document.createElement('b'); bb.textContent = m.b; s.append(bb, ' ' + m.r);
+  const d = document.createElement('span'); d.className = 'tk-sep';
+  d.innerHTML = '<svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.5"/></svg>';   // fioletowy pierścień jak „°” w logo
+  tr.append(s, d);
+}
+function tickerFrame(ts) {
+  ticker.raf = 0;
+  const box = $('ticker'), tr = $('tkTrack');
+  if (box.hidden || !ticker.visible || document.hidden) { ticker.last = 0; return; }
+  const dt = ticker.last ? Math.min(100, ts - ticker.last) : 16; ticker.last = ts;
+  ticker.x -= dt * 0.045;                                   // ok. 45 px/s
+  // element, który wyjechał w całości z lewej – usuń (razem z kropką) i skoryguj przesunięcie
+  while (tr.children.length > 2) {
+    const w = tr.children[0].offsetWidth + tr.children[1].offsetWidth;
+    if (-ticker.x < w) break;
+    tr.children[0].remove(); tr.children[0].remove(); ticker.x += w;
+  }
+  // dokładaj nowe komunikaty z prawej – dopiero teraz, więc treść (np. „za 72 minuty”) jest zawsze świeża
+  while (tr.scrollWidth + ticker.x < box.clientWidth + 40) tickerAppend();
+  tr.style.transform = `translateX(${ticker.x.toFixed(2)}px)`;
+  ticker.raf = requestAnimationFrame(tickerFrame);
+}
+function updateTicker() {
+  const box = $('ticker'); if (!box) return;
+  const msg = issMessage();
+  box.hidden = !satrecs.some(r => r.sat.norad === ISS_NORAD);
+  $('tickerSr').textContent = msg ? `${msg.b} ${msg.r}` : '';
+  if (box.hidden) return;
+  if (reduceMotion()) {                                     // bez ruchu: sam bieżący komunikat
+    const tr = $('tkTrack'); tr.textContent = ''; tr.style.transform = '';
+    if (msg) { const s = document.createElement('span'); s.className = 'tk-item'; const bb = document.createElement('b'); bb.textContent = msg.b; s.append(bb, ' ' + msg.r); tr.append(s); }
+    return;
+  }
+  if (!ticker.raf) ticker.raf = requestAnimationFrame(tickerFrame);
+}
+function resetTicker() { ticker.x = 0; ticker.n = 0; const tr = $('tkTrack'); if (tr) tr.textContent = ''; updateTicker(); }
+
+// ---------- stopka: panele TLE DATA / SATELLITES ----------
+let satOff = new Set((() => { try { return JSON.parse(store.get('sats_off') || '[]'); } catch (e) { return []; } })());
+function renderSatGrid() {
+  const grid = $('satgrid'); if (!grid) return;
+  const loaded = satrecs.map(r => r.sat).sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));   // tylko satelity z danymi TLE
+  const key = loaded.map(s => s.norad).join(',');
+  if (grid._key !== key) {
+    grid._key = key;
+    grid.innerHTML = loaded.map(s => `<button class="satchip" data-norad="${s.norad}" title="${esc(s.name)} · NORAD ${s.norad}"><svg viewBox="0 0 12 12" aria-hidden="true"><path class="ic-tick" d="M2.5 6.3 5 8.7 9.5 3.6"/><path class="ic-cross" d="M3.2 3.2 8.8 8.8M8.8 3.2 3.2 8.8"/></svg><span class="mode" data-m="${esc(s.mode)}">${esc(s.mode)}</span><span class="nm">${esc(s.name)}</span></button>`).join('');
+  }
+  for (const b of grid.children) b.setAttribute('aria-pressed', String(!satOff.has(+b.dataset.norad)));
+  const on = loaded.filter(s => !satOff.has(s.norad)).length;
+  $('satcount').textContent = loaded.length ? `${on}/${loaded.length}` : '';
+}
+function setPanel(name) {
+  const box = $('fpanes'), inner = box.firstElementChild;
+  const wasOpen = box.classList.contains('open');
+  const h0 = inner.getBoundingClientRect().height;
+  for (const [id, pan] of [['tab-tle', 'pan-tle'], ['tab-sats', 'pan-sats']]) {
+    const on = pan === name;
+    if (name) $(pan).hidden = !on;            // przy zamykaniu zostaje ostatnia zawartość (zwija się razem z panelem)
+    $(id).setAttribute('aria-expanded', String(on));
+  }
+  document.querySelector('.ftabs').classList.toggle('has-open', !!name);
+  if (name && wasOpen) {
+    // przełączenie zakładek: panel zostaje otwarty, podmienia się zawartość, a wysokość płynnie dopasowuje
+    const h1 = inner.getBoundingClientRect().height;
+    if (Math.abs(h1 - h0) > 0.5 && !reduceMotion()) inner.animate([{ height: `${h0}px` }, { height: `${h1}px` }], { duration: 320, easing: 'cubic-bezier(.2, .7, .2, 1)' });
+    const pane = $(name); if (!reduceMotion()) pane.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
+  } else {
+    box.classList.toggle('open', !!name);
+  }
+  box.inert = !name;
+  store.set('fpanel', name || '');
+}
+// zmiana wyboru satelitów zmienia listę nad stopką – przewiń o tyle samo, żeby panel na dole nie „skakał”
+function keepInPlace(el, change) {
+  const y0 = el.getBoundingClientRect().top;
+  change();
+  const dy = el.getBoundingClientRect().top - y0;
+  if (Math.abs(dy) > 0.5) window.scrollBy(0, dy);
 }
 
 function setLocatorUI() {
@@ -1901,6 +2089,7 @@ async function loadTLE(force, silent) {
   catch (e) {
     text = cached;
     $('tlefail').hidden = !!cached;
+    if (!cached && !$('fpanes').classList.contains('open')) setPanel('pan-tle');   // brak jakichkolwiek danych: pokaż od razu, jak wczytać plik
     scheduleTLERetry();
   }
   tleLoading = false;
@@ -2071,14 +2260,16 @@ function snapWelcome() {
   w.querySelectorAll('.w-gps').forEach(el => snapBox(el, true));
 }
 function snapStatic() {
-  document.querySelectorAll('.seg button, .lang button, .actions button, .actions a, .actions label.btn, .theme').forEach(el => snapBox(el));
+  document.querySelectorAll('.seg button, .lang button, .btn2, .theme').forEach(el => snapBox(el));
   document.querySelectorAll('.w-gps, .morebtn').forEach(el => snapBox(el, true));
   snapBox($('loc'));
   // etykiety FM/SSB/DIG: szerokość zmierzona raz na typ i zapisana w stylu (wiersze tworzą się na nowo co chwilę)
   const probe = document.createElement('span'); probe.className = 'mode'; probe.style.cssText = 'position:absolute;visibility:hidden;left:-999px';
   document.body.appendChild(probe);
   let rules = '';
-  for (const m of ['FM', 'SSB', 'DIG']) { probe.textContent = m; rules += `.mode[data-m="${m}"]{width:${Math.ceil(probe.getBoundingClientRect().width - 0.01)}px;text-align:center}`; }
+  let maxW = 0;
+  for (const m of ['FM', 'SSB', 'DIG']) { probe.textContent = m; const w = Math.ceil(probe.getBoundingClientRect().width - 0.01); maxW = Math.max(maxW, w); rules += `.mode[data-m="${m}"]{width:${w}px;text-align:center}`; }
+  rules += `.satchip .mode[data-m]{width:${maxW}px}`;   // w liście satelitów etykiety równej szerokości – nazwy w jednej linii
   probe.remove();
   let st = document.getElementById('snapcss'); if (!st) { st = document.createElement('style'); st.id = 'snapcss'; document.head.appendChild(st); }
   st.textContent = rules;
@@ -2177,14 +2368,19 @@ function snapStatic() {
       window.open(a.href, '_blank', 'noopener');
     }
   });
-  $('satreveal').classList.toggle('open', store.get('satlist_open') === '1');
-  $('satreveal').inert = !$('satreveal').classList.contains('open');
-  $('satlist-toggle').addEventListener('click', () => {
-    const open = $('satreveal').classList.toggle('open');
-    $('satreveal').inert = !open;
-    store.set('satlist_open', open ? '1' : '0');
-    setSatlistToggle();
+  setPanel(['pan-tle', 'pan-sats'].includes(store.get('fpanel')) ? store.get('fpanel') : '');
+  // pasek przesuwa się tylko, gdy jest widoczny na ekranie (oszczędność baterii)
+  new IntersectionObserver(es => { ticker.visible = es[0].isIntersecting; if (ticker.visible) updateTicker(); }).observe($('ticker'));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) updateTicker(); });
+  const isOpen = id => $('fpanes').classList.contains('open') && !$(id).hidden;
+  $('tab-tle').addEventListener('click', () => setPanel(isOpen('pan-tle') ? '' : 'pan-tle'));
+  $('tab-sats').addEventListener('click', () => setPanel(isOpen('pan-sats') ? '' : 'pan-sats'));
+  $('satgrid').addEventListener('click', e => {
+    const b = e.target.closest('.satchip'); if (!b) return;
+    const n = +b.dataset.norad;
+    keepInPlace($('fpanes'), () => { satOff.has(n) ? satOff.delete(n) : satOff.add(n); store.set('sats_off', JSON.stringify([...satOff])); renderSatGrid(); draw(); });
   });
+  $('sats-all').addEventListener('click', () => keepInPlace($('fpanes'), () => { satOff.clear(); store.set('sats_off', '[]'); renderSatGrid(); draw(); }));
   document.querySelector('label[for=tlefile2]').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('tlefile2').click(); } });
   const onTleFile = async e => {
     const files = [...e.target.files];
