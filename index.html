@@ -138,6 +138,8 @@
   .tog label { position: relative; }
   .where > span { position: relative; }
   h1.brand { margin: 0; line-height: 0; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; cursor: default; }
+  .home { display: block; padding: 0; margin: 0; border: 0; background: none; color: inherit; cursor: pointer; border-radius: 4px; }
+  .home:focus-visible { outline-offset: 4px; }
   svg.logo-s { display: block; width: 41.26px; height: 38px; overflow: visible; }
   svg.logo-s .lg-ink, svg.logo .lg-ink { fill: var(--ink); }
   svg.logo-s .lg-mark, svg.logo .lg-mark { fill: var(--live); }
@@ -175,8 +177,8 @@
   .elrow { display: flex; align-items: center; }
   #minel { position: relative; top: 1px; -webkit-appearance: none; appearance: none; height: 20px; margin: 0; background: transparent; cursor: pointer; touch-action: pan-y; --pct: 0%; }
   #minel:focus-visible { outline: none; }
-  #minel::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; transition: height .25s cubic-bezier(.2, .7, .2, 1); background: linear-gradient(to right, var(--live) var(--pct), var(--pastel) var(--pct)); }
-  #minel::-moz-range-track { height: 4px; border-radius: 2px; transition: height .25s cubic-bezier(.2, .7, .2, 1); background: linear-gradient(to right, var(--live) var(--pct), var(--pastel) var(--pct)); }
+  #minel::-webkit-slider-runnable-track { height: 4px; border-radius: 999px; transition: height .25s cubic-bezier(.2, .7, .2, 1); background: linear-gradient(to right, var(--live) var(--pct), var(--pastel) var(--pct)); }
+  #minel::-moz-range-track { height: 4px; border-radius: 999px; transition: height .25s cubic-bezier(.2, .7, .2, 1); background: linear-gradient(to right, var(--live) var(--pct), var(--pastel) var(--pct)); }
   #minel::-moz-range-progress { background: transparent; }
   #minel::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 20px; margin-top: -8px; background: transparent; border: 0; }
   #minel::-moz-range-thumb { width: 14px; height: 20px; background: transparent; border: 0; }
@@ -303,7 +305,7 @@
   svg.polar .tlabel { fill: var(--tlabel); font-weight: 600; }
   svg.polar .halo { r: 5px; fill: var(--live); fill-opacity: .25; stroke: none; transform-box: fill-box; transform-origin: center; animation: pulse 1.8s cubic-bezier(.2, .6, .3, 1) infinite; }
   @keyframes pulse { 0% { transform: scale(.6); opacity: .9; } 70% { transform: scale(2.1); opacity: 0; } 100% { transform: scale(2.1); opacity: 0; } }
-  svg.polar .satdot { r: 2.65px; fill: var(--live); stroke: #dab8c9; stroke-width: 2; }
+  svg.polar .satdot { r: 3.31px; fill: var(--live); stroke: none; }   /* pełne kółko, średnica 10 px = zewnętrzna średnica kółek AOS / MAX / LOS */
   svg.polar .satname { fill: var(--satname); font-weight: 700; font-size: 11.93px; }
 
   /* ---------- „pokaż kolejne” ---------- */
@@ -334,7 +336,6 @@
     font-family: var(--sans); font-weight: 600; font-size: 16px; line-height: 20px; white-space: nowrap; }
   #tab-sats { width: 189px; padding-left: 19px; justify-content: flex-start; }
   #tab-tle { flex: 1; border-left: 1px solid var(--rule); padding-left: 22px; }
-  .ftab > span[data-i18n] { text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-skip-ink: none; }
   .ftab-n { color: var(--muted); font-variant-numeric: tabular-nums; margin-left: -1.05px; }
   .ftab .chev { width: 11.65px; height: 14.15px; transition: rotate .32s cubic-bezier(.2, .7, .2, 1); color: var(--muted); }
   .ftab[aria-expanded="true"] .chev { rotate: 180deg; }
@@ -344,7 +345,6 @@
   .ftabs.has-open::after { content: ""; order: 3; flex: 1; border-bottom: 1px solid var(--rule); }
   .ftabs.has-open:has(#tab-tle[aria-expanded="true"])::after { display: none; }
   .ftabs.has-open #tab-tle[aria-expanded="false"] { justify-content: flex-start; }
-  @media (hover: hover) { .ftab:hover > span[data-i18n] { text-decoration-color: var(--ink); } }
   .reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s cubic-bezier(.2, .7, .2, 1); }
   .reveal.open { grid-template-rows: 1fr; }
   .reveal > div { overflow: hidden; min-height: 0; }
@@ -356,9 +356,7 @@
   .btn2 { height: 40px; margin: 0 0 0 1px; padding: 0 18px; border: 2px solid var(--rule); border-radius: 4px; background: var(--field); color: var(--ink); cursor: pointer;
     font-family: var(--sans); font-weight: 600; font-size: 16px; line-height: 20px; transition: border-color .15s ease; }
   @media (hover: hover) { .btn2:hover { border-color: var(--muted); } }
-  .lnk3 { border: 0; background: none; padding: 0; cursor: pointer; color: var(--ink); font-family: var(--sans); font-weight: 600; font-size: 16px; line-height: 20px;
-    text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 1px; text-underline-offset: 3px; }
-  @media (hover: hover) { .lnk3:hover { text-decoration-color: var(--ink); } }
+  .lnk3 { border: 0; padding: 0; cursor: pointer; color: var(--ink); font-family: var(--sans); font-weight: 600; font-size: 16px; line-height: 20px; }
   .fpanel .links { display: flex; gap: 30px; width: 100%; padding-left: 1px; }
 
   .satgrid { columns: 2; column-gap: 44px; }
@@ -366,16 +364,29 @@
     font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-size: 16px; line-height: 20px; white-space: nowrap; text-align: left; transition: color .2s ease; }
   .satchip > .nm { overflow: hidden; text-overflow: ellipsis; }
   .satchip .mode { display: none; }
-  .satchip svg { flex: none; position: relative; top: -1px; width: 14px; height: 14px; margin-right: 10px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.71 12.71'%3E%3Cpath  d='M7.061,6.353L12.707,11.999L12.000,12.706L6.354,7.060L0.708,12.706L0.001,11.999L5.647,6.353L0.000,0.707L0.707,0.000L6.353,5.646L11.999,0.000L12.706,0.707Z'/%3E%3C/svg%3E") 1px 1px / 12.71px 12.71px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.71 12.71'%3E%3Cpath  d='M7.061,6.353L12.707,11.999L12.000,12.706L6.354,7.060L0.708,12.706L0.001,11.999L5.647,6.353L0.000,0.707L0.707,0.000L6.353,5.646L11.999,0.000L12.706,0.707Z'/%3E%3C/svg%3E") 1px 1px / 12.71px 12.71px no-repeat; }
+  .satchip svg { flex: none; position: relative; top: -1px; width: 14px; height: 14px; margin-right: 10px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill-rule='evenodd' d='M7,14C3.14,14 0,10.859 0,7C0,3.141 3.14,0 7,0C10.86,0 14,3.141 14,7C14,10.859 10.859,14 7,14M7,1C3.691,1 1,3.691 1,7C1,10.309 3.691,13 7,13C10.309,13 13,10.309 13,7C13,3.691 10.309,1 7,1Z'/%3E%3C/svg%3E") 0 0 / 14px 14px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill-rule='evenodd' d='M7,14C3.14,14 0,10.859 0,7C0,3.141 3.14,0 7,0C10.86,0 14,3.141 14,7C14,10.859 10.859,14 7,14M7,1C3.691,1 1,3.691 1,7C1,10.309 3.691,13 7,13C10.309,13 13,10.309 13,7C13,3.691 10.309,1 7,1Z'/%3E%3C/svg%3E") 0 0 / 14px 14px no-repeat; }
   .satchip svg path { display: none; }
   .satchip[aria-pressed="true"] { color: var(--ink); }
-  .satchip[aria-pressed="true"] svg { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill-rule='evenodd' d='M7,14C3.14,14 0,10.859 0,7C0,3.141 3.14,0 7,0C10.86,0 14,3.141 14,7C14,10.859 10.859,14 7,14M7,1C3.691,1 1,3.691 1,7C1,10.309 3.691,13 7,13C10.309,13 13,10.309 13,7C13,3.691 10.309,1 7,1Z'/%3E%3C/svg%3E") 0 0 / 14px 14px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill-rule='evenodd' d='M7,14C3.14,14 0,10.859 0,7C0,3.141 3.14,0 7,0C10.86,0 14,3.141 14,7C14,10.859 10.859,14 7,14M7,1C3.691,1 1,3.691 1,7C1,10.309 3.691,13 7,13C10.309,13 13,10.309 13,7C13,3.691 10.309,1 7,1Z'/%3E%3C/svg%3E") 0 0 / 14px 14px no-repeat; }
+  /* zaznaczony satelita: krzyżyk; odznaczony: kółko */
+  .satchip[aria-pressed="true"] svg { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.71 12.71'%3E%3Cpath  d='M7.061,6.353L12.707,11.999L12.000,12.706L6.354,7.060L0.708,12.706L0.001,11.999L5.647,6.353L0.000,0.707L0.707,0.000L6.353,5.646L11.999,0.000L12.706,0.707Z'/%3E%3C/svg%3E") 1px 1px / 12.71px 12.71px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.71 12.71'%3E%3Cpath  d='M7.061,6.353L12.707,11.999L12.000,12.706L6.354,7.060L0.708,12.706L0.001,11.999L5.647,6.353L0.000,0.707L0.707,0.000L6.353,5.646L11.999,0.000L12.706,0.707Z'/%3E%3C/svg%3E") 1px 1px / 12.71px 12.71px no-repeat; }
   @media (hover: hover) { .satchip:hover > .nm { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); } }
   .satbulk { display: flex; justify-content: center; }
 
   .notice { margin-top: 16px; padding: 10px 12px; border-left: 3px solid var(--live); background: var(--hover); color: var(--ink); border-radius: 0 4px 4px 0; font-size: 14px; line-height: 20px; }
   .notice p { margin: 0 0 4px; } .notice ol { margin: 4px 0 0; padding-left: 20px; }
   .notice a { text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ---------- podkreślone linki: jasna linia 1 px pod tekstem; po najechaniu ciemna linia
+     „ładuje się” od lewej do prawej (jak pasek postępu), po zjechaniu cofa się w lewo ---------- */
+  .lnk3, .w-gps, .ftab > span[data-i18n] { display: inline-block; text-decoration: none;
+    background: linear-gradient(var(--ink), var(--ink)) 0 calc(100% - 1px) / 0% 1px no-repeat,
+                linear-gradient(var(--rule), var(--rule)) 0 calc(100% - 1px) / 100% 1px no-repeat;
+    transition: background-size .45s cubic-bezier(.2, .7, .2, 1); }
+  @media (hover: hover) {
+    .lnk3:hover, .w-gps:hover:not(:disabled), .ftab:hover > span[data-i18n] { background-size: 100% 1px, 100% 1px; }
+  }
+  .lnk3:focus-visible, .w-gps:focus-visible { background-size: 100% 1px, 100% 1px; }
+  @media (prefers-reduced-motion: reduce) { .lnk3, .w-gps, .ftab > span[data-i18n] { transition: none; } }
 
   /* ---------- stopka ---------- */
   .copy { margin: 0; text-align: center; color: var(--muted); font-size: 14px; line-height: 20px; }
@@ -392,9 +403,15 @@
   .empty.loading::before { content: ""; display: block; width: 99.63px; height: 100.5px; margin: 0 auto 29.5px;
     background: conic-gradient(from var(--spin) at 49.8% 50%, var(--live) 0 90deg, var(--rule) 90deg 360deg);
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 99.633 100.5'%3E%3Cpath fill-rule='evenodd' d='M76.308,5.038C68.822,1.683 59.990,0.000 49.817,0.000C39.642,0.000 30.812,1.683 23.325,5.038C15.838,8.400 10.079,13.200 6.047,19.436C2.015,25.676 0.000,33.020 0.000,41.464L0.000,58.453C0.000,66.903 2.015,74.290 6.047,80.626C10.079,86.962 15.837,91.856 23.325,95.312C30.811,98.767 39.638,100.495 49.817,100.495C59.994,100.495 68.821,98.767 76.308,95.312C83.796,91.856 89.555,86.961 93.586,80.626C97.617,74.291 99.633,66.903 99.633,58.453L99.633,41.464C99.633,33.019 97.617,25.676 93.586,19.436C89.554,13.200 83.796,8.399 76.308,5.038M73.141,56.439C73.141,62.009 71.075,66.423 66.950,69.684C62.819,72.951 57.109,74.580 49.817,74.580C45.786,74.580 42.185,74.054 39.019,72.996C35.851,71.943 33.304,70.453 31.388,68.533C28.120,65.465 26.492,61.433 26.492,56.439L26.492,44.057C26.492,38.110 28.552,33.597 32.683,30.524C36.809,27.456 42.518,25.916 49.815,25.916C54.036,25.916 57.734,26.448 60.902,27.501C64.069,28.557 66.610,30.047 68.533,31.963C71.601,35.036 73.141,39.068 73.141,44.057Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 99.633 100.5'%3E%3Cpath fill-rule='evenodd' d='M76.308,5.038C68.822,1.683 59.990,0.000 49.817,0.000C39.642,0.000 30.812,1.683 23.325,5.038C15.838,8.400 10.079,13.200 6.047,19.436C2.015,25.676 0.000,33.020 0.000,41.464L0.000,58.453C0.000,66.903 2.015,74.290 6.047,80.626C10.079,86.962 15.837,91.856 23.325,95.312C30.811,98.767 39.638,100.495 49.817,100.495C59.994,100.495 68.821,98.767 76.308,95.312C83.796,91.856 89.555,86.961 93.586,80.626C97.617,74.291 99.633,66.903 99.633,58.453L99.633,41.464C99.633,33.019 97.617,25.676 93.586,19.436C89.554,13.200 83.796,8.399 76.308,5.038M73.141,56.439C73.141,62.009 71.075,66.423 66.950,69.684C62.819,72.951 57.109,74.580 49.817,74.580C45.786,74.580 42.185,74.054 39.019,72.996C35.851,71.943 33.304,70.453 31.388,68.533C28.120,65.465 26.492,61.433 26.492,56.439L26.492,44.057C26.492,38.110 28.552,33.597 32.683,30.524C36.809,27.456 42.518,25.916 49.815,25.916C54.036,25.916 57.734,26.448 60.902,27.501C64.069,28.557 66.610,30.047 68.533,31.963C71.601,35.036 73.141,39.068 73.141,44.057Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-    animation: spin 1.6s steps(4, jump-none) infinite; }
-  @keyframes spin { from { --spin: 0deg; } to { --spin: 270deg; } }
-  body:has(.empty.loading) .ftabs, body:has(.empty.loading) .fbox { display: none; }
+    animation: spin 1.2s linear infinite; }
+  /* płynny obrót: magentowa ćwiartka obiega kształt „°” ruchem jednostajnym */
+  @keyframes spin { from { --spin: 0deg; } to { --spin: 360deg; } }
+  body:has(.list > .empty.loading) .fbox { display: none; }
+  /* ustalanie lokalizacji (GPS z ekranu startowego): ekran startowy ustępuje miejsca komunikatowi z animacją */
+  .locating { display: none; }
+  body:has(#wGps:disabled) .locating { display: block; }
+  body:has(#wGps:disabled) .welcome { opacity: 0; pointer-events: none; }
+  body:has(#wGps:disabled) .wrap > main, body:has(#wGps:disabled) .wrap > .more, body:has(#wGps:disabled) footer.data > :not(.copy) { visibility: hidden; }
 
   /* ---------- ekran powitalny ---------- */
   .welcome { position: fixed; inset: 0; z-index: 50; background: var(--paper); display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden;
@@ -426,15 +443,15 @@
   .w-hint.err { color: var(--live); }
   .w-go { height: 50px; border: 0; border-radius: 8px; background: var(--live); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 16px; line-height: 20px; text-transform: uppercase; cursor: pointer; }
   @media (hover: hover) { .w-go:hover { background: color-mix(in srgb, var(--live) 85%, #000); } }
-  .w-gps { margin-top: 40px; align-self: center; border: 0; background: none; padding: 0; color: var(--ink); font-weight: 600; font-size: 16px; line-height: 20px; cursor: pointer;
-    text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .w-gps { margin-top: 40px; align-self: center; border: 0; padding: 0; color: var(--ink); font-weight: 600; font-size: 16px; line-height: 20px; cursor: pointer; }
   .w-gps:disabled { color: var(--muted); cursor: default; }
 
   @media (prefers-reduced-motion: reduce) {
     .det, .det-in, .reveal, .reveal .fpanel, .row, .row::after, .mode, .switch, .switch::after, .switch::before, .name .livepos, .theme .ic-half { transition: none !important; }
     #minel::-webkit-slider-runnable-track, #minel::-moz-range-track { transition: none; }
     .row.on[aria-expanded="false"] { animation: none; }
-    .eta .ec, svg.polar .halo, .empty.loading::before { animation: none; }
+    .eta .ec, .empty.loading::before { animation: none; }
+    svg.polar .halo { display: none; }
   }
 
   /* ================= telefon (do 720 px) ================= */
@@ -554,7 +571,7 @@
 
 <header class="top">
   <div class="hrow r1">
-    <h1 class="brand" aria-label="SAT° Predictor"><svg class="logo-s" viewBox="0 0 41.26 38" aria-hidden="true" focusable="false"><path class="lg-ink" d="M20.590,22.307C20.037,21.669 19.277,21.098 18.310,20.597C17.342,20.095 16.152,19.632 14.740,19.205L10.318,17.882C9.243,17.548 8.436,17.229 7.900,16.924C7.362,16.621 6.993,16.256 6.794,15.829C6.594,15.404 6.495,14.902 6.495,14.324L6.495,13.366C6.495,12.758 6.617,12.234 6.863,11.792C7.109,11.352 7.462,10.987 7.923,10.698C8.383,10.409 8.943,10.204 9.604,10.082C10.264,9.961 11.039,9.899 11.930,9.899C12.851,9.899 13.657,9.968 14.348,10.105C14.628,10.160 14.913,10.236 15.200,10.324L15.200,10.492L15.200,11.610L15.200,12.591L15.200,13.503C15.200,13.656 15.246,13.777 15.339,13.868C15.431,13.959 15.553,14.005 15.707,14.005L18.425,14.005L21.096,14.005L21.096,11.861L21.096,9.671L21.096,7.709C21.096,7.527 21.080,7.375 21.050,7.253C21.019,7.132 20.942,7.010 20.820,6.888C20.113,6.189 18.992,5.588 17.458,5.087C15.922,4.585 14.079,4.334 11.930,4.334C10.180,4.334 8.591,4.539 7.163,4.950C5.735,5.360 4.514,5.953 3.501,6.729C2.487,7.504 1.711,8.417 1.175,9.466C0.637,10.515 0.369,11.663 0.369,12.910L0.369,15.100C0.369,15.951 0.484,16.765 0.714,17.540C0.944,18.316 1.328,19.039 1.866,19.707C2.403,20.376 3.162,21.007 4.145,21.600C5.128,22.193 6.372,22.718 7.877,23.174L12.253,24.497C13.388,24.801 14.217,25.113 14.740,25.432C15.262,25.751 15.607,26.087 15.776,26.436C15.945,26.786 16.030,27.219 16.030,27.736L16.030,29.287C16.030,30.139 15.592,30.869 14.717,31.477C13.842,32.085 12.452,32.389 10.548,32.389C8.491,32.389 6.709,32.169 5.205,31.727C3.700,31.287 2.257,30.610 0.875,29.698L0,29.698L0,31.477L0,33.119L0,34.716C0,34.989 0.023,35.180 0.069,35.286C0.115,35.393 0.184,35.491 0.276,35.582C0.829,36.069 1.589,36.502 2.556,36.882C3.524,37.262 4.659,37.544 5.965,37.726C7.270,37.909 8.660,38 10.134,38C12.651,38 14.809,37.658 16.605,36.974C18.402,36.289 19.776,35.301 20.728,34.009C21.679,32.716 22.156,31.188 22.156,29.424L22.156,27.325C22.156,26.261 22.033,25.318 21.787,24.497C21.541,23.676 21.142,22.946 20.590,22.307"/><path class="lg-mark" d="M37.534,0.798C36.336,0.267 34.923,0 33.296,0C31.668,0 30.256,0.267 29.059,0.798C27.861,1.331 26.940,2.091 26.295,3.079C25.650,4.068 25.327,5.231 25.327,6.569L25.327,9.260C25.327,10.599 25.650,11.770 26.295,12.773C26.940,13.777 27.861,14.552 29.059,15.100C30.256,15.647 31.668,15.921 33.296,15.921C34.923,15.921 36.336,15.647 37.534,15.100C38.732,14.552 39.653,13.777 40.298,12.773C40.942,11.770 41.265,10.599 41.265,9.260L41.265,6.569C41.265,5.231 40.942,4.068 40.298,3.079C39.653,2.091 38.732,1.331 37.534,0.798M37.027,8.941C37.027,9.824 36.697,10.523 36.037,11.040C35.376,11.557 34.463,11.815 33.296,11.815C32.651,11.815 32.076,11.732 31.569,11.564C31.062,11.397 30.655,11.162 30.348,10.857C29.826,10.371 29.565,9.732 29.565,8.941L29.565,6.980C29.565,6.037 29.895,5.322 30.555,4.836C31.216,4.349 32.129,4.106 33.296,4.106C33.971,4.106 34.563,4.190 35.070,4.357C35.576,4.524 35.983,4.760 36.290,5.064C36.781,5.550 37.027,6.189 37.027,6.980L37.027,8.941"/></svg></h1>
+    <h1 class="brand"><button type="button" class="home" id="home" data-i18n-aria="homeAria"><svg class="logo-s" viewBox="0 0 41.26 38" aria-hidden="true" focusable="false"><path class="lg-ink" d="M20.590,22.307C20.037,21.669 19.277,21.098 18.310,20.597C17.342,20.095 16.152,19.632 14.740,19.205L10.318,17.882C9.243,17.548 8.436,17.229 7.900,16.924C7.362,16.621 6.993,16.256 6.794,15.829C6.594,15.404 6.495,14.902 6.495,14.324L6.495,13.366C6.495,12.758 6.617,12.234 6.863,11.792C7.109,11.352 7.462,10.987 7.923,10.698C8.383,10.409 8.943,10.204 9.604,10.082C10.264,9.961 11.039,9.899 11.930,9.899C12.851,9.899 13.657,9.968 14.348,10.105C14.628,10.160 14.913,10.236 15.200,10.324L15.200,10.492L15.200,11.610L15.200,12.591L15.200,13.503C15.200,13.656 15.246,13.777 15.339,13.868C15.431,13.959 15.553,14.005 15.707,14.005L18.425,14.005L21.096,14.005L21.096,11.861L21.096,9.671L21.096,7.709C21.096,7.527 21.080,7.375 21.050,7.253C21.019,7.132 20.942,7.010 20.820,6.888C20.113,6.189 18.992,5.588 17.458,5.087C15.922,4.585 14.079,4.334 11.930,4.334C10.180,4.334 8.591,4.539 7.163,4.950C5.735,5.360 4.514,5.953 3.501,6.729C2.487,7.504 1.711,8.417 1.175,9.466C0.637,10.515 0.369,11.663 0.369,12.910L0.369,15.100C0.369,15.951 0.484,16.765 0.714,17.540C0.944,18.316 1.328,19.039 1.866,19.707C2.403,20.376 3.162,21.007 4.145,21.600C5.128,22.193 6.372,22.718 7.877,23.174L12.253,24.497C13.388,24.801 14.217,25.113 14.740,25.432C15.262,25.751 15.607,26.087 15.776,26.436C15.945,26.786 16.030,27.219 16.030,27.736L16.030,29.287C16.030,30.139 15.592,30.869 14.717,31.477C13.842,32.085 12.452,32.389 10.548,32.389C8.491,32.389 6.709,32.169 5.205,31.727C3.700,31.287 2.257,30.610 0.875,29.698L0,29.698L0,31.477L0,33.119L0,34.716C0,34.989 0.023,35.180 0.069,35.286C0.115,35.393 0.184,35.491 0.276,35.582C0.829,36.069 1.589,36.502 2.556,36.882C3.524,37.262 4.659,37.544 5.965,37.726C7.270,37.909 8.660,38 10.134,38C12.651,38 14.809,37.658 16.605,36.974C18.402,36.289 19.776,35.301 20.728,34.009C21.679,32.716 22.156,31.188 22.156,29.424L22.156,27.325C22.156,26.261 22.033,25.318 21.787,24.497C21.541,23.676 21.142,22.946 20.590,22.307"/><path class="lg-mark" d="M37.534,0.798C36.336,0.267 34.923,0 33.296,0C31.668,0 30.256,0.267 29.059,0.798C27.861,1.331 26.940,2.091 26.295,3.079C25.650,4.068 25.327,5.231 25.327,6.569L25.327,9.260C25.327,10.599 25.650,11.770 26.295,12.773C26.940,13.777 27.861,14.552 29.059,15.100C30.256,15.647 31.668,15.921 33.296,15.921C34.923,15.921 36.336,15.647 37.534,15.100C38.732,14.552 39.653,13.777 40.298,12.773C40.942,11.770 41.265,10.599 41.265,9.260L41.265,6.569C41.265,5.231 40.942,4.068 40.298,3.079C39.653,2.091 38.732,1.331 37.534,0.798M37.027,8.941C37.027,9.824 36.697,10.523 36.037,11.040C35.376,11.557 34.463,11.815 33.296,11.815C32.651,11.815 32.076,11.732 31.569,11.564C31.062,11.397 30.655,11.162 30.348,10.857C29.826,10.371 29.565,9.732 29.565,8.941L29.565,6.980C29.565,6.037 29.895,5.322 30.555,4.836C31.216,4.349 32.129,4.106 33.296,4.106C33.971,4.106 34.563,4.190 35.070,4.357C35.576,4.524 35.983,4.760 36.290,5.064C36.781,5.550 37.027,6.189 37.027,6.980L37.027,8.941"/></svg></button></h1>
     <div class="hgrp">
       <div class="lang lang-top" role="group" data-i18n-aria="langGroup"><button data-lang="pl" lang="pl">PL</button><button data-lang="en" lang="en">EN</button></div>
       <p class="where"><span>Grid</span><button class="loc" id="loc" data-i18n-title="gridTitle"></button></p>
@@ -571,7 +588,8 @@
   </div>
 </header>
 
-<main class="list" id="list"><p class="empty" data-i18n="computing"></p></main>
+<main class="list" id="list"><p class="empty loading" data-i18n-html="computingHtml"></p></main>
+<div class="locating" aria-live="polite"><p class="empty loading" data-i18n-html="locatingHtml"></p></div>
 <div class="more" id="more" hidden><div class="peek" id="peek" aria-hidden="true"></div><button id="morebtn" class="morebtn"><span class="mb-label"></span><span class="mb-num" aria-hidden="true"><span class="mb-d"><span>1</span></span><span class="mb-d"><span>0</span></span></span><span class="mb-unit"></span></button></div>
 
 <footer class="data">
@@ -864,7 +882,7 @@ const plPasses = n => n === 1 ? 'przelot' : (n % 10 >= 2 && n % 10 <= 4 && (n % 
 const I18N = {
   pl: {
     gridTitle: 'Zmień lokator', modes: 'Rodzaj emisji', compass: 'N°', compassAria: 'Auto-obrót wykresu według kompasu telefonu',
-    computing: 'Liczę przeloty…', reload: 'Odśwież dane TLE', download: 'Pobierz plik TLE', load: 'Wczytaj plik TLE',
+    computing: 'Liczę przeloty…', homeAria: 'SAT° Predictor – ekran startowy (zmiana lokatora)', computingHtml: '<b>Liczę</b> przeloty.', locatingHtml: '<b>Ustalam</b> Twoją lokalizację.', reload: 'Odśwież dane TLE', download: 'Pobierz plik TLE', load: 'Wczytaj plik TLE',
     downloadTitle: 'Jeśli plik otworzy się w karcie: Ctrl+S (Cmd+S) albo prawy przycisk na linku → Zapisz link jako…',
     failHead: 'Nie udało się pobrać danych orbitalnych automatycznie.',
     failStep1: 'Pobierz plik z <a href="https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle" target="_blank" rel="noopener">CelesTrak</a> lub <a href="https://www.amsat.org/tle/current/nasabare.txt" target="_blank" rel="noopener">AMSAT</a> i zapisz go jako .txt.',
@@ -898,7 +916,7 @@ const I18N = {
   },
   en: {
     gridTitle: 'Change grid locator', modes: 'Mode', compass: 'N°', compassAria: 'Auto-rotate the sky plot with the phone compass',
-    computing: 'Calculating passes…', reload: 'Refresh TLE data', download: 'Download TLE file', load: 'Load TLE file',
+    computing: 'Calculating passes…', homeAria: 'SAT° Predictor – start screen (change grid locator)', computingHtml: '<b>Calculating</b> passes.', locatingHtml: '<b>Getting</b> your location.', reload: 'Refresh TLE data', download: 'Download TLE file', load: 'Load TLE file',
     downloadTitle: 'If the file opens in a tab: Ctrl+S (Cmd+S), or right-click the link → Save link as…',
     failHead: 'Could not download orbital data automatically.',
     failStep1: 'Download the file from <a href="https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle" target="_blank" rel="noopener">CelesTrak</a> or <a href="https://www.amsat.org/tle/current/nasabare.txt" target="_blank" rel="noopener">AMSAT</a> and save it as .txt.',
@@ -2410,6 +2428,63 @@ function snapStatic() {
   setInterval(updatePositions, 3000);
   setInterval(updatePlots, 1000);
   setInterval(tick, 1000);
+})();
+</script>
+<script>
+// stopka: rozwinięty panel (Satelity / Dane TLE) zwija się sam, gdy użytkownik przewinie stronę z powrotem do góry
+// i ramka zakładek zniknie pod dolną krawędzią ekranu. Panel otwarty z zapamiętanego stanu nie zwija się,
+// dopóki użytkownik go choć raz nie zobaczy.
+(function autoCollapsePanel() {
+  const box = document.querySelector('.fbox'), panes = $('fpanes');
+  let seen = false, raf = 0;
+  const check = () => {
+    raf = 0;
+    if (!panes.classList.contains('open')) { seen = false; return; }
+    const top = box.getBoundingClientRect().top;
+    if (top < innerHeight) seen = true;
+    else if (seen) { seen = false; setPanel(''); }
+  };
+  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(check); }, { passive: true });
+  for (const id of ['tab-sats', 'tab-tle']) $(id).addEventListener('click', () => requestAnimationFrame(check));
+})();
+
+// logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
+$('home').addEventListener('click', () => openWelcome(true));
+
+// krótkie „zaprzeczenie” ruchem: przycisk drga w poziomie, gdy kliknięcie nic nie zmieni
+const nope = el => { if (!reduceMotion()) el.animate([{ transform: 'none' }, { transform: 'translateX(-3px)' }, { transform: 'translateX(3px)' }, { transform: 'translateX(-2px)' }, { transform: 'none' }], { duration: 320, easing: 'ease-in-out' }); };
+// filtry SSB / FM / DIG: nie można wyłączyć ostatniego aktywnego – pusta lista nie ma sensu.
+// Zdarzenie jest zatrzymywane, zanim dotrze do przycisku; przycisk tylko krótko „odmawia” ruchem.
+(function keepOneMode() {
+  const seg = document.querySelector('.seg');
+  seg.addEventListener('click', e => {
+    const b = e.target.closest('.flt'); if (!b) return;
+    const on = [...seg.querySelectorAll('.flt')].filter(x => x.getAttribute('aria-pressed') === 'true');
+    if (on.length === 1 && on[0] === b) {
+      e.stopPropagation(); e.preventDefault();
+      nope(b);
+    }
+  }, true);
+  // zapamiętany stan bez żadnej emisji (z wcześniejszej wersji strony): włącz wszystkie
+  if (!filter.FM && !filter.SSB && !filter.DIG) { filter = { FM: true, SSB: true, DIG: true }; store.set('filter', JSON.stringify(filter)); setLocatorUI(); draw(); }
+})();
+
+// lista satelitów: nie można odznaczyć ostatniego zaznaczonego – lista przelotów nigdy nie jest pusta
+(function keepOneSat() {
+  const grid = $('satgrid');
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('.satchip'); if (!b) return;
+    const on = grid.querySelectorAll('.satchip[aria-pressed="true"]');
+    if (on.length === 1 && on[0] === b) { e.stopPropagation(); e.preventDefault(); nope(b); }
+  }, true);
+  // zapamiętany stan bez żadnego satelity (z wcześniejszej wersji strony): zaznacz wszystkie
+  const fix = () => {
+    if (grid.children.length && !grid.querySelector('.satchip[aria-pressed="true"]')) {
+      satOff.clear(); store.set('sats_off', '[]'); renderSatGrid(); draw();
+    }
+  };
+  new MutationObserver(fix).observe(grid, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed'] });
+  fix();
 })();
 </script>
 </body>
