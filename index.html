@@ -436,8 +436,8 @@
   .welcome .w-copy { flex: none; margin: 0 0 24px; }
   .w-logo { margin: 0; line-height: 0; text-align: center; -webkit-user-select: none; user-select: none; cursor: default; }
   .w-logo svg.logo { display: block; width: 346px; max-width: 100%; height: auto; margin: 0 auto; }
-  .w-quote { margin: 37px 0 37px; text-align: center; position: relative; }
-  .w-quote blockquote { margin: 0; letter-spacing: -0.01em; font-size: min(20px, (100vw - 40px) / 17); line-height: 1.3em; color: var(--muted); font-variation-settings: "MONO" 0, "CASL" 0, "slnt" -15, "CRSV" 1; font-style: oblique 15deg; }
+  .w-quote { margin: 37px 0 37px; text-align: center; position: relative; container-type: inline-size; }   /* rozmiar cytatu liczony od szerokości karty – zawsze maks. 2 linie */
+  .w-quote blockquote { margin: 0; letter-spacing: -0.01em; font-size: min(20px, 100cqw / 17.5); line-height: 1.3em; color: var(--muted); font-variation-settings: "MONO" 0, "CASL" 0, "slnt" -15, "CRSV" 1; font-style: oblique 15deg; }
   .w-quote cite { font-style: normal; font-variation-settings: "MONO" 0, "CASL" 0, "slnt" 0; color: var(--live); white-space: nowrap; }
   .w-quote .wq-q { font-style: inherit; }
   .w-label { color: var(--ink); font-weight: 600; font-size: 16px; line-height: 20px; margin-bottom: 13px; }
@@ -2503,8 +2503,8 @@ function snapStatic() {
   }).observe(html, { attributes: true, attributeFilter: ['class'] });
 })();
 
-// zamykanie ekranu startowego „kaskadą” – spójne z wejściem: elementy znikają kolejno od dołu do góry,
-// lekko unosząc się, a na końcu wygasa tło. Ponowne otwarcie w trakcie zamykania przerywa animację.
+// zamykanie ekranu startowego „kaskadą” – spójne z wejściem: elementy znikają kolejno od góry do dołu,
+// lekko opadając, a na końcu wygasa tło. Ponowne otwarcie w trakcie zamykania przerywa animację.
 (function staggeredClose() {
   const w = $('welcome');
   let anims = [], run = 0;
@@ -2521,8 +2521,8 @@ function snapStatic() {
     const STEP = 35, DUR = 260, n = items.length, total = (n - 1) * STEP + DUR;
     w.style.pointerEvents = 'none';                       // strona pod spodem od razu reaguje
     items.forEach((el, i) => anims.push(el.animate(
-      [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 -10px' }],
-      { duration: DUR, delay: (n - 1 - i) * STEP, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' })));
+      [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 10px' }],   // opadają w dół
+      { duration: DUR, delay: i * STEP, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' })));
     const bg = w.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, delay: total - 260, easing: 'ease-in', fill: 'forwards' });
     anims.push(bg);
     bg.onfinish = () => { if (id !== run) return; w.hidden = true; cancel(); };
