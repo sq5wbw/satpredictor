@@ -2520,8 +2520,9 @@ function snapStatic() {
     const items = [w.querySelector('.w-top'), ...w.querySelector('.w-card').children, w.querySelector('.w-copy')];
     const STEP = 35, DUR = 260, n = items.length, total = (n - 1) * STEP + DUR;
     w.style.pointerEvents = 'none';                       // strona pod spodem od razu reaguje
+    // górny pasek (krzyżyk, motyw, język) tylko wygasa – bez ruchu, tak samo jak przy wejściu; reszta lekko opada
     items.forEach((el, i) => anims.push(el.animate(
-      [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 10px' }],   // opadają w dół
+      el.classList.contains('w-top') ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 10px' }],
       { duration: DUR, delay: i * STEP, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' })));
     const bg = w.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, delay: total - 260, easing: 'ease-in', fill: 'forwards' });
     anims.push(bg);
