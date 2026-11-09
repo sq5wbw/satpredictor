@@ -58,7 +58,8 @@
     --disc:    #eff1ee;
     --knob:    #ffffff;
     --swtrack: #ccd5d2;   /* wyłączony przełącznik N° */
-    --pulse:   #ffffff;
+    --pulse:   #ffffff;   /* puls aktywnego wiersza: tło strony ⇄ biel */
+    --pulse-from: #eff1ee;
     --mono: "Recursive", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
     --sans: "Recursive", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
@@ -68,7 +69,7 @@
       --paper: #172630; --surface: #172630; --ink: #b3bfbd; --muted: #607073; --rule: #3b4b51;
       --pastel: #3b4b51; --hover: #1c2d39; --field: #172630; --sep: #607073; --icon: #607073;
       --dd: #607073; --tlabel: #607073; --satname: #b3bfbd; --plot: #607073; --tickbg: #172630;
-      --disc: #172630; --knob: #172630; --pulse: #1c2d39; --swtrack: #607073;
+      --disc: #172630; --knob: #172630; --pulse: #1c2d39; --pulse-from: #172630; --swtrack: #607073;
     }
   }
   :root[data-theme="dark"] {
@@ -76,21 +77,32 @@
     --paper: #172630; --surface: #172630; --ink: #b3bfbd; --muted: #607073; --rule: #3b4b51;
     --pastel: #3b4b51; --hover: #1c2d39; --field: #172630; --sep: #607073; --icon: #607073;
     --dd: #607073; --tlabel: #607073; --satname: #b3bfbd; --plot: #607073; --tickbg: #172630;
-    --disc: #172630; --knob: #172630; --pulse: #1c2d39; --swtrack: #607073;
+    --disc: #172630; --knob: #172630; --pulse: #1c2d39; --pulse-from: #172630; --swtrack: #607073;
   }
-  /* płynna zmiana motywu (kolory jako zarejestrowane zmienne) */
-  @property --paper   { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  /* płynna zmiana motywu: wszystkie kolory są zarejestrowanymi zmiennymi, więc przechodzą razem –
+     w tekstach, tłach, ramkach, ikonach, gradientach suwaka i paska postępu oraz w SVG */
+  @property --paper { syntax: '<color>'; inherits: true; initial-value: transparent; }
   @property --surface { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --ink     { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --muted   { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --rule    { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --pastel  { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --hover   { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --field   { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --dd      { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --tlabel  { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  @property --plot    { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  html.theme-anim { transition: --paper .6s, --surface .6s, --ink .6s, --muted .6s, --rule .6s, --pastel .6s, --hover .6s, --field .6s, --dd .6s, --tlabel .6s, --plot .6s; transition-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  @property --ink { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --muted { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --rule { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --live { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --pastel { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --hover { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --field { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --sep { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --icon { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --dd { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --tlabel { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --satname { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --plot { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --tickbg { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --disc { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --knob { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --pulse { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --pulse-from { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --swtrack { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  html.theme-anim { transition: --paper .6s cubic-bezier(.4, 0, .2, 1), --surface .6s cubic-bezier(.4, 0, .2, 1), --ink .6s cubic-bezier(.4, 0, .2, 1), --muted .6s cubic-bezier(.4, 0, .2, 1), --rule .6s cubic-bezier(.4, 0, .2, 1), --live .6s cubic-bezier(.4, 0, .2, 1), --pastel .6s cubic-bezier(.4, 0, .2, 1), --hover .6s cubic-bezier(.4, 0, .2, 1), --field .6s cubic-bezier(.4, 0, .2, 1), --sep .6s cubic-bezier(.4, 0, .2, 1), --icon .6s cubic-bezier(.4, 0, .2, 1), --dd .6s cubic-bezier(.4, 0, .2, 1), --tlabel .6s cubic-bezier(.4, 0, .2, 1), --satname .6s cubic-bezier(.4, 0, .2, 1), --plot .6s cubic-bezier(.4, 0, .2, 1), --tickbg .6s cubic-bezier(.4, 0, .2, 1), --disc .6s cubic-bezier(.4, 0, .2, 1), --knob .6s cubic-bezier(.4, 0, .2, 1), --pulse .6s cubic-bezier(.4, 0, .2, 1), --pulse-from .6s cubic-bezier(.4, 0, .2, 1), --swtrack .6s cubic-bezier(.4, 0, .2, 1); }
   html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition-property: none !important; }
   html.theme-anim .theme .ic-half { transition-property: transform !important; }
 
@@ -200,7 +212,7 @@
   .row[aria-expanded="true"] { background: var(--hover); border-bottom: 0; }
   .row.leaving { pointer-events: none; }
   .row.on[aria-expanded="false"] { animation: rowpulse 1.2s ease-in-out infinite alternate; }
-  @keyframes rowpulse { from { background-color: var(--surface); } to { background-color: var(--pulse); } }
+  @keyframes rowpulse { from { background-color: var(--pulse-from); } to { background-color: var(--pulse); } }
   @property --left { syntax: '<number>'; inherits: true; initial-value: 1; }
   .row.on { transition: background-color .2s ease, --left 1s linear; }
   .row.on::before { content: ""; z-index: 2; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 4px; border-radius: 2px;
@@ -401,7 +413,7 @@
   .w-logo { margin: 0; line-height: 0; text-align: center; -webkit-user-select: none; user-select: none; cursor: default; }
   .w-logo svg.logo { display: block; width: 346px; max-width: 100%; height: auto; margin: 0 auto; }
   .w-quote { margin: 37px 0 37px; text-align: center; position: relative; }
-  .w-quote blockquote { margin: 0; letter-spacing: -0.2px; font-size: 20px; line-height: 26px; color: var(--muted); font-variation-settings: "MONO" 0, "CASL" 0, "slnt" -15, "CRSV" 1; font-style: oblique 15deg; }
+  .w-quote blockquote { margin: 0; letter-spacing: -0.01em; font-size: min(20px, (100vw - 40px) / 17); line-height: 1.3em; color: var(--muted); font-variation-settings: "MONO" 0, "CASL" 0, "slnt" -15, "CRSV" 1; font-style: oblique 15deg; }
   .w-quote cite { font-style: normal; font-variation-settings: "MONO" 0, "CASL" 0, "slnt" 0; color: var(--live); white-space: nowrap; }
   .w-quote .wq-q { font-style: inherit; }
   .w-label { color: var(--ink); font-weight: 600; font-size: 16px; line-height: 20px; margin-bottom: 13px; }
