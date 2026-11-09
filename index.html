@@ -2469,6 +2469,21 @@ function snapStatic() {
   for (const id of ['tab-sats', 'tab-tle']) $(id).addEventListener('click', () => requestAnimationFrame(check));
 })();
 
+// kolor paska przeglądarki (meta theme-color) płynnie podąża za kolorem strony podczas zmiany motywu:
+// zamiast jednego skoku na początku przejścia, w każdej klatce dostaje aktualny, pośredni kolor tła (--paper)
+(function syncBrowserBar() {
+  const html = document.documentElement;
+  const metas = () => document.querySelectorAll('meta[name="theme-color"]');
+  let raf = 0;
+  const paint = () => {
+    const c = getComputedStyle(html).getPropertyValue('--paper').trim();
+    if (c) for (const m of metas()) if (m.getAttribute('content') !== c) m.setAttribute('content', c);
+  };
+  const loop = () => { paint(); raf = html.classList.contains('theme-anim') ? requestAnimationFrame(loop) : 0; if (!raf) paint(); };
+  new MutationObserver(() => { if (html.classList.contains('theme-anim') && !raf) { paint(); raf = requestAnimationFrame(loop); } })
+    .observe(html, { attributes: true, attributeFilter: ['class'] });
+})();
+
 // logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
 $('home').addEventListener('click', () => openWelcome(true));
 
