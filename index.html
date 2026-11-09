@@ -2559,10 +2559,20 @@ function snapStatic() {
     if (html && msg.innerHTML !== html) msg.innerHTML = html;
     if (!boot.classList.contains('show') || boot.hidden) { boot.hidden = false; void boot.offsetWidth; boot.classList.add('show'); shownAt = performance.now(); }
   };
+  // gdy nakładka znika, lista wchodzi kaskadą jak ekran startowy: nagłówki kolumn, kolejne przeloty,
+  // przycisk „pokaż kolejne”, pasek ISS i stopka – każdy element 40 ms po poprzednim, każdy 520 ms
+  const cascade = () => {
+    if (reduceMotion()) return;
+    const els = [list.querySelector(':scope > .cols'), ...list.querySelectorAll(':scope > .row, :scope > .empty'), $('more'), $('ticker'),
+                 document.querySelector('footer .fbox'), document.querySelector('footer .copy')]
+      .filter(el => el && !el.hidden && el.getClientRects().length);
+    els.forEach((el, i) => el.animate([{ opacity: 0, translate: '0 12px' }, { opacity: 1, translate: '0 0' }],
+      { duration: 520, delay: Math.min(i, 14) * 40, easing: 'cubic-bezier(.2, .7, .2, 1)', fill: 'backwards' }));
+  };
   const hide = () => {
     if (!boot.classList.contains('show')) return;
     clearTimeout(t1); clearTimeout(t2);
-    t1 = setTimeout(() => { boot.classList.remove('show'); t2 = setTimeout(() => { boot.hidden = true; }, FADE); },
+    t1 = setTimeout(() => { cascade(); boot.classList.remove('show'); t2 = setTimeout(() => { boot.hidden = true; }, FADE); },
                     Math.max(0, shownAt + BOOT_MIN - performance.now()));
   };
   const welcome = $('welcome');
