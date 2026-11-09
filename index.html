@@ -58,6 +58,8 @@
     --disc:    #eff1ee;
     --knob:    #ffffff;
     --swtrack: #ccd5d2;   /* wyłączony przełącznik N° */
+    --ok:      #2f8a5c;   /* zaznaczony satelita (kółko) */
+    --off:     #c4483e;   /* odznaczony satelita (krzyżyk) */
     --pulse:   #ffffff;   /* puls aktywnego wiersza: tło strony ⇄ biel */
     --pulse-from: #eff1ee;
     --mono: "Recursive", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
@@ -69,7 +71,7 @@
       --paper: #172630; --surface: #172630; --ink: #b3bfbd; --muted: #607073; --rule: #3b4b51;
       --pastel: #3b4b51; --hover: #1c2d39; --field: #172630; --sep: #607073; --icon: #607073;
       --dd: #607073; --tlabel: #607073; --satname: #b3bfbd; --plot: #607073; --tickbg: #172630;
-      --disc: #172630; --knob: #172630; --pulse: #1c2d39; --pulse-from: #172630; --swtrack: #607073;
+      --disc: #172630; --knob: #172630; --pulse: #1c2d39; --pulse-from: #172630; --swtrack: #607073; --ok: #4fae7f; --off: #d4655c;
     }
   }
   :root[data-theme="dark"] {
@@ -77,7 +79,7 @@
     --paper: #172630; --surface: #172630; --ink: #b3bfbd; --muted: #607073; --rule: #3b4b51;
     --pastel: #3b4b51; --hover: #1c2d39; --field: #172630; --sep: #607073; --icon: #607073;
     --dd: #607073; --tlabel: #607073; --satname: #b3bfbd; --plot: #607073; --tickbg: #172630;
-    --disc: #172630; --knob: #172630; --pulse: #1c2d39; --pulse-from: #172630; --swtrack: #607073;
+    --disc: #172630; --knob: #172630; --pulse: #1c2d39; --pulse-from: #172630; --swtrack: #607073; --ok: #4fae7f; --off: #d4655c;
   }
   /* płynna zmiana motywu: wszystkie kolory są zarejestrowanymi zmiennymi, więc przechodzą razem –
      w tekstach, tłach, ramkach, ikonach, gradientach suwaka i paska postępu oraz w SVG */
@@ -102,7 +104,9 @@
   @property --pulse { syntax: '<color>'; inherits: true; initial-value: transparent; }
   @property --pulse-from { syntax: '<color>'; inherits: true; initial-value: transparent; }
   @property --swtrack { syntax: '<color>'; inherits: true; initial-value: transparent; }
-  html.theme-anim { transition: --paper .6s cubic-bezier(.4, 0, .2, 1), --surface .6s cubic-bezier(.4, 0, .2, 1), --ink .6s cubic-bezier(.4, 0, .2, 1), --muted .6s cubic-bezier(.4, 0, .2, 1), --rule .6s cubic-bezier(.4, 0, .2, 1), --live .6s cubic-bezier(.4, 0, .2, 1), --pastel .6s cubic-bezier(.4, 0, .2, 1), --hover .6s cubic-bezier(.4, 0, .2, 1), --field .6s cubic-bezier(.4, 0, .2, 1), --sep .6s cubic-bezier(.4, 0, .2, 1), --icon .6s cubic-bezier(.4, 0, .2, 1), --dd .6s cubic-bezier(.4, 0, .2, 1), --tlabel .6s cubic-bezier(.4, 0, .2, 1), --satname .6s cubic-bezier(.4, 0, .2, 1), --plot .6s cubic-bezier(.4, 0, .2, 1), --tickbg .6s cubic-bezier(.4, 0, .2, 1), --disc .6s cubic-bezier(.4, 0, .2, 1), --knob .6s cubic-bezier(.4, 0, .2, 1), --pulse .6s cubic-bezier(.4, 0, .2, 1), --pulse-from .6s cubic-bezier(.4, 0, .2, 1), --swtrack .6s cubic-bezier(.4, 0, .2, 1); }
+  @property --ok { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  @property --off { syntax: '<color>'; inherits: true; initial-value: transparent; }
+  html.theme-anim { transition: --paper .6s cubic-bezier(.4, 0, .2, 1), --surface .6s cubic-bezier(.4, 0, .2, 1), --ink .6s cubic-bezier(.4, 0, .2, 1), --muted .6s cubic-bezier(.4, 0, .2, 1), --rule .6s cubic-bezier(.4, 0, .2, 1), --live .6s cubic-bezier(.4, 0, .2, 1), --pastel .6s cubic-bezier(.4, 0, .2, 1), --hover .6s cubic-bezier(.4, 0, .2, 1), --field .6s cubic-bezier(.4, 0, .2, 1), --sep .6s cubic-bezier(.4, 0, .2, 1), --icon .6s cubic-bezier(.4, 0, .2, 1), --dd .6s cubic-bezier(.4, 0, .2, 1), --tlabel .6s cubic-bezier(.4, 0, .2, 1), --satname .6s cubic-bezier(.4, 0, .2, 1), --plot .6s cubic-bezier(.4, 0, .2, 1), --tickbg .6s cubic-bezier(.4, 0, .2, 1), --disc .6s cubic-bezier(.4, 0, .2, 1), --knob .6s cubic-bezier(.4, 0, .2, 1), --pulse .6s cubic-bezier(.4, 0, .2, 1), --pulse-from .6s cubic-bezier(.4, 0, .2, 1), --swtrack .6s cubic-bezier(.4, 0, .2, 1), --ok .6s cubic-bezier(.4, 0, .2, 1), --off .6s cubic-bezier(.4, 0, .2, 1); }
   html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition-property: none !important; }
   html.theme-anim .theme .ic-half { transition-property: transform !important; }
 
@@ -367,11 +371,11 @@
     font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-size: 16px; line-height: 20px; white-space: nowrap; text-align: left; transition: color .2s ease; }
   .satchip > .nm { overflow: hidden; text-overflow: ellipsis; }
   .satchip .mode { display: none; }
-  .satchip svg { flex: none; position: relative; top: -1px; width: 14px; height: 14px; margin-right: 10px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill-rule='evenodd' d='M7,14C3.14,14 0,10.859 0,7C0,3.141 3.14,0 7,0C10.86,0 14,3.141 14,7C14,10.859 10.859,14 7,14M7,1C3.691,1 1,3.691 1,7C1,10.309 3.691,13 7,13C10.309,13 13,10.309 13,7C13,3.691 10.309,1 7,1Z'/%3E%3C/svg%3E") 0 0 / 14px 14px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill-rule='evenodd' d='M7,14C3.14,14 0,10.859 0,7C0,3.141 3.14,0 7,0C10.86,0 14,3.141 14,7C14,10.859 10.859,14 7,14M7,1C3.691,1 1,3.691 1,7C1,10.309 3.691,13 7,13C10.309,13 13,10.309 13,7C13,3.691 10.309,1 7,1Z'/%3E%3C/svg%3E") 0 0 / 14px 14px no-repeat; }
+  /* odznaczony satelita: czerwony krzyżyk; zaznaczony: zielone kółko (tekst: szary / ciemny jak dotąd) */
+  .satchip svg { flex: none; position: relative; top: -1px; width: 14px; height: 14px; margin-right: 10px; background: var(--off); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.71 12.71'%3E%3Cpath  d='M7.061,6.353L12.707,11.999L12.000,12.706L6.354,7.060L0.708,12.706L0.001,11.999L5.647,6.353L0.000,0.707L0.707,0.000L6.353,5.646L11.999,0.000L12.706,0.707Z'/%3E%3C/svg%3E") 1px 1px / 12.71px 12.71px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.71 12.71'%3E%3Cpath  d='M7.061,6.353L12.707,11.999L12.000,12.706L6.354,7.060L0.708,12.706L0.001,11.999L5.647,6.353L0.000,0.707L0.707,0.000L6.353,5.646L11.999,0.000L12.706,0.707Z'/%3E%3C/svg%3E") 1px 1px / 12.71px 12.71px no-repeat; transition: background-color .2s ease; }
   .satchip svg path { display: none; }
   .satchip[aria-pressed="true"] { color: var(--ink); }
-  /* zaznaczony satelita: krzyżyk; odznaczony: kółko */
-  .satchip[aria-pressed="true"] svg { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.71 12.71'%3E%3Cpath  d='M7.061,6.353L12.707,11.999L12.000,12.706L6.354,7.060L0.708,12.706L0.001,11.999L5.647,6.353L0.000,0.707L0.707,0.000L6.353,5.646L11.999,0.000L12.706,0.707Z'/%3E%3C/svg%3E") 1px 1px / 12.71px 12.71px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.71 12.71'%3E%3Cpath  d='M7.061,6.353L12.707,11.999L12.000,12.706L6.354,7.060L0.708,12.706L0.001,11.999L5.647,6.353L0.000,0.707L0.707,0.000L6.353,5.646L11.999,0.000L12.706,0.707Z'/%3E%3C/svg%3E") 1px 1px / 12.71px 12.71px no-repeat; }
+  .satchip[aria-pressed="true"] svg { background: var(--ok); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill-rule='evenodd' d='M7,14C3.14,14 0,10.859 0,7C0,3.141 3.14,0 7,0C10.86,0 14,3.141 14,7C14,10.859 10.859,14 7,14M7,1C3.691,1 1,3.691 1,7C1,10.309 3.691,13 7,13C10.309,13 13,10.309 13,7C13,3.691 10.309,1 7,1Z'/%3E%3C/svg%3E") 0 0 / 14px 14px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill-rule='evenodd' d='M7,14C3.14,14 0,10.859 0,7C0,3.141 3.14,0 7,0C10.86,0 14,3.141 14,7C14,10.859 10.859,14 7,14M7,1C3.691,1 1,3.691 1,7C1,10.309 3.691,13 7,13C10.309,13 13,10.309 13,7C13,3.691 10.309,1 7,1Z'/%3E%3C/svg%3E") 0 0 / 14px 14px no-repeat; }
   @media (hover: hover) { .satchip:hover > .nm { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); } }
   .satbulk { display: flex; justify-content: center; }
 
@@ -2469,19 +2473,34 @@ function snapStatic() {
   for (const id of ['tab-sats', 'tab-tle']) $(id).addEventListener('click', () => requestAnimationFrame(check));
 })();
 
-// kolor paska przeglądarki (meta theme-color) płynnie podąża za kolorem strony podczas zmiany motywu:
-// zamiast jednego skoku na początku przejścia, w każdej klatce dostaje aktualny, pośredni kolor tła (--paper)
+// kolor paska przeglądarki (meta theme-color) płynnie podąża za kolorem strony podczas zmiany motywu.
+// Strona przy zmianie motywu przemalowuje się z opóźnieniem ok. 4–6 klatek (pomiar z nagrania telefonu),
+// a pasek przeglądarki zmienia się natychmiast – dlatego pasek dostaje kolor tła sprzed BAR_LAG ms.
 (function syncBrowserBar() {
-  const html = document.documentElement;
+  const html = document.documentElement, BAR_LAG = 80;
   const metas = () => document.querySelectorAll('meta[name="theme-color"]');
-  let raf = 0;
-  const paint = () => {
-    const c = getComputedStyle(html).getPropertyValue('--paper').trim();
-    if (c) for (const m of metas()) if (m.getAttribute('content') !== c) m.setAttribute('content', c);
+  let raf = 0, hist = [], endT = 0;
+  const now = () => performance.now();
+  const paper = () => getComputedStyle(html).getPropertyValue('--paper').trim();
+  const set = c => { if (c) for (const m of metas()) if (m.getAttribute('content') !== c) m.setAttribute('content', c); };
+  const loop = () => {
+    const t = now();
+    hist.push([t, paper()]);
+    let c = hist[0][1];
+    for (const [ht, hc] of hist) if (ht <= t - BAR_LAG) c = hc; else break;
+    set(c);
+    const animating = html.classList.contains('theme-anim');
+    if (animating) endT = 0; else if (!endT) endT = t;
+    if (animating || t - endT < BAR_LAG + 20) raf = requestAnimationFrame(loop);
+    else { raf = 0; hist = []; set(paper()); }
   };
-  const loop = () => { paint(); raf = html.classList.contains('theme-anim') ? requestAnimationFrame(loop) : 0; if (!raf) paint(); };
-  new MutationObserver(() => { if (html.classList.contains('theme-anim') && !raf) { paint(); raf = requestAnimationFrame(loop); } })
-    .observe(html, { attributes: true, attributeFilter: ['class'] });
+  new MutationObserver(() => {
+    if (html.classList.contains('theme-anim') && !raf) {
+      const start = getComputedStyle(html).getPropertyValue('--paper').trim();
+      hist = [[now() - BAR_LAG, start]]; set(start); endT = 0;
+      raf = requestAnimationFrame(loop);
+    }
+  }).observe(html, { attributes: true, attributeFilter: ['class'] });
 })();
 
 // logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
