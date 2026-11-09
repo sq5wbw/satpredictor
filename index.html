@@ -404,15 +404,31 @@
   /* ---------- komunikaty i ładowanie ---------- */
   .empty { margin: 0; padding: 24px 20px; color: var(--muted); font-size: 16px; line-height: 20px; }
   .empty b { color: var(--ink); font-weight: 600; }
-  @property --spin { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-  .empty.loading { position: fixed; z-index: 0; left: 0; right: 0; top: 50%; transform: translateY(-50%); padding: 0 20px; margin-top: 1px;
+  /* animacja ładowania: „planeta z księżycem” – duże kółko w środku, małe obiega je po orbicie
+     i chowa się za nim; co obieg kierunek odwraca się lustrzanie. Kolory: magenta w obu motywach. */
+  @property --orb  { syntax: '<angle>';  inherits: false; initial-value: 0deg; }
+  @property --flip { syntax: '<number>'; inherits: false; initial-value: 1; }
+  .empty.loading { --s: 1.1px; position: fixed; z-index: 0; left: 0; right: 0; top: 50%; transform: translateY(-50%); padding: 0 20px; margin-top: 24.75px;
     display: block; text-align: center; pointer-events: none; }
-  .empty.loading::before { content: ""; display: block; width: 99.63px; height: 100.5px; margin: 0 auto 29.5px;
-    background: conic-gradient(from var(--spin) at 49.8% 50%, var(--live) 0 90deg, var(--rule) 90deg 360deg);
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 99.633 100.5'%3E%3Cpath fill-rule='evenodd' d='M76.308,5.038C68.822,1.683 59.990,0.000 49.817,0.000C39.642,0.000 30.812,1.683 23.325,5.038C15.838,8.400 10.079,13.200 6.047,19.436C2.015,25.676 0.000,33.020 0.000,41.464L0.000,58.453C0.000,66.903 2.015,74.290 6.047,80.626C10.079,86.962 15.837,91.856 23.325,95.312C30.811,98.767 39.638,100.495 49.817,100.495C59.994,100.495 68.821,98.767 76.308,95.312C83.796,91.856 89.555,86.961 93.586,80.626C97.617,74.291 99.633,66.903 99.633,58.453L99.633,41.464C99.633,33.019 97.617,25.676 93.586,19.436C89.554,13.200 83.796,8.399 76.308,5.038M73.141,56.439C73.141,62.009 71.075,66.423 66.950,69.684C62.819,72.951 57.109,74.580 49.817,74.580C45.786,74.580 42.185,74.054 39.019,72.996C35.851,71.943 33.304,70.453 31.388,68.533C28.120,65.465 26.492,61.433 26.492,56.439L26.492,44.057C26.492,38.110 28.552,33.597 32.683,30.524C36.809,27.456 42.518,25.916 49.815,25.916C54.036,25.916 57.734,26.448 60.902,27.501C64.069,28.557 66.610,30.047 68.533,31.963C71.601,35.036 73.141,39.068 73.141,44.057Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 99.633 100.5'%3E%3Cpath fill-rule='evenodd' d='M76.308,5.038C68.822,1.683 59.990,0.000 49.817,0.000C39.642,0.000 30.812,1.683 23.325,5.038C15.838,8.400 10.079,13.200 6.047,19.436C2.015,25.676 0.000,33.020 0.000,41.464L0.000,58.453C0.000,66.903 2.015,74.290 6.047,80.626C10.079,86.962 15.837,91.856 23.325,95.312C30.811,98.767 39.638,100.495 49.817,100.495C59.994,100.495 68.821,98.767 76.308,95.312C83.796,91.856 89.555,86.961 93.586,80.626C97.617,74.291 99.633,66.903 99.633,58.453L99.633,41.464C99.633,33.019 97.617,25.676 93.586,19.436C89.554,13.200 83.796,8.399 76.308,5.038M73.141,56.439C73.141,62.009 71.075,66.423 66.950,69.684C62.819,72.951 57.109,74.580 49.817,74.580C45.786,74.580 42.185,74.054 39.019,72.996C35.851,71.943 33.304,70.453 31.388,68.533C28.120,65.465 26.492,61.433 26.492,56.439L26.492,44.057C26.492,38.110 28.552,33.597 32.683,30.524C36.809,27.456 42.518,25.916 49.815,25.916C54.036,25.916 57.734,26.448 60.902,27.501C64.069,28.557 66.610,30.047 68.533,31.963C71.601,35.036 73.141,39.068 73.141,44.057Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-    animation: spin 1.2s linear infinite; }
-  /* płynny obrót: magentowa ćwiartka obiega kształt „°” ruchem jednostajnym */
-  @keyframes spin { from { --spin: 0deg; } to { --spin: 360deg; } }
+  .empty.loading::before { content: ""; position: relative; z-index: 1; display: block; width: calc(48 * var(--s)); height: calc(48 * var(--s));
+    margin: var(--s) auto calc(27.5px + var(--s)); border-radius: 50%; background: var(--live); }
+  .empty.loading::after { content: ""; position: absolute; z-index: 0; left: calc(50% - 9.1 * var(--s)); top: calc(15.9 * var(--s));
+    width: calc(18.2 * var(--s)); height: calc(18.2 * var(--s)); border-radius: 50%; background: var(--live); --orb: 270deg;
+    transform: scaleX(var(--flip)) translateX(calc(-34 * var(--s))) rotate(var(--orb)) translateX(calc(34 * var(--s)));
+    animation: orb 1s linear infinite, orbflip 2s linear infinite; }
+  @keyframes orb { from { --orb: 0deg; } to { --orb: 360deg; } }
+  @keyframes orbflip { 0%, 49.99% { --flip: 1; } 50%, 100% { --flip: -1; } }
+  /* w liście komunikat ładowania jest niewidoczny – pokazuje go nakładka startowa (#boot), która trzyma się
+     co najmniej kilka obrotów i znika płynnie, zamiast mignąć na ułamek sekundy */
+  .list > .empty.loading { visibility: hidden; }
+  .list > .empty.loading::after { animation: none; }
+  .boot { position: fixed; inset: 0; z-index: 4; background: var(--paper); border-bottom: 4px solid var(--live); opacity: 0; pointer-events: none;
+    transition: opacity .35s cubic-bezier(.4, 0, .2, 1); }
+  .boot.show { opacity: 1; pointer-events: auto; }
+  .boot .boot-copy { position: absolute; left: 0; right: 0; bottom: 24px; margin: 0; }
+  header.top { position: relative; z-index: 5; }
+  .locating .empty.loading { animation: lfade .35s cubic-bezier(.4, 0, .2, 1) both; }
+  @keyframes lfade { from { opacity: 0; } to { opacity: 1; } }
   body:has(.list > .empty.loading) .fbox { display: none; }
   /* ustalanie lokalizacji (GPS z ekranu startowego): ekran startowy ustępuje miejsca komunikatowi z animacją */
   .locating { display: none; }
@@ -475,7 +491,8 @@
     .det, .det-in, .reveal, .reveal .fpanel, .row, .row::after, .mode, .switch, .switch::after, .switch::before, .name .livepos, .theme .ic-half { transition: none !important; }
     #minel::-webkit-slider-runnable-track, #minel::-moz-range-track { transition: none; }
     .row.on[aria-expanded="false"] { animation: none; }
-    .eta .ec, .empty.loading::before { animation: none; }
+    .eta .ec, .empty.loading::after, .locating .empty.loading { animation: none; }
+    .boot { transition: none; }
     svg.polar .halo { display: none; }
   }
 
@@ -614,6 +631,7 @@
 </header>
 
 <main class="list" id="list"><p class="empty loading" data-i18n-html="computingHtml"></p></main>
+<div class="boot show" id="boot" aria-live="polite"><p class="empty loading" id="bootMsg" data-i18n-html="computingHtml"></p><p class="copy boot-copy" aria-hidden="true"><b>© SAT<span class="deg">°</span> Predictor</b><span class="dot"> · </span>Made in <span class="mono">KO02</span></p></div>
 <div class="locating" aria-live="polite"><p class="empty loading" data-i18n-html="locatingHtml"></p></div>
 <div class="more" id="more" hidden><div class="peek" id="peek" aria-hidden="true"></div><button id="morebtn" class="morebtn"><span class="mb-label"></span><span class="mb-num" aria-hidden="true"><span class="mb-d"><span>1</span></span><span class="mb-d"><span>0</span></span></span><span class="mb-unit"></span></button></div>
 
@@ -2528,6 +2546,36 @@ function snapStatic() {
     anims.push(bg);
     bg.onfinish = () => { if (id !== run) return; w.hidden = true; cancel(); };
   };
+})();
+
+// nakładka ładowania: widoczna od wczytania strony i za każdym razem, gdy lista pokazuje „ładuję…”.
+// Zostaje co najmniej BOOT_MIN ms (kilka obrotów animacji), potem płynnie znika i odsłania listę –
+// koniec z mignięciem, gdy dane są gotowe po ułamku sekundy.
+(function bootLoader() {
+  const boot = $('boot'), msg = $('bootMsg'), list = $('list'), BOOT_MIN = 2000, FADE = 350;
+  let shownAt = 0, t1 = 0, t2 = 0;                      // 0 = od początku wczytywania strony
+  const show = html => {
+    clearTimeout(t1); clearTimeout(t2);
+    if (html && msg.innerHTML !== html) msg.innerHTML = html;
+    if (!boot.classList.contains('show') || boot.hidden) { boot.hidden = false; void boot.offsetWidth; boot.classList.add('show'); shownAt = performance.now(); }
+  };
+  const hide = () => {
+    if (!boot.classList.contains('show')) return;
+    clearTimeout(t1); clearTimeout(t2);
+    t1 = setTimeout(() => { boot.classList.remove('show'); t2 = setTimeout(() => { boot.hidden = true; }, FADE); },
+                    Math.max(0, shownAt + BOOT_MIN - performance.now()));
+  };
+  const welcome = $('welcome');
+  const sync = () => {
+    if (!welcome.hidden) {                               // ekran startowy na wierzchu: nakładka niepotrzebna
+      clearTimeout(t1); clearTimeout(t2); boot.classList.remove('show'); boot.hidden = true;
+      return;
+    }
+    const l = list.querySelector(':scope > .empty.loading'); l ? show(l.innerHTML) : hide();
+  };
+  new MutationObserver(sync).observe(list, { childList: true });
+  new MutationObserver(sync).observe(welcome, { attributes: true, attributeFilter: ['hidden'] });
+  sync();
 })();
 
 // logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
