@@ -449,6 +449,24 @@
   .w-gps { margin-top: 40px; align-self: center; border: 0; padding: 0; color: var(--ink); font-weight: 600; font-size: 16px; line-height: 20px; cursor: pointer; }
   .w-gps:disabled { color: var(--muted); cursor: default; }
 
+  /* ekran startowy: wejście „kaskadą” – elementy pojawiają się kolejno od góry, z nakładaniem się animacji
+     (każdy 70 ms po poprzednim, każdy trwa 520 ms). Animacja rusza za każdym otwarciem ekranu. */
+  .welcome > .w-top, .w-card > *, .welcome > .w-copy {
+    animation: wstag 520ms cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+  .w-card > :nth-child(1) { --i: 1; }   /* logo */
+  .w-card > :nth-child(2) { --i: 2; }   /* cytat */
+  .w-card > :nth-child(3) { --i: 3; }   /* etykieta */
+  .w-card > :nth-child(4) { --i: 4; }   /* pole lokatora */
+  .w-card > :nth-child(5) { --i: 5; }   /* podpowiedź */
+  .w-card > :nth-child(6) { --i: 6; }   /* Show passes */
+  .w-card > :nth-child(7) { --i: 7; }   /* GPS */
+  .welcome > .w-copy { --i: 8; }
+  @keyframes wstag { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
+  /* górny pasek tylko się rozjaśnia – jego położenie mierzy skrypt wyrównujący kartę do pełnych pikseli */
+  @keyframes wfade { from { opacity: 0; } to { opacity: 1; } }
+  .welcome > .w-top { animation-name: wfade; }
+  @media (prefers-reduced-motion: reduce) { .welcome > .w-top, .w-card > *, .welcome > .w-copy { animation: none; } }
+
   @media (prefers-reduced-motion: reduce) {
     .det, .det-in, .reveal, .reveal .fpanel, .row, .row::after, .mode, .switch, .switch::after, .switch::before, .name .livepos, .theme .ic-half { transition: none !important; }
     #minel::-webkit-slider-runnable-track, #minel::-moz-range-track { transition: none; }
