@@ -40,16 +40,16 @@
   :root {
     color-scheme: light;
     --paper:   #eef1ee;
-    --surface: #f8faf8;
+    --surface: #ffffff;
     --ink:     #172630;
-    --muted:   #5b6d71;
+    --muted:   #607073;
     --rule:    #cbd5d2;
     --track:   #1d5c8f;
     --plot:    #dab7c9;   /* próba: kolor toru przelotu na wykresie */
     --tick:    #a6206a;
     --horizon: #9aa9a7;   /* jaśniejszy obrys – większy kontrast z fioletowymi napisami */
     --live:    #a6206a;
-    --live-bg: #f6e3ec;
+    --live-bg: #ffffff;
     --hover:   #e4eae7;
     --pulse:   #ffffff;
     --pastel:  #dab7c9;   /* „niewypełniona” część suwaka i paska postępu */
@@ -59,37 +59,37 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --paper:   #121b20;
-      --surface: #18242a;
+      --paper:   #172630;
+      --surface: #1c2d39;
       --ink:     #b3bfbc;   /* przygaszony, żeby w nocy ekran mniej świecił */
-      --muted:   #7c8d90;
-      --rule:    #2d3c42;
+      --muted:   #607073;
+      --rule:    #3b4b51;
       --track:   #7ab5e6;
       --plot:    #55666c;   /* tor przelotu w trybie ciemnym: stonowana szarość zamiast jasnego fioletu */
       --tick:    #55666c;   /* w nocy: kółka, tor i obrys tarczy w jednym kolorze */
       --horizon: #36454b;
       --live:    #a6206a;
       --live-bg: #1c282e;   /* w trybie ciemnym neutralne tło komunikatów */
-      --hover:   #1d2b32;
-      --pulse:   #1d2b32;   /* jak tło rozwiniętego wiersza */
+      --hover:   #1c2d39;
+      --pulse:   #1c2d39;
       --pastel:  #3b4b52;   /* w trybie ciemnym ciemnoszary zamiast przygaszonego fioletu */
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --paper:   #121b20;
-    --surface: #18242a;
+    --paper:   #172630;
+    --surface: #1c2d39;
     --ink:     #b3bfbc;
-    --muted:   #7c8d90;
-    --rule:    #2d3c42;
+    --muted:   #607073;
+    --rule:    #3b4b51;
     --track:   #7ab5e6;
     --plot:    #55666c;
     --tick:    #55666c;
     --horizon: #36454b;
     --live:    #a6206a;
     --live-bg: #1c282e;   /* w trybie ciemnym neutralne tło komunikatów */
-    --hover:   #1d2b32;
-    --pulse:   #1d2b32;   /* jak tło rozwiniętego wiersza */
+    --hover:   #1c2d39;
+    --pulse:   #1c2d39;
       --pastel:  #3b4b52;   /* w trybie ciemnym ciemnoszary zamiast przygaszonego fioletu */
   }
   /* płynne przejście motywu: kolory są zarejestrowanymi zmiennymi, więc przechodzą płynnie
@@ -484,7 +484,7 @@
   .w-gps:disabled { color: var(--muted); cursor: default; }
 
   /* ---------- telefon ---------- */
-  @media (max-width: 720px) {
+  @media (max-width: 1039px) {
     /* wariant B: wspólna linia treści 20 px od krawędzi (jak na ekranie startowym); tła wierszy i linie – na całą szerokość */
     .wrap { padding: 23px 0 40px; }   /* logo 20 px od górnej krawędzi – jak górny pasek na ekranie startowym */
     header.top { padding-left: 20px; padding-right: 20px; }
@@ -546,27 +546,293 @@
     .tarrow { display: block; padding-top: 18px; line-height: 27px; font-size: 16px; color: var(--muted); }
   }
   @media (max-width: 350px) { .row .info { font-size: 12px; line-height: 20px; } }   /* bardzo wąskie telefony: dolna linijka nadal w jednym wierszu */
-  @media (min-width: 721px) {
+  @media (min-width: 1040px) {
     figure.plot { margin-top: 5px; }   /* komputer: równy odstęp nad „N” i pod „S” (do linii TLE) */
     .tle { margin-top: 10px; }
     .row .info { display: contents; }
   }
+
+  /* =====================================================================
+     REDESIGN 2026-11 (projekt z Adobe XD) – nadpisuje wcześniejsze reguły
+     ===================================================================== */
+  .mono, .m { font-variation-settings: "MONO" 1, "CASL" 0; }
+  svg.mark { display: block; height: 38px; width: auto; }
+  svg.mark .lg-ink { fill: var(--ink); }
+  svg.mark .lg-mark { fill: var(--live); }
+
+  /* ---- nagłówek: wspólne elementy ---- */
+  header.top h1 { position: static; top: auto; margin: 0; line-height: 0; }
+  header.top .hdr-r { display: flex; align-items: center; justify-content: flex-end; }
+  .lang-h { font-size: 16px; line-height: 22px; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .lang-h button { padding: 0 10px; font-weight: 500; letter-spacing: 0; }
+  .lang-h button + button { border-left: 2px solid var(--rule); }
+  .lang-h button[aria-pressed="true"] { font-weight: 700; }
+  header.top .where { position: static; top: auto; margin: 0 0 0 12px; gap: 10px; font-size: 16px; line-height: 22px; white-space: nowrap; }
+  header.top .loc { height: 28px; padding: 0 4px; border: 2px solid var(--rule); border-radius: 4px; background: var(--surface); font-size: 18px; line-height: 24px; font-weight: 700; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .seg { height: 38px; border: 2px solid var(--rule); border-radius: 6px; background: none; }
+  .seg button { height: 34px; padding: 0 8px; font-size: 18px; line-height: 34px; font-weight: 700; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .seg button + button { border-left: 2px solid var(--rule); }
+  .theme-h { width: 26px; height: 26px; }
+  .theme-h svg { width: 26px; height: 26px; }
+  .elval { top: 0; font-size: 14px; line-height: 20px; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .elval b { font-weight: 700; min-width: 0; }
+  .tog { font-size: 16px; line-height: 22px; }
+  .switch { width: 48px; height: 28px; border-width: 2px; }
+  .switch::after, .switch::before { top: 2px; left: 2px; width: 20px; height: 20px; }
+  .switch[aria-checked="true"]::after, .switch[aria-checked="true"]::before { translate: 20px 0; }
+
+  /* ---- nagłówek: telefon ---- */
+  @media (max-width: 1039px) {
+    .wrap { padding-top: 19px; }
+    header.top { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "brand right" "ctl ctl"; align-items: center; gap: 15px 0;
+      padding: 0 20px 18px; border-bottom: 2px solid var(--rule); }
+    header.top > .brand { display: block; grid-area: brand; }
+    header.top .hdr-r { grid-area: right; margin-right: -10px; }
+    header.top .hdr-r .where { margin-left: 12px; margin-right: 10px; }
+    header.top .controls { grid-area: ctl; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 0; width: 100%; }
+    header.top .theme-h { display: inline-flex; margin-left: 12px; }
+    header.top #compasswrap { margin-left: auto; }
+    header.top .elrow { order: 3; flex: 0 0 100%; height: 20px; gap: 8px; }
+    header.top #minel { flex: 1; width: auto; height: 20px; }
+  }
+
+  /* ---- nagłówek: komputer (jeden wiersz) ---- */
+  @media (min-width: 1040px) {
+    .wrap { max-width: 1002px; padding-left: 0; padding-right: 0; padding-top: 16px; }
+    header.top { display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-start; gap: 0; padding-bottom: 20px; }
+    header.top > .brand { display: block; order: 0; }
+    header.top svg.mark { height: 40px; }
+    header.top .controls { display: contents; }
+    header.top .seg { order: 1; margin-left: 27px; }
+    header.top .elrow { order: 2; margin-left: 40px; gap: 8px; }
+    header.top #minel { width: 260px; height: 20px; }
+    header.top .theme-h { display: inline-flex; order: 3; margin-left: auto; }
+    header.top .hdr-r { order: 4; margin-left: 30px; }
+    header.top .hdr-r .where { margin-left: 32px; }
+    header.top #compasswrap { order: 5; margin-left: 24px; }
+  }
+
+  /* ---- lista przelotów ---- */
+  .row { border-bottom-width: 2px; }
+  .mode { font-size: 17px; line-height: 19px; font-weight: 500; padding: 0 1px; border-width: 2px; border-radius: 4px; background: none; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .row.on .mode { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .row .name { font-size: 18px; line-height: 23px; font-weight: 700; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .eta, .eta.on { font-size: 18px; line-height: 23px; font-weight: 700; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .name .livepos { font-size: 14px; line-height: 20px; font-weight: 400; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .name .livepos.show { max-height: 20px; }
+  .row .info, .row .info > * { font-size: 14px; line-height: 20px; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .row .info .el b { font-weight: 400; color: inherit; }
+  @media (max-width: 1039px) {
+    .row { grid-template-columns: 47px 1fr auto; column-gap: 0; row-gap: 3px; padding: 12px 20px; }
+    .row .mode { margin-top: 2px; }
+    .row .info { grid-template-columns: 22.3% 20.6% 1fr auto; line-height: 20px; }
+  }
+  @media (min-width: 1040px) {
+    .cols, .row { grid-template-columns: 47px 213px 110px 101px 151px 1fr auto; column-gap: 0; }
+    .cols { grid-template-columns: 66px 213px 110px 101px 151px 1fr auto; padding: 0 0 8px; border-bottom: 2px solid var(--rule);
+      font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .row { padding: 12px 23px 12px 19px; align-items: center; }
+    .row .name { font-size: 18px; line-height: 26px; }
+    .row .mode { align-self: start; margin-top: 2px; }   /* całe piksele (26 − 23 = 3) */
+    .row .info > * { font-size: 15px; line-height: 26px; text-align: left; }
+    .row .eta { text-align: right; }
+    .row .info > * { color: var(--muted); }
+    .row .info > .eta { font-size: 18px; color: var(--ink); }
+    .row .info > .eta.on { color: var(--live); }
+    .cols span:nth-child(2), .cols span:nth-child(4), .cols span:nth-child(6) { color: var(--ink); }
+    .row .az .parr { padding: 0 12px; word-spacing: -1ch; }
+  }
+  .livepos .lp-az { margin-left: 2.2ch; }   /* „el ↑5°   az →5°” – wyraźny odstęp między parami */
+  /* strzałki wektorowe: cienka kreska, rozmiar = wysokość tekstu */
+  svg.arw { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -0.17em; overflow: visible; }
+  svg.arw path { fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .tarr { margin-right: 2px; } .row .az .parr { margin: 0 2px; word-spacing: 0; } .earr { margin-right: 2px; }
+
+  /* ---- stopka ---- */
+  .more { margin-top: 24px; }
+  .morebtn { height: 50px; border-radius: 6px; font-size: 16px; line-height: 20px; padding: 0 16px; }
+  @media (min-width: 1040px) {
+    .morebtn { max-width: 350px; height: 50px; font-size: 16px; }
+    /* zakładki na komputerze: szerokość wg treści, wyrównane do lewej; reszta paska jako „pusta zakładka” */
+    .wrap .fbox .ftabs .ftab { flex: 0 0 auto !important; padding: 0 20px !important; }
+    .fbox .ftabs::after { content: ""; flex: 1 1 auto; border-left: 2px solid var(--rule); }
+    .fbox .ftabs.has-open::after { border-bottom: 2px solid var(--rule); }
+  }
+  .ticker { margin-top: 28px; height: 22px; }
+  .tk-item { font-size: 15px; line-height: 22px; }
+  .tk-sep { padding: 0 14px; }
+  .tk-sep svg { width: 11px; height: 11px; }
+  .fbox { margin-top: 24px; border: 2px solid var(--rule); border-radius: 6px; overflow: hidden; }
+  .ticker[hidden] + .fbox { margin-top: 24px; }
+  .fbox .ftabs { display: flex; margin: 0; gap: 0; }
+  .fbox .ftab, .fbox .ftabs:not(.has-open) .ftab { flex: 1 1 auto; height: 48px; margin: 0; padding: 0 16px; border: 0; border-radius: 0; background: none;
+    font-size: 16px; line-height: 22px; font-weight: 650; letter-spacing: 0; text-transform: none; color: var(--ink); white-space: nowrap; }
+  .fbox .ftab + .ftab { border-left: 2px solid var(--rule); }
+  .fbox .ftabs.has-open .ftab[aria-expanded="false"] { border-bottom: 2px solid var(--rule); }
+  .fbox .ftab .tl { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; text-decoration-color: var(--rule); }
+  .fbox .ftab-n { color: var(--muted); font-weight: 500; }
+  .fbox .ftab .tab-arw { margin-left: 6px; color: var(--muted); transition: rotate .32s cubic-bezier(.2, .7, .2, 1); }
+  .fbox .ftab[aria-expanded="true"] .tab-arw { rotate: 180deg; }
+  @media (hover: hover) { .fbox .ftabs:not(.has-open) .ftab:hover, .fbox .ftab:hover { background: none; } .fbox .ftab:hover .tl { text-decoration-color: var(--ink); } }
+  .fbox .fpanel { margin: 0; padding: 24px 18px 22px; border: 0; border-radius: 0; background: none; }
+  #tleinfo { font-size: 16px; line-height: 22px; color: var(--muted); font-variation-settings: "MONO" 1, "CASL" 0; }
+  .btn2 { height: 40px; padding: 0 18px; border: 2px solid var(--rule); background: var(--surface); font-size: 16px; line-height: 20px; font-weight: 650; letter-spacing: 0; text-transform: none; }
+  .lnk3 { font-size: 16px; font-weight: 650; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .fpanel .actions { margin-top: 16px; gap: 18px 30px; }
+  /* lista satelitów: ○ obserwowany, × pominięty; kolumny wypełniane z góry na dół */
+  .satgrid { grid-auto-flow: column; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  @media (min-width: 1040px) { .satgrid { grid-template-columns: repeat(4, 1fr); } }
+  .satchip { height: 31px; gap: 11px; font-size: 16px; font-weight: 400; color: var(--ink); font-variation-settings: "MONO" 1, "CASL" 0; }
+  .satchip .mode { display: none; }
+  .satchip svg { width: 13px; height: 13px; }
+  .satchip svg circle { fill: none; stroke: currentColor; stroke-width: 1.3; vector-effect: non-scaling-stroke; }
+  .satchip[aria-pressed="false"] { color: var(--muted); }
+  .satchip[aria-pressed="true"] .ic-tick { opacity: 0; }
+  .satchip .ic-ring { transition: opacity .2s ease; }
+  .satchip[aria-pressed="false"] .ic-ring { opacity: 0; }
+  .satbulk { justify-content: center; margin-top: 16px; }
+  /* copyright + fioletowa linia na końcu strony */
+  .copyrow { justify-content: center; margin-top: 40px; }
+  .copy { font-size: 15px; line-height: 20px; color: var(--muted); }
+  .copy b { color: var(--ink); font-weight: 650; }
+  .copy .dg { color: var(--live); }
+  .wrap { padding-bottom: 32px; }
+  .endbar { height: 4px; background: var(--live); }
+
+  /* ---- ładowanie ---- */
+  .loader { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; min-height: calc(100vh - 360px); padding: 40px 20px; }
+  .loader svg { width: 100px; height: 100px; }
+  .loader .ld-base { fill: var(--rule); }
+  .loader .ld-arc { fill: var(--live); }
+  .loader .ld-q { transform-box: view-box; transform-origin: 50px 50px; animation: ldspin 1.4s cubic-bezier(.45, 0, .55, 1) infinite; }
+  @keyframes ldspin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .loader .ld-q { animation: none; } }
+  .loader p { margin: 0; font-size: 17px; line-height: 24px; color: var(--muted); }
+  .loader p b { color: var(--ink); font-weight: 650; }
+  /* ---- szczegóły przelotu ---- */
+  .times div span, .times div em { font-size: 14px; line-height: 20px; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .times div strong { font-size: 18px; font-weight: 700; font-variation-settings: "MONO" 1, "CASL" 0; }
+  dl.freq dt { font-size: 14px; font-variation-settings: "MONO" 1, "CASL" 0; }
+  dl.freq dd { font-size: 16px; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .tle { border-top-width: 1px; }   /* projekt: cienka linia 1 px (2 px w eksporcie @2x) */
+  .row[aria-expanded="true"] { background: var(--hover); }
+  /* ---- ekran startowy ---- */
+  .w-close { color: var(--muted); display: inline-flex; align-items: center; justify-content: center; }
+  .lang-w { font-size: 16px; line-height: 22px; font-variation-settings: "MONO" 1, "CASL" 0; }
+  .lang-w button { padding: 0 12px; letter-spacing: 0; }
+  .lang-w button + button { border-left: 2px solid var(--rule); }
+  .w-input { border-width: 2px; background: var(--surface); }
+  .w-input:focus { box-shadow: none; }
+  .w-copy { font-size: 15px; line-height: 20px; }
+  .w-copy b { color: var(--ink); font-weight: 650; }
+  .w-copy .dg { color: var(--live); }
+  .welcome::after { content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: 4px; background: var(--live); }
+  .wrap:has(.loader) header.top { border-bottom-color: transparent; }
+  .wrap:has(.loader) .fbox, .wrap:has(.loader) .ticker { display: none; }
+  .w-label { font-size: 16px; line-height: 22px; }
+  .w-hint { font-size: 14px; }
+  .w-go { height: 50px; padding: 0 16px; border-radius: 6px; font-size: 16px; }
+  .w-gps { font-size: 16px; text-decoration-thickness: 2px; }
+  .det { background: transparent; }
+  .det-in { background: var(--det-bg, #ffffff); }   /* projekt: jasny – biały panel; ciemny – tło strony */
+
+  /* ---- szczegóły przelotu: komputer (wg projektu) ---- */
+  @media (min-width: 1040px) {
+    .det-in { display: grid; grid-template-columns: 558px 1fr; grid-template-rows: auto auto; padding: 48px 0 17px 19px; border-bottom: 2px solid var(--rule); }
+    .det-in > .det-grid { display: contents; }
+    .det-in > .det-grid > div:first-child { grid-column: 1; grid-row: 1; margin-left: 49px; }
+    .det-in figure.plot { grid-column: 2; grid-row: 1 / 3; align-self: stretch; align-items: center; margin: 0; }
+    .det-in .tle { grid-column: 1; grid-row: 2; margin-top: 37px; padding-top: 20px; font-size: 13px; line-height: 18px; }
+    .times { display: flex; justify-content: space-between; margin: 0; gap: 0; }
+    .times div span, .times div em { display: block; margin-left: 0; }
+    .times div strong { display: block; line-height: 27px; }
+    .times div:nth-of-type(2) { text-align: center; }
+    .times div:nth-of-type(3) { text-align: right; }
+    .tarrow { display: block; padding-top: 20px; line-height: 27px; font-size: 16px; color: var(--muted); }
+    dl.freq { grid-template-columns: 120px minmax(0, 1fr); gap: 8px 0; margin-top: 34px; }
+    dl.freq dt { line-height: 22px; padding-top: 0; }
+    dl.freq dd { line-height: 22px; }
+    .det-in figure.plot { display: flex; justify-content: center; }
+    .det-in svg.polar { flex: none; max-width: none; width: 470px; margin: -40px calc((100% - 470px) / 2); }   /* horyzont 282 px jak w projekcie; podpisy N/S w marginesach panelu */
+    figure.plot .level { --lv-top: 0px; right: 23px; }
+  }
+
+  /* ---- szczegóły przelotu: telefon (wg projektu) ---- */
+  .times div strong { margin-top: 4px; line-height: 27px; display: block; }
+  @media (min-width: 1040px) { .times div strong { margin-top: 8px; } }
+  @media (max-width: 1039px) {
+    .times { margin: 0; }
+    .tarrow { padding-top: 24px; }
+    dl.freq { grid-template-columns: 120px minmax(0, 1fr); gap: 8px 0; margin-top: 20px; }
+    dl.freq dt { line-height: 22px; padding-top: 0; }
+    dl.freq dd { line-height: 22px; }
+    .det-in .tle { margin-top: 19px; padding-top: 20px; font-size: 13px; line-height: 18px; }
+    .det-in { padding-bottom: 13px; }
+  }
+
+  /* kompas wg projektu: jasny obrys horyzontu w kolorze linii, delikatnie wypełniona tarcza */
+  svg.polar .horizon { stroke: var(--rule); stroke-width: 2; }
+  svg.polar .disc { fill: var(--paper); }   /* tarcza w kolorze tła strony na białym panelu */
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --det-bg: var(--paper); } :root:not([data-theme="light"]) svg.polar .disc { fill: transparent; } }
+  :root[data-theme="dark"] { --det-bg: var(--paper); }
+  :root[data-theme="dark"] svg.polar .disc { fill: transparent; }
+  :root[data-theme="light"] { --det-bg: #ffffff; }
+  @media (max-width: 1039px) { .times { margin-top: 4px; } }
+
+  /* ---- filtry SSB / FM / DIG wg projektu ----
+     wyłączone: wspólna ramka 2 px z liniami podziału; włączony: pełne pole na całą wysokość (także na ramce),
+     oddzielone od sąsiadów 2-pikselową szczeliną w kolorze tła */
+  .seg { height: 38px; border: 0; border-radius: 6px; background: none; overflow: visible; }
+  .seg button { height: 38px; line-height: 34px; border: 2px solid var(--rule); border-left-width: 0; border-right-width: 0; border-radius: 0; color: var(--muted); background: none;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease; }
+  .seg button:first-child { border-left-width: 2px; border-radius: 6px 0 0 6px; }
+  .seg button:last-child { border-right-width: 2px; border-radius: 0 6px 6px 0; }
+  /* separator 2 px poza ramką przycisku (bez skośnych narożników ramek): linia, a przy włączonym sąsiedzie – szczelina */
+  .seg button + button { position: relative; border-left: 0; margin-left: 2px; }
+  .seg button + button::before { content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 2px; background: var(--rule); transition: background-color .2s ease; }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .seg button[aria-pressed="true"] + button::before, .seg button + button[aria-pressed="true"]::before { background: var(--paper); }
+
+  /* ---- rytm pionowy stopki wg projektu (mierzone od tuszu liter i krawędzi elementów) ---- */
+  .more { margin-top: 3px; }
+  footer.data { margin-top: 0; }
+  .ticker { margin-top: 25px; }
+  .fbox, .ticker[hidden] + .fbox { margin-top: 22px; }
+  .fbox .ftab, .fbox .ftabs:not(.has-open) .ftab { height: 46px; }
+  .copyrow { margin-top: 26px; }
+  .wrap { padding-bottom: 25px; }
+  @media (min-width: 1040px) {
+    .more { margin-top: 2px; }
+    .ticker { margin-top: 23px; }
+    .fbox, .ticker[hidden] + .fbox { margin-top: 24px; }
+  }
+
+  /* poprawki wg projektu */
+  .satchip svg { width: 14px; height: 14px; }
+  .satchip svg circle { stroke-width: 1; }
+  .satchip svg path { stroke-width: 1; stroke-linecap: butt; }
+  .fbox { border-width: 1px; }
+  .fbox .ftab + .ftab { border-left-width: 1px; }
+  .fbox .ftabs.has-open .ftab[aria-expanded="false"] { border-bottom-width: 1px; }
+  @media (min-width: 1040px) { .fbox .ftabs::after { border-left-width: 1px; } .fbox .ftabs.has-open::after { border-bottom-width: 1px; } }
+  .fbox .ftabs { margin-bottom: 0; }
+  .fbox .ftab, .fbox .ftabs:not(.has-open) .ftab { height: 48px; }   /* 1 + 48 + 1 = 50, jak w projekcie */
+  .det-in { border-bottom: 2px solid var(--rule); }   /* linia pod rozwiniętymi szczegółami = linia między wierszami */
+  .ticker { -webkit-mask-image: none; mask-image: none; }   /* bez wygaszania krawędzi */
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header class="top">
-  <div class="tools-top"><button class="theme theme-top" type="button"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><g class="ic-half"><circle cx="12" cy="12" r="7.5" fill="none" stroke="var(--ink)" stroke-width="1.5"/><path d="M12 4.5a7.5 7.5 0 0 0 0 15z" fill="var(--ink)"/></g></svg></button><div class="lang lang-top" role="group" data-i18n-aria="langGroup"><button data-lang="pl" lang="pl">PL</button><button data-lang="en" lang="en">EN</button></div></div>
-  <div class="brand">
-    <h1 aria-label="SAT° Predictor"><svg class="logo" viewBox="0 0 1567.805 200" aria-hidden="true" focusable="false"><path class="lg-ink" d="M107.323,117.407c-2.881-3.362-6.843-6.363-11.885-9.004-5.042-2.641-11.247-5.079-18.608-7.323l-23.049-6.963c-5.605-1.759-9.807-3.44-12.605-5.042-2.803-1.598-4.723-3.519-5.762-5.762-1.043-2.24-1.561-4.88-1.561-7.923v-5.043c0-3.2.638-5.961,1.921-8.283,1.279-2.319,3.121-4.239,5.522-5.762,2.401-1.52,5.32-2.6,8.763-3.241,3.44-.638,7.481-.961,12.125-.961,4.802,0,9.004.36,12.605,1.081,1.459.292,2.943.692,4.442,1.155v16.732c0,.803.24,1.441.72,1.921s1.118.72,1.921.72h28.091v-33.133c0-.96-.083-1.759-.24-2.401-.161-.638-.563-1.279-1.2-1.921-3.684-3.68-9.525-6.843-17.527-9.484-8.006-2.641-17.61-3.961-28.812-3.961-9.123,0-17.407,1.08-24.85,3.241-7.443,2.161-13.806,5.282-19.088,9.364-5.282,4.081-9.326,8.884-12.125,14.406-2.803,5.522-4.202,11.566-4.202,18.127v11.525c0,4.483.601,8.763,1.801,12.845,1.2,4.081,3.2,7.885,6.002,11.405,2.799,3.522,6.76,6.843,11.885,9.964,5.121,3.121,11.604,5.883,19.448,8.283l22.809,6.963c5.92,1.602,10.242,3.241,12.965,4.922,2.72,1.68,4.521,3.444,5.402,5.282.878,1.842,1.321,4.124,1.321,6.843v8.164c0,4.482-2.281,8.324-6.843,11.525-4.561,3.203-11.806,4.802-21.728,4.802-10.726,0-20.01-1.16-27.851-3.482-7.845-2.318-15.366-5.882-22.569-10.684H0v26.41c0,1.441.12,2.443.36,3.002.24.562.6,1.08,1.08,1.56,2.881,2.563,6.843,4.844,11.885,6.843,5.043,2,10.962,3.481,17.767,4.442,6.802.96,14.046,1.44,21.729,1.44,13.123,0,24.37-1.8,33.734-5.401s16.525-8.802,21.489-15.607c4.959-6.801,7.443-14.845,7.443-24.13v-11.044c0-5.601-.642-10.565-1.921-14.886-1.283-4.322-3.361-8.163-6.242-11.525Z"/><path class="lg-ink" d="M261.055,162.065c-3.042-12.803-6.043-25.21-9.004-37.215-2.964-12.005-5.845-23.567-8.643-34.694-2.803-11.123-5.485-21.729-8.043-31.813-2.562-10.084-4.963-19.605-7.203-28.571-.162-.638-.36-1.118-.6-1.441-.24-.319-.521-.6-.841-.841-.322-.24-.803-.36-1.44-.36h-54.262c-1.283,4.802-2.843,10.804-4.682,18.007-1.842,7.203-3.842,15.288-6.003,24.25-2.161,8.966-4.442,18.247-6.843,27.851s-4.802,19.17-7.203,28.692c-2.401,9.525-4.644,18.57-6.722,27.13-2.082,8.565-3.962,16.248-5.642,23.049-1.681,6.806-3.084,12.207-4.202,16.206-.161.804-.12,1.441.12,1.921.24.481.518.803.841.96.319.161.638.24.96.24h30.253c3.714-14.148,7.043-27.107,9.995-38.895h54.126c2.625,10.625,5.42,22.064,8.388,34.334.48,1.282.841,2.243,1.08,2.88.24.642.638,1.08,1.201,1.321.559.24,1.32.36,2.281.36h29.532c-.96-5.762-2.123-11.442-3.481-17.047-1.362-5.601-2.683-11.044-3.962-16.326ZM208.474,128.212h-29.462c.963-3.771,1.902-7.421,2.812-10.925,2.72-10.481,5.079-19.965,7.083-28.451,2-8.482,3.721-16.124,5.162-22.929.955-4.51,1.795-8.692,2.539-12.605h5.586c.673,3.929,1.485,8.166,2.44,12.725,1.441,6.884,3.08,14.526,4.922,22.929,1.839,8.404,4.041,17.73,6.603,27.971.907,3.634,1.847,7.399,2.816,11.284h-10.499Z"/><path class="lg-ink" d="M384.487,27.371h-116.927v26.651c0,.48.12.923.36,1.321.24.401.559.72.961.961.397.24.84.36,1.32.36h39.856v136.135c0,.803.24,1.441.72,1.921.481.479,1.118.72,1.921.72h31.933V56.663h42.497v-26.651c0-.799-.24-1.441-.72-1.921s-1.122-.72-1.921-.72Z"/><path class="lg-mark" d="M472.842,4.201c-6.242-2.798-13.606-4.201-22.089-4.201s-15.846,1.403-22.089,4.201c-6.242,2.803-11.044,6.805-14.406,12.005-3.362,5.203-5.042,11.326-5.042,18.367v14.165c0,7.046,1.68,13.205,5.042,18.488s8.163,9.364,14.406,12.245c6.242,2.881,13.603,4.322,22.089,4.322s15.846-1.441,22.089-4.322c6.243-2.881,11.045-6.963,14.406-12.245,3.361-5.282,5.042-11.442,5.042-18.488v-14.165c0-7.042-1.681-13.164-5.042-18.367-3.362-5.2-8.163-9.203-14.406-12.005ZM470.201,47.059c0,4.644-1.722,8.325-5.162,11.044-3.444,2.724-8.205,4.082-14.286,4.082-3.361,0-6.363-.439-9.003-1.321-2.641-.878-4.765-2.12-6.363-3.721-2.724-2.558-4.082-5.92-4.082-10.084v-10.324c0-4.959,1.718-8.722,5.162-11.284,3.44-2.558,8.201-3.842,14.285-3.842,3.519,0,6.603.443,9.244,1.321,2.641.881,4.76,2.123,6.363,3.721,2.558,2.562,3.842,5.924,3.842,10.084v10.324Z"/><path class="lg-ink" d="M651.353,46.219c-2.802-4.082-6.404-7.522-10.804-10.324-4.404-2.799-9.645-4.922-15.726-6.363-6.085-1.441-13.048-2.161-20.888-2.161h-67.467v26.411c0,.803.24,1.44.72,1.921.481.48,1.118.72,1.921.72h9.124v136.375c0,.803.24,1.441.72,1.921.48.479,1.118.72,1.921.72h31.932v-51.38h21.369c9.922,0,18.446-1.16,25.57-3.482,7.12-2.318,12.883-5.68,17.287-10.083,4.4-4.401,7.642-9.762,9.724-16.087,2.078-6.321,3.121-13.483,3.121-21.489v-14.646c0-6.562-.72-12.523-2.161-17.887-1.44-5.361-3.564-10.084-6.363-14.165ZM625.063,94.118c0,3.842-.401,7.046-1.2,9.604-.803,2.562-2.082,4.644-3.842,6.242-1.763,1.602-3.962,2.802-6.603,3.601-2.641.803-5.725,1.2-9.243,1.2h-21.369v-58.343h21.369c3.842,0,7.12.36,9.844,1.081,2.72.72,4.881,1.962,6.483,3.721,1.598,1.602,2.761,3.643,3.481,6.122.72,2.484,1.081,5.563,1.081,9.244v17.527Z"/><path class="lg-ink" d="M760.331,66.027c-.642-.48-1.801-.96-3.481-1.44-1.681-.481-3.804-.72-6.363-.72-4.802,0-9.086.881-12.845,2.641-3.763,1.763-6.925,4.524-9.484,8.283-2.562,3.763-4.802,8.606-6.722,14.526h-5.042v-20.408c0-.638-.12-1.118-.36-1.441-.24-.319-.521-.6-.84-.841-.323-.24-.803-.36-1.441-.36h-31.933v126.531c0,.481.037.882.12,1.2.079.323.24.601.48.84.24.24.518.402.841.481.319.083.72.12,1.2.12h31.933v-80.924c1.888-2.297,3.732-4.427,5.522-6.351,3.2-3.44,6.681-6.123,10.444-8.044,3.759-1.92,8.122-2.881,13.086-2.881,2.401,0,4.562.162,6.483.48,1.92.323,3.68.72,5.282,1.2h4.562v-29.772c0-.799-.083-1.399-.24-1.801-.161-.397-.563-.84-1.2-1.321Z"/><path class="lg-ink" d="M862.916,70.108c-8.084-4.479-17.568-6.723-28.452-6.723-8.486,0-16.169,1.283-23.049,3.842-6.883,2.562-12.807,6.205-17.767,10.925-4.963,4.723-8.762,10.366-11.403,16.927-2.641,6.565-3.963,13.926-3.963,22.089v27.371c0,8.325,1.322,15.81,3.963,22.449,2.641,6.645,6.52,12.286,11.644,16.927,5.121,4.644,11.682,8.205,19.687,10.685,8.003,2.479,17.289,3.721,27.851,3.721,6.244,0,12.403-.443,18.488-1.321,6.08-.882,11.363-1.959,15.847-3.242,4.48-1.279,7.359-2.641,8.642-4.081.32-.32.56-.638.721-.961.159-.319.24-.637.24-.96v-24.729h-4.561c-3.523,1.44-7.286,2.641-11.286,3.601-4.001.96-8.205,1.763-12.605,2.401-4.403.642-9.483.96-15.246.96-5.604,0-10.526-.559-14.766-1.681-4.242-1.118-7.645-2.96-10.204-5.521-1.44-1.28-2.562-2.799-3.362-4.563-.803-1.759-1.44-3.759-1.92-6.002-.481-2.24-.719-4.641-.719-7.203v-5.763h75.39c.481,0,.918-.078,1.319-.239.399-.158.68-.44.841-.841.156-.398.24-.84.24-1.321v-19.928c0-10.722-2.244-20.086-6.724-28.091-4.482-8.002-10.766-14.244-18.846-18.727ZM857.033,117.407v1.681h-46.337v-3.362c0-8.801,1.956-15.163,5.881-19.088,3.92-3.92,9.882-5.883,17.887-5.883,3.843,0,7.121.402,9.844,1.2,2.721.803,4.96,2.161,6.724,4.082,2.077,1.921,3.6,4.525,4.561,7.803.959,3.282,1.44,7.244,1.44,11.885v1.68Z"/><path class="lg-ink" d="M1022.266,15.727c-.323-.24-.804-.36-1.441-.36h-29.772v68.668h-4.561c-2.401-4.322-5.282-8.002-8.643-11.045-3.362-3.038-7.204-5.402-11.525-7.083-4.322-1.68-9.285-2.521-14.886-2.521-5.924,0-11.367,1.081-16.328,3.241-4.963,2.161-9.165,5.245-12.605,9.244-3.444,4.003-6.122,8.925-8.042,14.766-1.921,5.845-2.881,12.448-2.881,19.808v40.817c0,7.363.96,13.926,2.881,19.687,1.92,5.763,4.599,10.647,8.042,14.647,3.44,4.003,7.602,7.045,12.486,9.124,4.88,2.078,10.361,3.121,16.447,3.121,4.959,0,9.603-.84,13.926-2.521,4.321-1.681,8.283-4.119,11.884-7.323,3.601-3.2,6.681-6.963,9.244-11.284h4.561v16.086c0,.642.12,1.122.36,1.441.24.323.559.6.96.84.398.24.841.36,1.321.36h29.772V18.007c0-.638-.12-1.118-.36-1.441-.24-.319-.521-.6-.84-.84ZM984.211,158.704c-3.601,2.724-7.244,4.682-10.925,5.882-3.684,1.2-7.363,1.801-11.044,1.801-2.881,0-5.443-.36-7.683-1.08-2.243-.721-4.082-1.879-5.523-3.481-1.602-1.441-2.843-3.52-3.721-6.244-.881-2.719-1.321-6.002-1.321-9.844v-30.012c0-4.479.721-8.283,2.162-11.405,1.441-3.121,3.519-5.481,6.242-7.083,2.719-1.598,6.002-2.401,9.844-2.401,5.601,0,11.202,1.482,16.807,4.442,4.229,2.238,8.23,5.321,12.004,9.244v43.884c-2.231,2.433-4.511,4.536-6.842,6.296Z"/><path class="lg-ink" d="M1094.653,66.627c-.323-.24-.803-.36-1.441-.36h-49.22v26.41c0,.803.24,1.441.72,1.921.481.48,1.119.72,1.921.72h16.807v97.479c0,.803.239,1.441.72,1.921.481.479,1.118.72,1.921.72h29.771v-126.531c0-.638-.12-1.118-.36-1.441-.239-.319-.521-.6-.84-.841Z"/><path class="lg-ink" d="M1093.212,4.802h-39.136v30.972c0,.803.24,1.441.721,1.921.479.48,1.118.72,1.92.72h39.136V7.443c0-.799-.24-1.441-.72-1.921-.481-.48-1.122-.72-1.921-.72Z"/><path class="lg-ink" d="M1214.338,70.108c-.96-.961-2.843-1.958-5.642-3.001-2.802-1.039-6.445-1.921-10.924-2.641-4.483-.72-9.687-1.081-15.607-1.081-12.166,0-22.809,2.521-31.933,7.564-9.124,5.042-16.248,12.005-21.368,20.888-5.125,8.884-7.683,19.249-7.683,31.092v17.288c0,9.123,1.358,17.287,4.082,24.489,2.719,7.204,6.722,13.326,12.004,18.368s11.682,8.846,19.208,11.405c7.522,2.558,16.086,3.842,25.691,3.842,5.919,0,11.164-.36,15.726-1.08,4.563-.721,8.243-1.603,11.045-2.641,2.799-1.039,4.599-1.959,5.401-2.761.32-.319.518-.638.601-.96.078-.32.12-.638.12-.961v-27.851h-4.561c-2.881,1.283-5.846,2.323-8.884,3.122-3.044.803-6.164,1.403-9.364,1.8-3.203.402-6.644.601-10.324.601-4.165,0-7.844-.518-11.044-1.561-3.205-1.039-5.924-2.679-8.164-4.922-2.724-2.401-4.722-5.481-6.002-9.244-1.283-3.759-1.921-8.2-1.921-13.325v-15.126c0-6.881,1.119-12.485,3.362-16.807,2.24-4.322,5.44-7.48,9.603-9.484,4.161-2,8.884-3.001,14.166-3.001,5.44,0,10.482.48,15.126,1.441,4.641.96,9.124,2.401,13.446,4.322h4.561v-27.611c0-.48-.042-.919-.12-1.32-.083-.398-.281-.68-.601-.841Z"/><path class="lg-ink" d="M1325.671,66.267h-40.817V30.012c0-.48-.12-.919-.36-1.321-.239-.397-.562-.72-.96-.96-.401-.24-.84-.36-1.321-.36h-29.771v38.896h-19.689v27.611c0,.323.079.642.24.961.158.322.36.6.601.84.239.24.517.443.84.601.319.161.638.24.96.24h17.047v47.299c0,8.966,1.2,16.728,3.601,23.289,2.401,6.565,5.919,11.926,10.565,16.087,4.64,4.164,10.242,7.243,16.806,9.243,6.562,2.004,14.005,3.002,22.33,3.002h19.928c.799,0,1.441-.278,1.92-.84.481-.559.721-1.16.721-1.801v-28.332h-21.368c-3.842,0-7.084-.319-9.725-.96-2.641-.637-4.842-1.759-6.602-3.361-1.921-1.921-3.362-4.4-4.322-7.443-.96-3.039-1.441-6.963-1.441-11.765v-44.418h43.458v-27.611c0-.799-.24-1.441-.721-1.921-.479-.48-1.121-.72-1.92-.72Z"/><path class="lg-ink" d="M1447.472,78.872c-5.125-4.88-11.247-8.681-18.368-11.405-7.123-2.72-15.006-4.082-23.649-4.082-11.367,0-21.451,2.363-30.252,7.083-8.804,4.723-15.647,11.247-20.528,19.568-4.884,8.325-7.323,17.929-7.323,28.812v24.249c0,8.164,1.399,15.607,4.202,22.33,2.799,6.722,6.759,12.526,11.884,17.407,5.121,4.884,11.244,8.685,18.368,11.405,7.12,2.719,15.006,4.082,23.649,4.082,11.525,0,21.646-2.363,30.372-7.084,8.723-4.719,15.524-11.242,20.408-19.567,4.881-8.321,7.323-17.925,7.323-28.811v-24.25c0-8.163-1.402-15.606-4.201-22.329-2.803-6.723-6.764-12.523-11.885-17.407ZM1431.145,141.417c0,5.604-1.002,10.485-3.002,14.645-2.003,4.165-4.963,7.323-8.884,9.484-3.924,2.161-8.606,3.241-14.046,3.241-3.842,0-7.323-.559-10.443-1.681-3.122-1.118-5.726-2.719-7.803-4.802-2.243-2.558-4.004-5.56-5.282-9.004-1.283-3.44-1.921-7.401-1.921-11.884v-21.129c0-5.762,1.039-10.684,3.122-14.766,2.078-4.082,5.042-7.203,8.884-9.364,3.842-2.161,8.482-3.241,13.926-3.241,4.16,0,7.803.48,10.924,1.441,3.122.96,5.721,2.562,7.803,4.802,2.24,2.243,3.921,5.083,5.042,8.524,1.118,3.444,1.681,7.645,1.681,12.605v21.129Z"/><path class="lg-ink" d="M1567.566,67.347c-.162-.397-.563-.84-1.2-1.321-.642-.48-1.801-.96-3.482-1.44-1.68-.481-3.804-.72-6.363-.72-4.802,0-9.085.881-12.844,2.641-3.763,1.763-6.926,4.524-9.484,8.283-2.562,3.763-4.802,8.606-6.723,14.526h-5.042v-20.408c0-.638-.12-1.118-.359-1.441-.24-.319-.521-.6-.841-.841-.322-.24-.803-.36-1.441-.36h-31.932v126.531c0,.481.037.882.12,1.2.078.323.239.601.479.84.24.24.518.402.84.481.32.083.721.12,1.202.12h31.932v-80.923c1.888-2.297,3.733-4.428,5.523-6.352,3.2-3.44,6.681-6.123,10.444-8.044,3.759-1.92,8.122-2.881,13.084-2.881,2.401,0,4.563.162,6.483.48,1.921.323,3.681.72,5.282,1.2h4.561v-29.772c0-.799-.082-1.399-.239-1.801Z"/></svg></h1>
+  <div class="brand"><h1 aria-label="SAT° Predictor"><svg class="mark" viewBox="0 0 211 200" aria-hidden="true" focusable="false"><path class="lg-ink" d="M107.323,117.407c-2.881-3.362-6.843-6.363-11.885-9.004-5.042-2.641-11.247-5.079-18.608-7.323l-23.049-6.963c-5.605-1.759-9.807-3.44-12.605-5.042-2.803-1.598-4.723-3.519-5.762-5.762-1.043-2.24-1.561-4.88-1.561-7.923v-5.043c0-3.2.638-5.961,1.921-8.283,1.279-2.319,3.121-4.239,5.522-5.762,2.401-1.52,5.32-2.6,8.763-3.241,3.44-.638,7.481-.961,12.125-.961,4.802,0,9.004.36,12.605,1.081,1.459.292,2.943.692,4.442,1.155v16.732c0,.803.24,1.441.72,1.921s1.118.72,1.921.72h28.091v-33.133c0-.96-.083-1.759-.24-2.401-.161-.638-.563-1.279-1.2-1.921-3.684-3.68-9.525-6.843-17.527-9.484-8.006-2.641-17.61-3.961-28.812-3.961-9.123,0-17.407,1.08-24.85,3.241-7.443,2.161-13.806,5.282-19.088,9.364-5.282,4.081-9.326,8.884-12.125,14.406-2.803,5.522-4.202,11.566-4.202,18.127v11.525c0,4.483.601,8.763,1.801,12.845,1.2,4.081,3.2,7.885,6.002,11.405,2.799,3.522,6.76,6.843,11.885,9.964,5.121,3.121,11.604,5.883,19.448,8.283l22.809,6.963c5.92,1.602,10.242,3.241,12.965,4.922,2.72,1.68,4.521,3.444,5.402,5.282.878,1.842,1.321,4.124,1.321,6.843v8.164c0,4.482-2.281,8.324-6.843,11.525-4.561,3.203-11.806,4.802-21.728,4.802-10.726,0-20.01-1.16-27.851-3.482-7.845-2.318-15.366-5.882-22.569-10.684H0v26.41c0,1.441.12,2.443.36,3.002.24.562.6,1.08,1.08,1.56,2.881,2.563,6.843,4.844,11.885,6.843,5.043,2,10.962,3.481,17.767,4.442,6.802.96,14.046,1.44,21.729,1.44,13.123,0,24.37-1.8,33.734-5.401s16.525-8.802,21.489-15.607c4.959-6.801,7.443-14.845,7.443-24.13v-11.044c0-5.601-.642-10.565-1.921-14.886-1.283-4.322-3.361-8.163-6.242-11.525Z"/><g transform="translate(-281 0)"><path class="lg-mark" d="M472.842,4.201c-6.242-2.798-13.606-4.201-22.089-4.201s-15.846,1.403-22.089,4.201c-6.242,2.803-11.044,6.805-14.406,12.005-3.362,5.203-5.042,11.326-5.042,18.367v14.165c0,7.046,1.68,13.205,5.042,18.488s8.163,9.364,14.406,12.245c6.242,2.881,13.603,4.322,22.089,4.322s15.846-1.441,22.089-4.322c6.243-2.881,11.045-6.963,14.406-12.245,3.361-5.282,5.042-11.442,5.042-18.488v-14.165c0-7.042-1.681-13.164-5.042-18.367-3.362-5.2-8.163-9.203-14.406-12.005ZM470.201,47.059c0,4.644-1.722,8.325-5.162,11.044-3.444,2.724-8.205,4.082-14.286,4.082-3.361,0-6.363-.439-9.003-1.321-2.641-.878-4.765-2.12-6.363-3.721-2.724-2.558-4.082-5.92-4.082-10.084v-10.324c0-4.959,1.718-8.722,5.162-11.284,3.44-2.558,8.201-3.842,14.285-3.842,3.519,0,6.603.443,9.244,1.321,2.641.881,4.76,2.123,6.363,3.721,2.558,2.562,3.842,5.924,3.842,10.084v10.324Z"/></g></svg></h1></div>
+  <div class="hdr-r">
+    <div class="lang lang-h" role="group" data-i18n-aria="langGroup"><button data-lang="pl" lang="pl">PL</button><button data-lang="en" lang="en">EN</button></div>
     <p class="where"><span>Grid</span><button class="loc mono" id="loc" data-i18n-title="gridTitle"></button></p>
   </div>
   <div class="controls">
-    <div class="seg" role="group" data-i18n-aria="modes">
-      <button class="flt" data-m="FM" aria-pressed="true">FM</button><button class="flt" data-m="SSB" aria-pressed="true">SSB</button><button class="flt" data-m="DIG" aria-pressed="true">DIG</button>
-    </div>
-    <button class="theme theme-m" type="button"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><g class="ic-half"><circle cx="12" cy="12" r="7.5" fill="none" stroke="var(--ink)" stroke-width="1.5"/><path d="M12 4.5a7.5 7.5 0 0 0 0 15z" fill="var(--ink)"/></g></svg></button>
+    <div class="seg" role="group" data-i18n-aria="modes"><button class="flt" data-m="SSB" aria-pressed="true">SSB</button><button class="flt" data-m="FM" aria-pressed="true">FM</button><button class="flt" data-m="DIG" aria-pressed="true">DIG</button></div>
+    <button class="theme theme-h" type="button"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><g class="ic-half"><circle cx="12" cy="12" r="7.5" fill="none" stroke="var(--ink)" stroke-width="1.5"/><path d="M12 4.5a7.5 7.5 0 0 0 0 15z" fill="var(--ink)"/></g></svg></button>
     <div class="elrow">
       <input type="range" id="minel" min="0" max="45" step="1" value="0" data-i18n-aria="minElAria">
       <label for="minel" class="elval"><span data-i18n="minEl"></span> <b class="num" id="minelv">0°</b></label>
@@ -582,9 +848,10 @@
   <!-- pasek ISS -->
   <div class="ticker" id="ticker" hidden><p class="sr-only" id="tickerSr" aria-live="polite"></p><div class="tk-track" id="tkTrack" aria-hidden="true"></div></div>
   <!-- dwa równe przyciski 2. stopnia rozwijające panele (jeden otwarty naraz) -->
+  <div class="fbox">
   <div class="ftabs" role="group">
-    <button class="ftab" id="tab-tle" aria-expanded="false" aria-controls="pan-tle"><span data-i18n="tabTle"></span><svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.8 5 6.8 8 3.8"/></svg></button>
-    <button class="ftab" id="tab-sats" aria-expanded="false" aria-controls="pan-sats"><span data-i18n="tabSats"></span> <span class="ftab-n num" id="satcount"></span><svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.8 5 6.8 8 3.8"/></svg></button>
+    <button class="ftab" id="tab-sats" aria-expanded="false" aria-controls="pan-sats"><span class="tl" data-i18n="tabSats"></span> <span class="ftab-n num" id="satcount"></span><svg class="arw tab-arw" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v13M3.5 10 8 14.5 12.5 10"/></svg></button>
+    <button class="ftab" id="tab-tle" aria-expanded="false" aria-controls="pan-tle"><span class="tl" data-i18n="tabTle"></span><svg class="arw tab-arw" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v13M3.5 10 8 14.5 12.5 10"/></svg></button>
   </div>
   <div class="reveal" id="fpanes"><div>
   <div class="fpanel" id="pan-tle" hidden>
@@ -607,27 +874,28 @@
     <div class="satbulk"><button class="lnk3" id="sats-all" data-i18n="satsAll"></button></div>
   </div>
   </div></div>
-  <div class="copyrow"><p class="copy">© SAT° Predictor by SQ5WBW</p><div class="lang lang-foot" role="group" data-i18n-aria="langGroup"><button data-lang="pl" lang="pl">PL</button><button data-lang="en" lang="en">EN</button></div></div>
+  </div>
+  <div class="copyrow"><p class="copy">© <b>SAT<span class="dg">°</span> Predictor</b> · Made in KO02</p></div>
 </footer>
 
 </div>
 
 <div class="welcome" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="wTitle">
   <div class="w-top">
-    <button class="w-close" id="wClose" type="button" data-i18n-aria="wClose">×</button>
+    <button class="w-close" id="wClose" type="button" data-i18n-aria="wClose"><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M2 2 18 18M18 2 2 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     <button class="theme theme-w" type="button"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><g class="ic-half"><circle cx="12" cy="12" r="7.5" fill="none" stroke="var(--ink)" stroke-width="1.5"/><path d="M12 4.5a7.5 7.5 0 0 0 0 15z" fill="var(--ink)"/></g></svg></button>
-    <div class="lang lang-w" role="group" data-i18n-aria="langGroup"><button data-lang="pl" lang="en">POLISH</button><button data-lang="en" lang="en">ENGLISH</button></div>
+    <div class="lang lang-w" role="group" data-i18n-aria="langGroup"><button data-lang="pl" lang="pl">POLSKI</button><button data-lang="en" lang="en">ENGLISH</button></div>
   </div>
   <div class="w-card">
     <h1 class="w-logo" id="wTitle" aria-label="SAT° Predictor"><svg class="logo" viewBox="0 0 1567.805 200" aria-hidden="true" focusable="false"><path class="lg-ink" d="M107.323,117.407c-2.881-3.362-6.843-6.363-11.885-9.004-5.042-2.641-11.247-5.079-18.608-7.323l-23.049-6.963c-5.605-1.759-9.807-3.44-12.605-5.042-2.803-1.598-4.723-3.519-5.762-5.762-1.043-2.24-1.561-4.88-1.561-7.923v-5.043c0-3.2.638-5.961,1.921-8.283,1.279-2.319,3.121-4.239,5.522-5.762,2.401-1.52,5.32-2.6,8.763-3.241,3.44-.638,7.481-.961,12.125-.961,4.802,0,9.004.36,12.605,1.081,1.459.292,2.943.692,4.442,1.155v16.732c0,.803.24,1.441.72,1.921s1.118.72,1.921.72h28.091v-33.133c0-.96-.083-1.759-.24-2.401-.161-.638-.563-1.279-1.2-1.921-3.684-3.68-9.525-6.843-17.527-9.484-8.006-2.641-17.61-3.961-28.812-3.961-9.123,0-17.407,1.08-24.85,3.241-7.443,2.161-13.806,5.282-19.088,9.364-5.282,4.081-9.326,8.884-12.125,14.406-2.803,5.522-4.202,11.566-4.202,18.127v11.525c0,4.483.601,8.763,1.801,12.845,1.2,4.081,3.2,7.885,6.002,11.405,2.799,3.522,6.76,6.843,11.885,9.964,5.121,3.121,11.604,5.883,19.448,8.283l22.809,6.963c5.92,1.602,10.242,3.241,12.965,4.922,2.72,1.68,4.521,3.444,5.402,5.282.878,1.842,1.321,4.124,1.321,6.843v8.164c0,4.482-2.281,8.324-6.843,11.525-4.561,3.203-11.806,4.802-21.728,4.802-10.726,0-20.01-1.16-27.851-3.482-7.845-2.318-15.366-5.882-22.569-10.684H0v26.41c0,1.441.12,2.443.36,3.002.24.562.6,1.08,1.08,1.56,2.881,2.563,6.843,4.844,11.885,6.843,5.043,2,10.962,3.481,17.767,4.442,6.802.96,14.046,1.44,21.729,1.44,13.123,0,24.37-1.8,33.734-5.401s16.525-8.802,21.489-15.607c4.959-6.801,7.443-14.845,7.443-24.13v-11.044c0-5.601-.642-10.565-1.921-14.886-1.283-4.322-3.361-8.163-6.242-11.525Z"/><path class="lg-ink" d="M261.055,162.065c-3.042-12.803-6.043-25.21-9.004-37.215-2.964-12.005-5.845-23.567-8.643-34.694-2.803-11.123-5.485-21.729-8.043-31.813-2.562-10.084-4.963-19.605-7.203-28.571-.162-.638-.36-1.118-.6-1.441-.24-.319-.521-.6-.841-.841-.322-.24-.803-.36-1.44-.36h-54.262c-1.283,4.802-2.843,10.804-4.682,18.007-1.842,7.203-3.842,15.288-6.003,24.25-2.161,8.966-4.442,18.247-6.843,27.851s-4.802,19.17-7.203,28.692c-2.401,9.525-4.644,18.57-6.722,27.13-2.082,8.565-3.962,16.248-5.642,23.049-1.681,6.806-3.084,12.207-4.202,16.206-.161.804-.12,1.441.12,1.921.24.481.518.803.841.96.319.161.638.24.96.24h30.253c3.714-14.148,7.043-27.107,9.995-38.895h54.126c2.625,10.625,5.42,22.064,8.388,34.334.48,1.282.841,2.243,1.08,2.88.24.642.638,1.08,1.201,1.321.559.24,1.32.36,2.281.36h29.532c-.96-5.762-2.123-11.442-3.481-17.047-1.362-5.601-2.683-11.044-3.962-16.326ZM208.474,128.212h-29.462c.963-3.771,1.902-7.421,2.812-10.925,2.72-10.481,5.079-19.965,7.083-28.451,2-8.482,3.721-16.124,5.162-22.929.955-4.51,1.795-8.692,2.539-12.605h5.586c.673,3.929,1.485,8.166,2.44,12.725,1.441,6.884,3.08,14.526,4.922,22.929,1.839,8.404,4.041,17.73,6.603,27.971.907,3.634,1.847,7.399,2.816,11.284h-10.499Z"/><path class="lg-ink" d="M384.487,27.371h-116.927v26.651c0,.48.12.923.36,1.321.24.401.559.72.961.961.397.24.84.36,1.32.36h39.856v136.135c0,.803.24,1.441.72,1.921.481.479,1.118.72,1.921.72h31.933V56.663h42.497v-26.651c0-.799-.24-1.441-.72-1.921s-1.122-.72-1.921-.72Z"/><path class="lg-mark" d="M472.842,4.201c-6.242-2.798-13.606-4.201-22.089-4.201s-15.846,1.403-22.089,4.201c-6.242,2.803-11.044,6.805-14.406,12.005-3.362,5.203-5.042,11.326-5.042,18.367v14.165c0,7.046,1.68,13.205,5.042,18.488s8.163,9.364,14.406,12.245c6.242,2.881,13.603,4.322,22.089,4.322s15.846-1.441,22.089-4.322c6.243-2.881,11.045-6.963,14.406-12.245,3.361-5.282,5.042-11.442,5.042-18.488v-14.165c0-7.042-1.681-13.164-5.042-18.367-3.362-5.2-8.163-9.203-14.406-12.005ZM470.201,47.059c0,4.644-1.722,8.325-5.162,11.044-3.444,2.724-8.205,4.082-14.286,4.082-3.361,0-6.363-.439-9.003-1.321-2.641-.878-4.765-2.12-6.363-3.721-2.724-2.558-4.082-5.92-4.082-10.084v-10.324c0-4.959,1.718-8.722,5.162-11.284,3.44-2.558,8.201-3.842,14.285-3.842,3.519,0,6.603.443,9.244,1.321,2.641.881,4.76,2.123,6.363,3.721,2.558,2.562,3.842,5.924,3.842,10.084v10.324Z"/><path class="lg-ink" d="M651.353,46.219c-2.802-4.082-6.404-7.522-10.804-10.324-4.404-2.799-9.645-4.922-15.726-6.363-6.085-1.441-13.048-2.161-20.888-2.161h-67.467v26.411c0,.803.24,1.44.72,1.921.481.48,1.118.72,1.921.72h9.124v136.375c0,.803.24,1.441.72,1.921.48.479,1.118.72,1.921.72h31.932v-51.38h21.369c9.922,0,18.446-1.16,25.57-3.482,7.12-2.318,12.883-5.68,17.287-10.083,4.4-4.401,7.642-9.762,9.724-16.087,2.078-6.321,3.121-13.483,3.121-21.489v-14.646c0-6.562-.72-12.523-2.161-17.887-1.44-5.361-3.564-10.084-6.363-14.165ZM625.063,94.118c0,3.842-.401,7.046-1.2,9.604-.803,2.562-2.082,4.644-3.842,6.242-1.763,1.602-3.962,2.802-6.603,3.601-2.641.803-5.725,1.2-9.243,1.2h-21.369v-58.343h21.369c3.842,0,7.12.36,9.844,1.081,2.72.72,4.881,1.962,6.483,3.721,1.598,1.602,2.761,3.643,3.481,6.122.72,2.484,1.081,5.563,1.081,9.244v17.527Z"/><path class="lg-ink" d="M760.331,66.027c-.642-.48-1.801-.96-3.481-1.44-1.681-.481-3.804-.72-6.363-.72-4.802,0-9.086.881-12.845,2.641-3.763,1.763-6.925,4.524-9.484,8.283-2.562,3.763-4.802,8.606-6.722,14.526h-5.042v-20.408c0-.638-.12-1.118-.36-1.441-.24-.319-.521-.6-.84-.841-.323-.24-.803-.36-1.441-.36h-31.933v126.531c0,.481.037.882.12,1.2.079.323.24.601.48.84.24.24.518.402.841.481.319.083.72.12,1.2.12h31.933v-80.924c1.888-2.297,3.732-4.427,5.522-6.351,3.2-3.44,6.681-6.123,10.444-8.044,3.759-1.92,8.122-2.881,13.086-2.881,2.401,0,4.562.162,6.483.48,1.92.323,3.68.72,5.282,1.2h4.562v-29.772c0-.799-.083-1.399-.24-1.801-.161-.397-.563-.84-1.2-1.321Z"/><path class="lg-ink" d="M862.916,70.108c-8.084-4.479-17.568-6.723-28.452-6.723-8.486,0-16.169,1.283-23.049,3.842-6.883,2.562-12.807,6.205-17.767,10.925-4.963,4.723-8.762,10.366-11.403,16.927-2.641,6.565-3.963,13.926-3.963,22.089v27.371c0,8.325,1.322,15.81,3.963,22.449,2.641,6.645,6.52,12.286,11.644,16.927,5.121,4.644,11.682,8.205,19.687,10.685,8.003,2.479,17.289,3.721,27.851,3.721,6.244,0,12.403-.443,18.488-1.321,6.08-.882,11.363-1.959,15.847-3.242,4.48-1.279,7.359-2.641,8.642-4.081.32-.32.56-.638.721-.961.159-.319.24-.637.24-.96v-24.729h-4.561c-3.523,1.44-7.286,2.641-11.286,3.601-4.001.96-8.205,1.763-12.605,2.401-4.403.642-9.483.96-15.246.96-5.604,0-10.526-.559-14.766-1.681-4.242-1.118-7.645-2.96-10.204-5.521-1.44-1.28-2.562-2.799-3.362-4.563-.803-1.759-1.44-3.759-1.92-6.002-.481-2.24-.719-4.641-.719-7.203v-5.763h75.39c.481,0,.918-.078,1.319-.239.399-.158.68-.44.841-.841.156-.398.24-.84.24-1.321v-19.928c0-10.722-2.244-20.086-6.724-28.091-4.482-8.002-10.766-14.244-18.846-18.727ZM857.033,117.407v1.681h-46.337v-3.362c0-8.801,1.956-15.163,5.881-19.088,3.92-3.92,9.882-5.883,17.887-5.883,3.843,0,7.121.402,9.844,1.2,2.721.803,4.96,2.161,6.724,4.082,2.077,1.921,3.6,4.525,4.561,7.803.959,3.282,1.44,7.244,1.44,11.885v1.68Z"/><path class="lg-ink" d="M1022.266,15.727c-.323-.24-.804-.36-1.441-.36h-29.772v68.668h-4.561c-2.401-4.322-5.282-8.002-8.643-11.045-3.362-3.038-7.204-5.402-11.525-7.083-4.322-1.68-9.285-2.521-14.886-2.521-5.924,0-11.367,1.081-16.328,3.241-4.963,2.161-9.165,5.245-12.605,9.244-3.444,4.003-6.122,8.925-8.042,14.766-1.921,5.845-2.881,12.448-2.881,19.808v40.817c0,7.363.96,13.926,2.881,19.687,1.92,5.763,4.599,10.647,8.042,14.647,3.44,4.003,7.602,7.045,12.486,9.124,4.88,2.078,10.361,3.121,16.447,3.121,4.959,0,9.603-.84,13.926-2.521,4.321-1.681,8.283-4.119,11.884-7.323,3.601-3.2,6.681-6.963,9.244-11.284h4.561v16.086c0,.642.12,1.122.36,1.441.24.323.559.6.96.84.398.24.841.36,1.321.36h29.772V18.007c0-.638-.12-1.118-.36-1.441-.24-.319-.521-.6-.84-.84ZM984.211,158.704c-3.601,2.724-7.244,4.682-10.925,5.882-3.684,1.2-7.363,1.801-11.044,1.801-2.881,0-5.443-.36-7.683-1.08-2.243-.721-4.082-1.879-5.523-3.481-1.602-1.441-2.843-3.52-3.721-6.244-.881-2.719-1.321-6.002-1.321-9.844v-30.012c0-4.479.721-8.283,2.162-11.405,1.441-3.121,3.519-5.481,6.242-7.083,2.719-1.598,6.002-2.401,9.844-2.401,5.601,0,11.202,1.482,16.807,4.442,4.229,2.238,8.23,5.321,12.004,9.244v43.884c-2.231,2.433-4.511,4.536-6.842,6.296Z"/><path class="lg-ink" d="M1094.653,66.627c-.323-.24-.803-.36-1.441-.36h-49.22v26.41c0,.803.24,1.441.72,1.921.481.48,1.119.72,1.921.72h16.807v97.479c0,.803.239,1.441.72,1.921.481.479,1.118.72,1.921.72h29.771v-126.531c0-.638-.12-1.118-.36-1.441-.239-.319-.521-.6-.84-.841Z"/><path class="lg-ink" d="M1093.212,4.802h-39.136v30.972c0,.803.24,1.441.721,1.921.479.48,1.118.72,1.92.72h39.136V7.443c0-.799-.24-1.441-.72-1.921-.481-.48-1.122-.72-1.921-.72Z"/><path class="lg-ink" d="M1214.338,70.108c-.96-.961-2.843-1.958-5.642-3.001-2.802-1.039-6.445-1.921-10.924-2.641-4.483-.72-9.687-1.081-15.607-1.081-12.166,0-22.809,2.521-31.933,7.564-9.124,5.042-16.248,12.005-21.368,20.888-5.125,8.884-7.683,19.249-7.683,31.092v17.288c0,9.123,1.358,17.287,4.082,24.489,2.719,7.204,6.722,13.326,12.004,18.368s11.682,8.846,19.208,11.405c7.522,2.558,16.086,3.842,25.691,3.842,5.919,0,11.164-.36,15.726-1.08,4.563-.721,8.243-1.603,11.045-2.641,2.799-1.039,4.599-1.959,5.401-2.761.32-.319.518-.638.601-.96.078-.32.12-.638.12-.961v-27.851h-4.561c-2.881,1.283-5.846,2.323-8.884,3.122-3.044.803-6.164,1.403-9.364,1.8-3.203.402-6.644.601-10.324.601-4.165,0-7.844-.518-11.044-1.561-3.205-1.039-5.924-2.679-8.164-4.922-2.724-2.401-4.722-5.481-6.002-9.244-1.283-3.759-1.921-8.2-1.921-13.325v-15.126c0-6.881,1.119-12.485,3.362-16.807,2.24-4.322,5.44-7.48,9.603-9.484,4.161-2,8.884-3.001,14.166-3.001,5.44,0,10.482.48,15.126,1.441,4.641.96,9.124,2.401,13.446,4.322h4.561v-27.611c0-.48-.042-.919-.12-1.32-.083-.398-.281-.68-.601-.841Z"/><path class="lg-ink" d="M1325.671,66.267h-40.817V30.012c0-.48-.12-.919-.36-1.321-.239-.397-.562-.72-.96-.96-.401-.24-.84-.36-1.321-.36h-29.771v38.896h-19.689v27.611c0,.323.079.642.24.961.158.322.36.6.601.84.239.24.517.443.84.601.319.161.638.24.96.24h17.047v47.299c0,8.966,1.2,16.728,3.601,23.289,2.401,6.565,5.919,11.926,10.565,16.087,4.64,4.164,10.242,7.243,16.806,9.243,6.562,2.004,14.005,3.002,22.33,3.002h19.928c.799,0,1.441-.278,1.92-.84.481-.559.721-1.16.721-1.801v-28.332h-21.368c-3.842,0-7.084-.319-9.725-.96-2.641-.637-4.842-1.759-6.602-3.361-1.921-1.921-3.362-4.4-4.322-7.443-.96-3.039-1.441-6.963-1.441-11.765v-44.418h43.458v-27.611c0-.799-.24-1.441-.721-1.921-.479-.48-1.121-.72-1.92-.72Z"/><path class="lg-ink" d="M1447.472,78.872c-5.125-4.88-11.247-8.681-18.368-11.405-7.123-2.72-15.006-4.082-23.649-4.082-11.367,0-21.451,2.363-30.252,7.083-8.804,4.723-15.647,11.247-20.528,19.568-4.884,8.325-7.323,17.929-7.323,28.812v24.249c0,8.164,1.399,15.607,4.202,22.33,2.799,6.722,6.759,12.526,11.884,17.407,5.121,4.884,11.244,8.685,18.368,11.405,7.12,2.719,15.006,4.082,23.649,4.082,11.525,0,21.646-2.363,30.372-7.084,8.723-4.719,15.524-11.242,20.408-19.567,4.881-8.321,7.323-17.925,7.323-28.811v-24.25c0-8.163-1.402-15.606-4.201-22.329-2.803-6.723-6.764-12.523-11.885-17.407ZM1431.145,141.417c0,5.604-1.002,10.485-3.002,14.645-2.003,4.165-4.963,7.323-8.884,9.484-3.924,2.161-8.606,3.241-14.046,3.241-3.842,0-7.323-.559-10.443-1.681-3.122-1.118-5.726-2.719-7.803-4.802-2.243-2.558-4.004-5.56-5.282-9.004-1.283-3.44-1.921-7.401-1.921-11.884v-21.129c0-5.762,1.039-10.684,3.122-14.766,2.078-4.082,5.042-7.203,8.884-9.364,3.842-2.161,8.482-3.241,13.926-3.241,4.16,0,7.803.48,10.924,1.441,3.122.96,5.721,2.562,7.803,4.802,2.24,2.243,3.921,5.083,5.042,8.524,1.118,3.444,1.681,7.645,1.681,12.605v21.129Z"/><path class="lg-ink" d="M1567.566,67.347c-.162-.397-.563-.84-1.2-1.321-.642-.48-1.801-.96-3.482-1.44-1.68-.481-3.804-.72-6.363-.72-4.802,0-9.085.881-12.844,2.641-3.763,1.763-6.926,4.524-9.484,8.283-2.562,3.763-4.802,8.606-6.723,14.526h-5.042v-20.408c0-.638-.12-1.118-.359-1.441-.24-.319-.521-.6-.841-.841-.322-.24-.803-.36-1.441-.36h-31.932v126.531c0,.481.037.882.12,1.2.078.323.239.601.479.84.24.24.518.402.84.481.32.083.721.12,1.202.12h31.932v-80.923c1.888-2.297,3.733-4.428,5.523-6.352,3.2-3.44,6.681-6.123,10.444-8.044,3.759-1.92,8.122-2.881,13.084-2.881,2.401,0,4.563.162,6.483.48,1.921.323,3.681.72,5.282,1.2h4.561v-29.772c0-.799-.082-1.399-.239-1.801Z"/></svg></h1>
     <figure class="w-quote" id="wQuote" aria-live="off"><blockquote class="wq-in"></blockquote></figure>
     <label class="w-label" for="wGrid" data-i18n="wLabel"></label>
-    <input class="w-input" id="wGrid" type="text" maxlength="6" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="KO02OC" aria-describedby="wHint">
+    <input class="w-input" id="wGrid" type="text" maxlength="6" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="KO02" aria-describedby="wHint">
     <p class="w-hint" id="wHint" aria-live="polite"></p>
     <button class="w-go" id="wGo" type="button" data-i18n="wGo"></button>
     <button class="w-gps" id="wGps" type="button" data-i18n="wGps"></button>
   </div>
-  <p class="w-copy">© SAT° Predictor by SQ5WBW</p>
+  <p class="w-copy">© <b>SAT<span class="dg">°</span> Predictor</b> · Made in KO02</p>
 </div>
 
 <script>
@@ -871,7 +1139,7 @@ const I18N = {
     failHead: 'Nie udało się pobrać danych orbitalnych automatycznie.',
     failStep1: 'Pobierz plik z <a href="https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle" target="_blank" rel="noopener">CelesTrak</a> lub <a href="https://www.amsat.org/tle/current/nasabare.txt" target="_blank" rel="noopener">AMSAT</a> i zapisz go jako .txt.',
     failStep2: 'Wczytaj go tutaj (możesz zaznaczyć kilka plików):',
-    colMode: 'Tryb', colSat: 'Satelita', colRise: 'Wschód/zachód', colDur: 'Czas', colEta: 'Do wschodu', colMax: 'Maks.', colAz: 'Azymut',
+    colMode: 'Tryb', colSat: 'Satelita', colRise: 'AOS/LOS', colDur: 'Czas trwania', colEta: 'Licznik', colMax: 'Maks. elewacja', colAz: 'Azymut',
     now: 'QRV', in: 'za', min: 'min', h: 'h', upNow: 'Satelita jest nad horyzontem', toRise: 'Do wschodu', maxEl: 'Maksymalna elewacja',
     azPath: 'Azymut: wschód → szczyt → zachód', rise: 'Wschód', peak: 'Szczyt', set: 'Zachód',
     down: 'Downlink', up: 'Uplink', beacon: 'Beacon', type: 'Rodzaj', note: 'Uwagi', age: 'wiek danych', n2yo: 'Sprawdź na N2YO',
@@ -895,6 +1163,7 @@ const I18N = {
     tkTomorrow: ['ISS wróci jutro', 'o {t} / maks. el {el}°'], tkLater: ['ISS wróci', '{day} o {t} / maks. el {el}°'],
     tkFacts: [['ISS okrąża Ziemię', '16 razy na dobę'], ['ISS leci', 'z prędkością około 28\u202f000 km/h'], ['ISS pokonuje', 'około 8 km w każdej sekundzie']],
     tabTle: 'Dane TLE', tabSats: 'Satelity', satsAll: 'Zaznacz wszystkie', satsNone: 'Odznacz wszystkie', satsAria: 'Obserwowane satelity',
+    ldTle: 'Pobieram dane orbitalne.', ldGps: 'Ustalam Twoją lokalizację.',
     tleRetrying: 'Nie udało się pobrać danych orbitalnych – serwery nie odpowiadają. Ponawiam automatycznie; możesz też wczytać plik TLE na dole strony.',
     minEl: 'min el', minElAria: 'Minimalna elewacja przelotu', showMore: n => `Pokaż kolejne ${n} ${plPasses(n)}`, showMoreLbl: 'Pokaż kolejne', passUnit: n => plPasses(n), shownOf: (a, b) => `${a} z ${b}`,
   },
@@ -905,7 +1174,7 @@ const I18N = {
     failHead: 'Could not download orbital data automatically.',
     failStep1: 'Download the file from <a href="https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle" target="_blank" rel="noopener">CelesTrak</a> or <a href="https://www.amsat.org/tle/current/nasabare.txt" target="_blank" rel="noopener">AMSAT</a> and save it as .txt.',
     failStep2: 'Load it here (you can select several files):',
-    colMode: 'Mode', colSat: 'Satellite', colRise: 'AOS/LOS', colDur: 'Duration', colEta: 'Starts in', colMax: 'Max', colAz: 'Azimuth',
+    colMode: 'Mode', colSat: 'Satellite', colRise: 'AOS/LOS', colDur: 'Duration', colEta: 'Timer', colMax: 'Max elevation', colAz: 'Azimuth',
     now: 'QRV', in: 'in', min: 'min', h: 'h', upNow: 'The satellite is above the horizon', toRise: 'Time to AOS', maxEl: 'Maximum elevation',
     azPath: 'Azimuth: AOS → max → LOS', rise: 'AOS', peak: 'Max', set: 'LOS',
     down: 'Downlink', up: 'Uplink', beacon: 'Beacon', type: 'Type', note: 'Notes', age: 'data age', n2yo: 'View on N2YO',
@@ -929,6 +1198,7 @@ const I18N = {
     tkTomorrow: ['ISS will be back tomorrow', 'at {t} / max el {el}°'], tkLater: ['ISS will be back', '{day} at {t} / max el {el}°'],
     tkFacts: [['ISS circles the Earth', '16 times a day'], ['ISS flies', 'about 28\u202f000 km/h'], ['ISS travels', 'about 8 km every second']],
     tabTle: 'TLE data', tabSats: 'Satellites', satsAll: 'Select all', satsNone: 'Clear all', satsAria: 'Watched satellites',
+    ldTle: 'Downloading orbital data.', ldGps: 'Getting your location.',
     tleRetrying: 'Could not download orbital data – the servers are not responding. Retrying automatically; you can also load a TLE file at the bottom of the page.',
     minEl: 'min el', minElAria: 'Minimum pass elevation', showMore: n => `Show next ${n} ${n === 1 ? 'pass' : 'passes'}`, showMoreLbl: 'Show next', passUnit: n => n === 1 ? 'pass' : 'passes', shownOf: (a, b) => `${a} of ${b}`,
   },
@@ -1016,25 +1286,32 @@ function etaShort(ms) {
   return `${pad2(Math.floor(m / 60))}:${pad2(m % 60)}`;
 }
 
+// strzałki jako cienkie wektory (jak w projekcie) – kierunek: u/d/l/r
+const ARW = (() => {
+  const P = { r: 'M1.5 8h13M10 3.5 14.5 8 10 12.5', l: 'M14.5 8h-13M6 3.5 1.5 8 6 12.5', u: 'M8 14.5v-13M3.5 6 8 1.5 12.5 6', d: 'M8 1.5v13M3.5 10 8 14.5 12.5 10' };
+  const o = {};
+  for (const k in P) o[k] = `<svg class="arw" viewBox="0 0 16 16" aria-hidden="true"><path d="${P[k]}"/></svg>`;
+  return o;
+})();
 function rowHTML(p, now) {
   const dur = Math.round((p.end - p.start) / 60000);
   const on = now >= p.start;
   return `<span class="mode" data-m="${esc(p.sat.mode)}">${esc(p.sat.mode)}</span>` +
     `<span class="name">${esc(p.sat.name)}<span class="livepos num" data-sat="${esc(p.sat.name)}" data-start="${p.start}" data-end="${p.end}"></span></span>` +
     `<span class="info">` +
-      `<span class="start num" title="${on ? T('set') : T('rise')}"><span class="tarr">${on ? '↓' : '↑'}</span>${hhmm(on ? p.end : p.start)}</span>` +
+      `<span class="start num" title="${on ? T('set') : T('rise')}"><span class="tarr">${on ? ARW.d : ARW.u}</span>${hhmm(on ? p.end : p.start)}</span>` +
       `<span class="dur num r">${dur} ${T('min')}</span>` +
       `<span class="eta r${on ? ' on' : ''}" title="${on ? T('upNow') : T('toRise') + ': ' + T('in') + ' ' + etaShort(p.start - now)}">${on ? T('now') : etaHTML(p.start - now)}</span>` +
       `<span class="el num r" title="${T('maxEl')}"><b>${p.elMax}°</b></span>` +
-      `<span class="az num r" title="${T('azPath')}">${p.azRise}°<span class="parr"> → </span>${p.azPeak}°<span class="parr"> → </span>${p.azSet}°</span>` +
+      `<span class="az num r" title="${T('azPath')}">${p.azRise}°<span class="parr">${ARW.r}</span>${p.azPeak}°<span class="parr">${ARW.r}</span>${p.azSet}°</span>` +
     `</span>`;
 }
 
 // na telefonie pola z „info” idą do drugiej linii; „za …” zostaje po prawej w pierwszej
 function placeEta(row) {
   const eta = row.querySelector('.eta');
-  if (matchMedia('(max-width: 720px)').matches) row.insertBefore(eta, row.querySelector('.info'));
-  else row.querySelector('.dur').after(eta);
+  if (matchMedia('(max-width: 1039px)').matches) row.insertBefore(eta, row.querySelector('.info'));
+  else row.querySelector('.info').appendChild(eta);   // komputer: licznik w ostatniej kolumnie (TIMER)
 }
 
 function detailsHTML(p) {
@@ -1044,9 +1321,9 @@ function detailsHTML(p) {
   return `<div class="det-grid"><div>` +
     `<div class="times">` +
       `<div><span>${T('rise')}</span><strong class="num">${hhmm(p.start)}</strong><em class="num">az ${p.azRise}°</em></div>` +
-      `<span class="tarrow num" aria-hidden="true">→</span>` +
+      `<span class="tarrow num" aria-hidden="true">${ARW.r}</span>` +
       `<div><span>${T('peak')}</span><strong class="num">${hhmm(p.peak)}</strong><em class="num">el ${p.elMax}°</em></div>` +
-      `<span class="tarrow num" aria-hidden="true">→</span>` +
+      `<span class="tarrow num" aria-hidden="true">${ARW.r}</span>` +
       `<div><span>${T('set')}</span><strong class="num">${hhmm(p.end)}</strong><em class="num">az ${p.azSet}°</em></div>` +
     `</div>` +
     `<dl class="freq">` +
@@ -1077,7 +1354,7 @@ function passTrack(p) {
   return (p.track = pts);
 }
 // pole widoku wykresu: na komputerze z marginesem na podpisy, na telefonie ciaśniej, żeby tarcza była duża
-const isNarrow = () => matchMedia('(max-width: 720px)').matches;
+const isNarrow = () => matchMedia('(max-width: 1039px)').matches;
 const plotBox = () => isNarrow() ? { x: 4, y: 0, w: 232, h: 240 } : { x: -40, y: 0, w: 320, h: 240 };
 function polarSVG(p) {
   const v = plotBox();
@@ -1705,6 +1982,14 @@ function flipFrom(before, delay = 0) {
   }
 }
 
+// ekran ładowania: pierścień jak „°” z logo, fioletowa ćwiartka krąży; podpis – pierwsze słowo pogrubione
+function loaderHTML(msg) {
+  const ring = 'M44 0h12a44 44 0 0 1 44 44v12a44 44 0 0 1-44 44H44A44 44 0 0 1 0 56V44A44 44 0 0 1 44 0ZM43 26a16 16 0 0 0-16 16v16a16 16 0 0 0 16 16h14a16 16 0 0 0 16-16V42a16 16 0 0 0-16-16Z';
+  const [b, ...r] = msg.split(' ');
+  return `<div class="loader" role="status"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><clipPath id="ldq"><rect class="ld-q" x="50" y="-50" width="100" height="100"/></clipPath></defs>` +
+    `<path class="ld-base" fill-rule="evenodd" d="${ring}"/><path class="ld-arc" fill-rule="evenodd" clip-path="url(#ldq)" d="${ring}"/></svg>` +
+    `<p><b>${esc(b)}</b> ${esc(r.join(' '))}</p></div>`;
+}
 function draw() {
   const now = Date.now();
   passes = passes.filter(p => p.end > now);
@@ -1715,7 +2000,8 @@ function draw() {
   updateMore(matching.length, shown.length, matching[shown.length]);
   if (!shown.length) {
     rowEls.clear();
-    list.innerHTML = `<p class="empty${tleLoading && !satrecs.length ? ' loading' : ''}">${T(satrecs.length ? 'noPasses' : (tleLoading ? 'tleLoading' : (tleRetry ? 'tleRetrying' : 'noTLE')))}</p>`;
+    const busy = tleLoading && !satrecs.length;
+    list.innerHTML = busy ? loaderHTML(T('ldTle')) : `<p class="empty">${T(satrecs.length ? 'noPasses' : (tleRetry ? 'tleRetrying' : 'noTLE'))}</p>`;
     return;
   }
   const first = !list.querySelector('.cols');
@@ -1727,7 +2013,7 @@ function draw() {
     list.appendChild(head);
   }
   if (head._lang !== lang) {
-    head.innerHTML = `<span>${T('colMode')}</span><span>${T('colSat')}</span><span>${T('colRise')}</span><span class="r">${T('colDur')}</span><span class="r">${T('colEta')}</span><span class="r">${T('colMax')}</span><span class="r">${T('colAz')}</span>`;
+    head.innerHTML = `<span>${T('colMode')}</span><span>${T('colSat')}</span><span>${T('colRise')}</span><span>${T('colDur')}</span><span>${T('colMax')}</span><span>${T('colAz')}</span><span class="r">${T('colEta')}</span>`;
     head._lang = lang;
   }
 
@@ -1897,7 +2183,7 @@ function updatePositions() {
       const b = r && lookAngles(r.satrec, new Date(now + 10000));
       if (a && b && a.el >= 0) {
         const daz = ((b.az - a.az + 540) % 360) - 180;   // poprawnie także przy przejściu 359° → 0°
-        txt = `el <span class="earr vert">${b.el > a.el ? '↑' : '↓'}</span>${Math.round(a.el)}°  az <span class="earr">${daz >= 0 ? '→' : '←'}</span>${Math.round(a.az)}°`;
+        txt = `el <span class="earr vert">${b.el > a.el ? ARW.u : ARW.d}</span>${Math.round(a.el)}°<span class="lp-az">az</span> <span class="earr">${daz >= 0 ? ARW.r : ARW.l}</span>${Math.round(a.az)}°`;
       }   // strzałka tuż przy elewacji – wiadomo, czego dotyczy
     }
     if (txt) {
@@ -2026,13 +2312,16 @@ function resetTicker() { ticker.x = 0; ticker.n = 0; const tr = $('tkTrack'); if
 let satOff = new Set((() => { try { return JSON.parse(store.get('sats_off') || '[]'); } catch (e) { return []; } })());
 function renderSatGrid() {
   const grid = $('satgrid'); if (!grid) return;
-  const loaded = satrecs.map(r => r.sat).sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));   // tylko satelity z danymi TLE
+  const MO = { FM: 0, SSB: 1, DIG: 2 };
+  const loaded = satrecs.map(r => r.sat).sort((a, b) => (MO[a.mode] - MO[b.mode]) || a.name.localeCompare(b.name, 'en', { numeric: true }));   // tylko satelity z danymi TLE, wg emisji
   const key = loaded.map(s => s.norad).join(',');
   if (grid._key !== key) {
     grid._key = key;
-    grid.innerHTML = loaded.map(s => `<button class="satchip" data-norad="${s.norad}" title="${esc(s.name)} · NORAD ${s.norad}"><svg viewBox="0 0 12 12" aria-hidden="true"><path class="ic-tick" d="M2.5 6.3 5 8.7 9.5 3.6"/><path class="ic-cross" d="M3.2 3.2 8.8 8.8M8.8 3.2 3.2 8.8"/></svg><span class="mode" data-m="${esc(s.mode)}">${esc(s.mode)}</span><span class="nm">${esc(s.name)}</span></button>`).join('');
+    grid.innerHTML = loaded.map(s => `<button class="satchip" data-norad="${s.norad}" title="${esc(s.name)} · NORAD ${s.norad}"><svg viewBox="0 0 14 14" aria-hidden="true"><circle class="ic-ring" cx="7" cy="7" r="6.5"/><path class="ic-cross" d="M.75.75 13.25 13.25M13.25.75.75 13.25"/></svg><span class="mode" data-m="${esc(s.mode)}">${esc(s.mode)}</span><span class="nm">${esc(s.name)}</span></button>`).join('');
   }
   for (const b of grid.children) b.setAttribute('aria-pressed', String(!satOff.has(+b.dataset.norad)));
+  const cols = matchMedia('(min-width: 1040px)').matches ? 4 : 2;
+  grid.style.gridTemplateRows = `repeat(${Math.max(1, Math.ceil(loaded.length / cols))}, 31px)`;
   const on = loaded.filter(s => !satOff.has(s.norad)).length;
   $('satcount').textContent = loaded.length ? `${on}/${loaded.length}` : '';
   $('satcount').style.minWidth = loaded.length ? `${String(loaded.length).length * 2 + 1}ch` : '';   // stała szerokość licznika – zakładki nie drgają przy 9/33 → 10/33
@@ -2399,7 +2688,7 @@ function snapStatic() {
   };
   $('tlefile').addEventListener('change', onTleFile);
   $('tlefile2').addEventListener('change', onTleFile);
-  matchMedia('(max-width: 720px)').addEventListener('change', () => draw());
+  matchMedia('(max-width: 1039px)').addEventListener('change', () => draw());
   window.addEventListener('resize', () => { if (!$('welcome').hidden) { sizeQuote(); snapWelcome(); } snapStatic(); });
 
   loadTLE(false);
@@ -2414,5 +2703,6 @@ function snapStatic() {
   setInterval(tick, 1000);
 })();
 </script>
+<div class="endbar" aria-hidden="true"></div>
 </body>
 </html>
