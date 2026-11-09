@@ -107,7 +107,8 @@
   html.theme-anim .theme .ic-half { transition-property: transform !important; }
 
   *, *::before, *::after { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  /* stałe miejsce na pasek przewijania: otwarcie ekranu startowego (blokada przewijania) nie przesuwa strony */
+  html { scrollbar-gutter: stable; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   html, body { margin: 0; background: var(--paper); color: var(--ink); }
   button, a, label, input, .row, .seg, .switch, #minel { touch-action: manipulation; }
   body {
@@ -151,6 +152,8 @@
   .seg button[data-m="FM"]  { width: 38px; border-inline: 0; padding-left: 8.2px; text-align: left; }
   .seg button[data-m="DIG"] { width: 48px; border-left: 0; border-radius: 0 8px 8px 0; padding-left: 7.8px; text-align: left; }
   .seg button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  /* dwa sąsiednie wyłączone filtry: odstęp między nimi wypełnia linia w kolorze ramki */
+  .seg button[aria-pressed="false"] + button[aria-pressed="false"]::before { content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 2px; background: var(--rule); }
   @media (hover: hover) { .seg button:hover:not([aria-pressed="true"]) { color: var(--ink); } }
 
   .theme { width: 30px; height: 30px; padding: 0; margin: -6px; border: 0; background: none; border-radius: 50%; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex: none; color: var(--icon); }
@@ -237,7 +240,7 @@
     width: 14px; height: 11.65px; margin-right: 4px; vertical-align: -1.32px; }
   .livepos .earr.vert::before { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11.65 14.15'%3E%3Cpath  d='M11.648,5.327L6.931,0.610C6.321,0.001 5.327,0.000 4.717,0.610L0.000,5.328L0.707,6.035L5.324,1.418L5.324,14.152L6.324,14.152L6.324,1.417L10.941,6.035L11.648,5.328Z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11.65 14.15'%3E%3Cpath  d='M11.648,5.327L6.931,0.610C6.321,0.001 5.327,0.000 4.717,0.610L0.000,5.328L0.707,6.035L5.324,1.418L5.324,14.152L6.324,14.152L6.324,1.417L10.941,6.035L11.648,5.328Z'/%3E%3C/svg%3E"); width: 11.65px; height: 14.15px; margin-right: 4.05px; vertical-align: -1.5px; }
   .livepos .earr.vert { margin-left: -14.3px; }
-  .eta { font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-weight: 600; font-size: 18px; line-height: 23px; font-variant-numeric: tabular-nums; text-align: right; }
+  .eta { color: var(--ink); font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-weight: 600; font-size: 18px; line-height: 23px; font-variant-numeric: tabular-nums; text-align: right; }
   .eta.on { color: var(--live); }
   .eta .ec { display: inline-block; animation: colonblink 1s linear infinite; }
   @keyframes colonblink { 0%, 45% { opacity: 1; } 50%, 95% { opacity: 0; } 100% { opacity: 1; } }
@@ -548,7 +551,7 @@
     figure.plot { grid-column: 2; grid-row: 1 / span 2; }
     svg.polar { width: 483px; height: auto; margin: 14px -29px 14px -28px; }   /* ten sam odstęp nad „N” i pod „S”, także gdy opis po lewej jest krótki */
     figure.plot .level { right: -27px; top: 23px; }
-    .tle { grid-column: 1; grid-row: 2; margin-top: 52px; padding: 18px 0 20px; }
+    .tle { grid-column: 1; grid-row: 2; align-self: end; margin-top: 52px; padding: 18px 0 20px; }   /* zawsze przy dolnej krawędzi okienka */
 
     .more { padding-top: 20px; }
     .morebtn { width: 350px; }
