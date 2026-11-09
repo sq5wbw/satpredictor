@@ -2503,6 +2503,32 @@ function snapStatic() {
   }).observe(html, { attributes: true, attributeFilter: ['class'] });
 })();
 
+// zamykanie ekranu startowego „kaskadą” – spójne z wejściem: elementy znikają kolejno od dołu do góry,
+// lekko unosząc się, a na końcu wygasa tło. Ponowne otwarcie w trakcie zamykania przerywa animację.
+(function staggeredClose() {
+  const w = $('welcome');
+  let anims = [], run = 0;
+  const cancel = () => { run++; anims.forEach(a => a.cancel()); anims = []; w.style.pointerEvents = ''; };
+  const open0 = openWelcome;
+  // otwarcie w trakcie zamykania: ekran na moment znika, żeby kaskada wejścia zagrała od początku
+  openWelcome = function (...args) { const was = anims.length > 0; cancel(); if (was) { w.hidden = true; void w.offsetWidth; } return open0.apply(this, args); };
+  closeWelcome = function () {
+    document.body.style.overflow = '';
+    if (reduceMotion()) { cancel(); w.hidden = true; return; }
+    cancel();
+    const id = run;
+    const items = [w.querySelector('.w-top'), ...w.querySelector('.w-card').children, w.querySelector('.w-copy')];
+    const STEP = 35, DUR = 260, n = items.length, total = (n - 1) * STEP + DUR;
+    w.style.pointerEvents = 'none';                       // strona pod spodem od razu reaguje
+    items.forEach((el, i) => anims.push(el.animate(
+      [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 -10px' }],
+      { duration: DUR, delay: (n - 1 - i) * STEP, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' })));
+    const bg = w.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, delay: total - 260, easing: 'ease-in', fill: 'forwards' });
+    anims.push(bg);
+    bg.onfinish = () => { if (id !== run) return; w.hidden = true; cancel(); };
+  };
+})();
+
 // logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
 $('home').addEventListener('click', () => openWelcome(true));
 
