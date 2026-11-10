@@ -2799,8 +2799,8 @@ function snapStatic() {
 (function sdrFollow() {
   const BRIDGE = 'ws://127.0.0.1:4533', C = 299792.458, TICK = 500, TOL = 30;
   const desktop = matchMedia('(min-width: 721px) and (hover: hover) and (pointer: fine)');
-  const L = () => lang === 'pl' ? { follow: 'Śledź', following: 'Śledzę', hint: 'Śledzenie w SDR++ (korekta Dopplera)' }
-                                : { follow: 'Follow', following: 'Following', hint: 'Track in SDR++ (Doppler correction)' };
+  const L = () => lang === 'pl' ? { follow: 'Dostrój', following: 'Dostrajam', hint: 'Dostrajanie SDR++ z korektą Dopplera (aktywne w trakcie przelotu)' }
+                                : { follow: 'Tune', following: 'Tuning', hint: 'Tune SDR++ with Doppler correction (active during the pass)' };
   let ws = null, retryT = 0, ready = false, seq = 0, follow = null;
   const pending = new Map();
 
@@ -2850,7 +2850,9 @@ function snapStatic() {
   };
 
   const tick = () => {
-    if (!follow || follow.busy) return;
+    if (!follow) return;
+    if (Date.now() >= follow.end) { stop(); return; }      // satelita zaszedł: koniec dostrajania
+    if (follow.busy) return;
     const f = follow, target = doppler(f.f0, f.satrec), dop = target - f.f0;
     f.busy = true;
     const done = () => { f.busy = false; };
@@ -2868,11 +2870,11 @@ function snapStatic() {
       }) || done();
     }
   };
-  const start = sat => {
+  const start = (sat, end) => {
     const r = satrecs.find(x => x.sat === sat), d = parseDown(sat.down);
     if (!r || !d || !observer) return;
     stop(true);
-    follow = { sat, satrec: r.satrec, f0: d.f, last: null, busy: false, timer: setInterval(tick, TICK) };
+    follow = { sat, end, satrec: r.satrec, f0: d.f, last: null, busy: false, timer: setInterval(tick, TICK) };
     send({ type: 'follow', sat: sat.name, f0: d.f, linear: d.linear });
     tick(); paint();
   };
@@ -2906,7 +2908,11 @@ function snapStatic() {
       wrap.innerHTML = `<div><button type="button" class="follow-btn" data-sat="${esc(e.p.sat.name)}" title="${esc(L().hint)}"><span class="fl-t"></span><span class="fl-ring" aria-hidden="true"></span></button></div>`;
       wrap.querySelector('button').addEventListener('click', ev => {
         ev.stopPropagation();
-        if (follow && follow.sat === e.p.sat) stop(); else start(e.p.sat);
+        if (follow && follow.sat === e.p.sat) { stop(); return; }
+        // dostrajanie tylko w trakcie przelotu (satelita nad horyzontem); wcześniej i później przycisk tylko drga
+        const now = Date.now();
+        if (now < e.p.start || now >= e.p.end) { nope(ev.currentTarget); return; }
+        start(e.p.sat, e.p.end);
       });
       col.querySelector('dl.freq').after(wrap);
       added = true;
