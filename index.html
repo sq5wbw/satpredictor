@@ -404,39 +404,26 @@
   /* ---------- komunikaty i ładowanie ---------- */
   .empty { margin: 0; padding: 24px 20px; color: var(--muted); font-size: 16px; line-height: 20px; }
   .empty b { color: var(--ink); font-weight: 600; }
-  /* animacja ładowania: „planeta z księżycem” – duże kółko w środku, małe obiega je po orbicie
-     i chowa się za nim; co obieg kierunek odwraca się lustrzanie. Kolory: magenta w obu motywach. */
-  @property --orb  { syntax: '<angle>';  inherits: true; initial-value: 0deg; }
-  @property --flip { syntax: '<number>'; inherits: true; initial-value: 1; }
-  /* księżyc na zmianę przelatuje przed planetą (część wspólna jasna – „wycięta”) i za nią (część wspólna ciemna).
-     Położenie księżyca liczone wprost z kąta orbity: dx, dy względem środka planety. */
-  .empty.loading { --s: 1.1px; position: fixed; z-index: 0; left: 0; right: 0; top: 50%; transform: translateY(-50%); padding: 0 20px; margin-top: 24.75px;
-    display: block; text-align: center; pointer-events: none;
-    --dx: calc(var(--flip) * 34 * var(--s) * (cos(var(--orb)) - 1));
-    --dy: calc(34 * var(--s) * sin(var(--orb)));
-    --front: max(0, -1 * var(--flip));
-    animation: orb 1s linear infinite, orbflip 2s linear infinite; }
-  .empty.loading::before { content: ""; position: relative; z-index: 1; display: block; width: calc(48 * var(--s)); height: calc(48 * var(--s));
-    margin: var(--s) auto calc(27.5px + var(--s)); border-radius: 50%; background: var(--live);
-    -webkit-mask: radial-gradient(circle at calc(50% + var(--dx)) calc(50% + var(--dy)), transparent calc(9.1 * var(--s) * var(--front)), #000 calc((9.1 * var(--s) + .5px) * var(--front)));
-            mask: radial-gradient(circle at calc(50% + var(--dx)) calc(50% + var(--dy)), transparent calc(9.1 * var(--s) * var(--front)), #000 calc((9.1 * var(--s) + .5px) * var(--front))); }
-  .empty.loading::after { content: ""; position: absolute; z-index: calc(2 * var(--front)); left: calc(50% - 9.1 * var(--s)); top: calc(15.9 * var(--s));
-    width: calc(18.2 * var(--s)); height: calc(18.2 * var(--s)); border-radius: 50%; background: var(--live);
-    translate: var(--dx) var(--dy);
-    -webkit-mask: radial-gradient(circle at calc(50% - var(--dx)) calc(50% - var(--dy)), transparent calc(24 * var(--s) * var(--front)), #000 calc((24 * var(--s) + .5px) * var(--front)));
-            mask: radial-gradient(circle at calc(50% - var(--dx)) calc(50% - var(--dy)), transparent calc(24 * var(--s) * var(--front)), #000 calc((24 * var(--s) + .5px) * var(--front))); }
-  @keyframes orb { from { --orb: 0deg; } to { --orb: 360deg; } }
-  @keyframes orbflip { 0%, 49.99% { --flip: 1; } 50%, 100% { --flip: -1; } }
+  /* animacja ładowania: dwie połówki koła na zmianę obracają się w 3D wokół pionowej osi środka
+     (jak przewracana strona) – spokojny, jednostajny rytm; magenta w obu motywach */
+  .empty.loading { --d: 56px; position: fixed; z-index: 0; left: 0; right: 0; top: 50%; transform: translateY(-50%); margin-top: 25px;
+    padding: calc(var(--d) + 26px) 20px 0; display: block; text-align: center; pointer-events: none;
+    perspective: calc(var(--d) * 500 / 48); perspective-origin: 50% calc(var(--d) / 2); }
+  .empty.loading::before, .empty.loading::after { content: ""; position: absolute; top: 0; left: 50%; width: calc(var(--d) / 2); height: var(--d);
+    background: var(--live); border-radius: 0 calc(var(--d) / 2) calc(var(--d) / 2) 0; transform-origin: 0 0;
+    animation: lflip 2s linear infinite alternate; }
+  .empty.loading::after { left: calc(50% - var(--d) / 2); border-radius: calc(var(--d) / 2) 0 0 calc(var(--d) / 2); transform-origin: 100% 0; animation-delay: 1s; }
+  @keyframes lflip { 0%, 10% { transform: rotateY(0deg); } 90%, 100% { transform: rotateY(-180deg); } }
   /* w liście komunikat ładowania jest niewidoczny – pokazuje go nakładka startowa (#boot), która trzyma się
      co najmniej kilka obrotów i znika płynnie, zamiast mignąć na ułamek sekundy */
   .list > .empty.loading { visibility: hidden; }
-  .list > .empty.loading { animation: none; }
+  .list > .empty.loading::before, .list > .empty.loading::after { animation: none; }
   .boot { position: fixed; inset: 0; z-index: 4; background: var(--paper); border-bottom: 4px solid var(--live); opacity: 0; pointer-events: none;
     transition: opacity .35s cubic-bezier(.4, 0, .2, 1); }
   .boot.show { opacity: 1; pointer-events: auto; }
   .boot .boot-copy { position: absolute; left: 0; right: 0; bottom: 24px; margin: 0; }
   header.top { position: relative; z-index: 5; }
-  .locating .empty.loading { animation: lfade .35s cubic-bezier(.4, 0, .2, 1) both, orb 1s linear infinite, orbflip 2s linear infinite; }
+  .locating .empty.loading { animation: lfade .35s cubic-bezier(.4, 0, .2, 1) both; }
   @keyframes lfade { from { opacity: 0; } to { opacity: 1; } }
   body:has(.list > .empty.loading) .fbox { display: none; }
   /* ustalanie lokalizacji (GPS z ekranu startowego): ekran startowy ustępuje miejsca komunikatowi z animacją */
@@ -500,8 +487,8 @@
     .det, .det-in, .reveal, .reveal .fpanel, .row, .row::after, .mode, .switch, .switch::after, .switch::before, .name .livepos, .theme .ic-half { transition: none !important; }
     #minel::-webkit-slider-runnable-track, #minel::-moz-range-track { transition: none; }
     .row.on[aria-expanded="false"] { animation: none; }
-    .eta .ec, .empty.loading, .locating .empty.loading { animation: none; }
-    .empty.loading { --dx: 18px; --dy: 19px; --front: 1; }   /* bez ruchu: księżyc przed planetą, w pozycji z projektu */
+    .eta .ec, .empty.loading::before, .empty.loading::after, .locating .empty.loading { animation: none; }
+    .empty.loading::after { transform: rotateY(-180deg); }   /* bez ruchu: widać jedną połówkę, jak w projekcie */
     .boot { transition: none; }
     svg.polar .halo { display: none; }
   }
@@ -2562,7 +2549,7 @@ function snapStatic() {
 // Zostaje co najmniej BOOT_MIN ms (kilka obrotów animacji), potem płynnie znika i odsłania listę –
 // koniec z mignięciem, gdy dane są gotowe po ułamku sekundy.
 (function bootLoader() {
-  const boot = $('boot'), msg = $('bootMsg'), list = $('list'), BOOT_MIN = 2000, FADE = 350;
+  const boot = $('boot'), msg = $('bootMsg'), list = $('list'), BOOT_MIN = 3000, FADE = 350;
   let shownAt = 0, t1 = 0, t2 = 0;                      // 0 = od początku wczytywania strony
   const show = html => {
     clearTimeout(t1); clearTimeout(t2);
