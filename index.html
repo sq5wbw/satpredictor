@@ -134,7 +134,7 @@
   .i-right { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 11.65'%3E%3Cpath  d='M13.541,4.717L8.824,0.000L8.117,0.707L12.733,5.324L0.000,5.324L0.000,6.324L12.735,6.324L8.117,10.941L8.824,11.648L13.541,6.932C13.837,6.636 14.000,6.242 14.000,5.824C14.000,5.406 13.837,5.012 13.541,4.718Z'/%3E%3C/svg%3E"); }
 
   /* ---------- układ strony: stopka zawsze na dole, pod nią magentowy pasek 4 px ---------- */
-  .wrap { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; border-bottom: 4px solid var(--live); }
+  .wrap { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; border-bottom: 4px solid transparent; }   /* bez fioletowej linii; odstęp 4 px zostaje */
   .wrap > main { flex: none; }
   footer.data { margin-top: auto; }
 
@@ -155,7 +155,19 @@
   .seg button[data-m="SSB"] { width: 48px; border-right: 0; border-radius: 8px 0 0 8px; padding-left: 6.8px; text-align: left; }
   .seg button[data-m="FM"]  { width: 38px; border-inline: 0; padding-left: 8.2px; text-align: left; }
   .seg button[data-m="DIG"] { width: 48px; border-left: 0; border-radius: 0 8px 8px 0; padding-left: 7.8px; text-align: left; }
-  .seg button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  /* włączanie / wyłączanie filtra: ciemne wypełnienie odsłania się od dołu do góry (swipe up), a przy wyłączaniu
+     chowa w dół; tekst płynnie zmienia kolor. Wypełnienie przykrywa też ramkę, więc jej kolor się nie zmienia. */
+  .seg button { isolation: isolate; transition: color .35s cubic-bezier(.2, .7, .2, 1); }
+  .seg button::after { content: ""; position: absolute; z-index: -1; inset: -2px; border-radius: inherit; background: var(--ink);
+    clip-path: inset(100% 0 0 0); transition: clip-path .35s cubic-bezier(.2, .7, .2, 1); will-change: clip-path; }   /* stała warstwa: tekst nie przeskakuje o subpiksel na starcie i końcu animacji */   /* odsłanianie zamiast skalowania: zaokrąglenia zostają nietknięte */
+  .seg button[data-m="SSB"]::after { inset: -2px 0 -2px -2px; }
+  .seg button[data-m="FM"]::after  { inset: -2px 0; }
+  .seg button[data-m="DIG"]::after { inset: -2px -2px -2px 0; }
+  .seg button[aria-pressed="true"] { color: var(--paper); }
+  .seg button[aria-pressed="true"]::after { clip-path: inset(0 0 0 0); }
+  /* dotyk: natychmiastowe przyciemnienie tła pod palcem – bez skalowania, żeby tekst nie drgał */
+  .seg button:active:not([aria-pressed="true"]) { background: var(--hover); }
+  @media (prefers-reduced-motion: reduce) { .seg button, .seg button::after { transition: none; } }
   /* dwa sąsiednie wyłączone filtry: odstęp między nimi wypełnia linia w kolorze ramki */
   .seg button[aria-pressed="false"] + button[aria-pressed="false"]::before { content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 2px; background: var(--rule); }
   @media (hover: hover) { .seg button:hover:not([aria-pressed="true"]) { color: var(--ink); } }
@@ -310,7 +322,7 @@
   svg.polar .tick { r: 2.65px; fill: var(--tickbg); stroke: var(--plot); stroke-width: 2; }
   svg.polar .tlabel, svg.polar .ring, svg.polar .card { transition: opacity .45s cubic-bezier(.4, 0, .2, 1); }
   svg.polar .tlabel { fill: var(--tlabel); font-weight: 600; }
-  svg.polar .halo { r: 5px; fill: var(--live); fill-opacity: .25; stroke: none; transform-box: fill-box; transform-origin: center; animation: pulse 1.8s cubic-bezier(.2, .6, .3, 1) infinite; }
+  svg.polar .halo { fill: var(--live); fill-opacity: .3; stroke: var(--live); stroke-width: 1.2; stroke-opacity: .7; transform-box: fill-box; transform-origin: center; animation: pulse 1.8s cubic-bezier(.2, .6, .3, 1) infinite; }   /* jak przed redesignem: promień 8 j., wypełnienie i obwódka */
   @keyframes pulse { 0% { transform: scale(.6); opacity: .9; } 70% { transform: scale(2.1); opacity: 0; } 100% { transform: scale(2.1); opacity: 0; } }
   svg.polar .satdot { r: 3.31px; fill: var(--live); stroke: none; }   /* pełne kółko, średnica 10 px = zewnętrzna średnica kółek AOS / MAX / LOS */
   svg.polar .satname { fill: var(--satname); font-weight: 700; font-size: 11.93px; }
@@ -418,7 +430,7 @@
      co najmniej kilka obrotów i znika płynnie, zamiast mignąć na ułamek sekundy */
   .list > .empty.loading { visibility: hidden; }
   .list > .empty.loading::before, .list > .empty.loading::after { animation: none; }
-  .boot { position: fixed; inset: 0; z-index: 4; background: var(--paper); border-bottom: 4px solid var(--live); opacity: 0; pointer-events: none;
+  .boot { position: fixed; inset: 0; z-index: 4; background: var(--paper); border-bottom: 4px solid transparent; opacity: 0; pointer-events: none;
     transition: opacity .35s cubic-bezier(.4, 0, .2, 1); }
   .boot.show { opacity: 1; pointer-events: auto; }
   .boot .boot-copy { position: absolute; left: 0; right: 0; bottom: 24px; margin: 0; }
@@ -434,7 +446,7 @@
 
   /* ---------- ekran powitalny ---------- */
   .welcome { position: fixed; inset: 0; z-index: 50; background: var(--paper); display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden;
-    padding: calc(21px + env(safe-area-inset-top, 0px)) 20px 0; border-bottom: 4px solid var(--live); }
+    padding: calc(21px + env(safe-area-inset-top, 0px)) 20px 0; border-bottom: 4px solid transparent; }
   .w-top { width: 100%; max-width: 350px; display: flex; align-items: center; height: 34px; flex: none; }
   .w-close { order: -1; margin: 0 auto 0 -3px; width: 30px; height: 30px; padding: 0; border: 0; background: none; border-radius: 50%; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 0; }
   .w-close::before { content: ""; width: 17px; height: 17px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath  d='M1.5,0.1L17,15.6L15.6,17L0.1,1.5ZM15.6,0.1L17,1.5L1.5,17L0.1,15.6Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath  d='M1.5,0.1L17,15.6L15.6,17L0.1,1.5ZM15.6,0.1L17,1.5L1.5,17L0.1,15.6Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat; }
@@ -2026,11 +2038,13 @@ function issMessage() {
 }
 const ticker = { x: 0, n: 0, lastFact: -1, raf: 0, last: 0, visible: true };
 function tickerNext() {
-  // kolejność: komunikat o ISS, a co trzeci element – losowy fakt (inny niż poprzedni)
+  // kolejność: komunikat o ISS, a co trzeci element – losowy fakt (inny niż poprzedni).
+  // Gdy ISS jest właśnie nad użytkownikiem, pasek pokazuje wyłącznie komunikat o tym przelocie – bez faktów.
   ticker.n++;
   const msg = issMessage();
   const facts = T('tkFacts');
-  if (!msg || ticker.n % 3 === 0) {
+  const overhead = !!msg && msg.b === T('tkNow')[0];
+  if (!msg || (!overhead && ticker.n % 3 === 0)) {
     let i = Math.floor(Math.random() * facts.length);
     if (i === ticker.lastFact) i = (i + 1) % facts.length;
     ticker.lastFact = i;
@@ -2052,6 +2066,19 @@ function tickerFrame(ts) {
   if (box.hidden || !ticker.visible || document.hidden) { ticker.last = 0; return; }
   const dt = ticker.last ? Math.min(100, ts - ticker.last) : 16; ticker.last = ts;
   ticker.x -= dt * 0.045;                                   // ok. 45 px/s
+  // początek przelotu ISS: komunikaty jeszcze niewidoczne (za prawą krawędzią) są usuwane,
+  // żeby zaraz po tych na ekranie wjechał już tylko komunikat o bieżącym przelocie
+  if (ts - (ticker.chk || 0) > 1000) {
+    ticker.chk = ts;
+    const m = issMessage(), over = !!m && m.b === T('tkNow')[0];
+    if (over !== ticker.over) {
+      ticker.over = over;
+      const edge = box.getBoundingClientRect().right;
+      while (tr.children.length > 2 && tr.children[tr.children.length - 2].getBoundingClientRect().left > edge) {
+        tr.lastElementChild.remove(); tr.lastElementChild.remove();
+      }
+    }
+  }
   // element, który wyjechał w całości z lewej – usuń (razem z kropką) i skoryguj przesunięcie
   while (tr.children.length > 2) {
     const w = tr.children[0].offsetWidth + tr.children[1].offsetWidth;
@@ -2583,6 +2610,42 @@ function snapStatic() {
   new MutationObserver(sync).observe(list, { childList: true });
   new MutationObserver(sync).observe(welcome, { attributes: true, attributeFilter: ['hidden'] });
   sync();
+})();
+
+// panel „Satellites”: satelity wchodzą i wychodzą kaskadą, tak jak elementy ekranu startowego.
+// Opóźnienie liczone wg wiersza na ekranie (obie kolumny w tym samym wierszu ruszają razem).
+(function satsCascade() {
+  const pane = $('pan-sats'), EASE_IN = 'cubic-bezier(.2, .7, .2, 1)', EASE_OUT = 'cubic-bezier(.4, 0, 1, 1)';
+  let anims = [], timer = 0;
+  const stop = () => { clearTimeout(timer); timer = 0; anims.forEach(a => a.cancel()); anims = []; };
+  const items = () => {
+    const chips = [...pane.querySelectorAll('.satchip')], tops = [...new Set(chips.map(c => c.offsetTop))].sort((a, b) => a - b);
+    const out = chips.map(c => [c, tops.indexOf(c.offsetTop)]);
+    const bulk = pane.querySelector('.satbulk'); if (bulk) out.push([bulk, tops.length]);
+    return out;
+  };
+  const open0 = setPanel;
+  setPanel = function (name) {
+    const wasSats = !pane.hidden && $('fpanes').classList.contains('open');
+    if (!name && timer) {                               // drugie kliknięcie w trakcie zamykania = rozmyślenie się: panel zostaje
+      stop();
+      for (const [el] of items()) anims.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: EASE_IN }));
+      return;
+    }
+    stop();
+    if (reduceMotion()) return open0(name);
+    if (!name && wasSats) {                               // zamykanie: od góry do dołu, lekkie opadanie, potem zwinięcie panelu
+      for (const [el, row] of items()) anims.push(el.animate([{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 10px' }],
+        { duration: 200, delay: row * 12, easing: EASE_OUT, fill: 'forwards' }));
+      timer = setTimeout(() => { timer = 0; open0(''); setTimeout(() => { if (!timer) { anims.forEach(a => a.cancel()); anims = []; } }, 340); }, 180);
+      return;
+    }
+    open0(name);
+    if (name === 'pan-sats' && !wasSats) {              // otwieranie: od góry, wysunięcie od dołu
+      for (const [el, row] of items()) anims.push(el.animate([{ opacity: 0, translate: '0 12px' }, { opacity: 1, translate: '0 0' }],
+        { duration: 520, delay: 60 + row * 25, easing: EASE_IN, fill: 'backwards' }));
+    }
+  };
 })();
 
 // logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
