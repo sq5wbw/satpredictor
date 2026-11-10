@@ -787,11 +787,15 @@ const SATS = [
 
 const HOURS_AHEAD = 24;          // ile godzin do przodu liczyć przeloty
 const MIN_PEAK_EL = 1;           // pomijaj przeloty niższe niż tyle stopni
-const TLE_URLS = [
-  'https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle',
-  'https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=tle',
-  'https://www.amsat.org/tle/current/nasabare.txt',
-];
+// Źródła danych TLE:
+// 1) tle.txt – kopia z tego samego serwera co strona, odświeżana co 6 h przez GitHub Actions (.github/workflows/tle.yml);
+//    bez limitów CelesTrak i bez blokad przeglądarki, więc to podstawowe źródło dla wszystkich użytkowników;
+// 2) CelesTrak – tylko awaryjnie, gdy kopii brak (np. strona otwarta z dysku), zgodnie z zasadami serwisu:
+//    jedno zapytanie zbiorcze, pojedyncze satelity po kolei, a po każdej odmowie przerwa 2 h.
+const TLE_LOCAL = 'tle.txt';
+const CELESTRAK = 'https://celestrak.org/NORAD/elements/gp.php';
+const CT_BLOCK_REFUSED = 2 * 3600 * 1000;    // serwer odpowiedział błędem (403, 429, 5xx…): 2 h bez zapytań
+const CT_BLOCK_NETWORK = 30 * 60 * 1000;     // brak odpowiedzi (sieć, blokada przeglądarki): 30 min
 const TLE_MAX_AGE = 24 * 3600 * 1000;
 
 // ---------- pamięć przeglądarki (bezpiecznie) ----------
@@ -839,24 +843,44 @@ function parseTLE(text) {
 }
 
 // pobieranie z limitem czasu – serwer, który nie odpowiada, nie może zawiesić aplikacji
-async function fetchT(url, ms = 10000) {
+// jak fetchT, ale zwraca też kod odpowiedzi (0 = brak odpowiedzi: sieć, limit czasu, blokada przeglądarki)
+async function fetchS(url, ms = 10000, cache = 'no-store') {
   const ac = new AbortController(), to = setTimeout(() => ac.abort(), ms);
-  try { const r = await fetch(url, { cache: 'no-store', signal: ac.signal }); return r.ok ? await r.text() : ''; }
-  catch (e) { return ''; }
+  try { const r = await fetch(url, { cache, signal: ac.signal }); return { status: r.status, text: r.ok ? await r.text() : '' }; }
+  catch (e) { return { status: 0, text: '' }; }
   finally { clearTimeout(to); }
 }
+// odmowa CelesTrak: zapamiętaj przerwę (przetrwa odświeżenie strony) i przestań pytać
+function celestrakRefused(status) {
+  const until = Date.now() + (status ? CT_BLOCK_REFUSED : CT_BLOCK_NETWORK);
+  store.set('tle_ct_block', String(until));
+  const e = new Error(`CelesTrak ${status || 'brak odpowiedzi'}`); e.until = until;
+  return e;
+}
 async function fetchTLE() {
-  // wszystkie źródła naraz (równolegle), żeby dane były gotowe jak najszybciej
-  const parts = await Promise.all(TLE_URLS.map(url => fetchT(url, 12000)));
-  let text = '\n' + parts.join('\n');
-  // satelity, których nie ma w plikach zbiorczych – dociągnij pojedynczo z CelesTrak po numerze NORAD
-  const have = parseTLE(text);
-  const missing = SATS.filter(s => !have[s.norad]).map(s => s.norad);
-  await Promise.all(missing.map(async n => {
-    const s = await fetchT(`https://celestrak.org/NORAD/elements/gp.php?CATNR=${n}&FORMAT=tle`, 8000);
-    if (s) text += '\n' + s;
-  }));
+  let text = '';
+  // 1) własna kopia danych (GitHub Actions); serwer stron sam pilnuje świeżości pliku
+  if (location.protocol !== 'file:') {
+    const r = await fetchS(TLE_LOCAL, 10000, 'no-cache');
+    if (r.status === 200) text = r.text;
+  }
+  // 2) awaryjnie CelesTrak – tylko gdy kopii brak, nigdy w trakcie przerwy po odmowie
+  if (!Object.keys(parseTLE(text)).length) {
+    const until = +store.get('tle_ct_block') || 0;
+    if (Date.now() < until) { const e = new Error('CelesTrak: przerwa po odmowie'); e.until = until; throw e; }
+    const g = await fetchS(`${CELESTRAK}?GROUP=amateur&FORMAT=tle`, 12000);
+    if (g.status !== 200) throw celestrakRefused(g.status);
+    text = g.text;
+    // satelity spoza pliku zbiorczego: po jednym, po kolei; pierwsza odmowa kończy dopytywanie
+    const have = parseTLE(text);
+    for (const s of SATS.filter(x => !have[x.norad])) {
+      const r = await fetchS(`${CELESTRAK}?CATNR=${s.norad}&FORMAT=tle`, 8000);
+      if (r.status !== 200) { celestrakRefused(r.status); break; }
+      text += '\n' + r.text;
+    }
+  }
   if (Object.keys(parseTLE(text)).length === 0) throw new Error('brak danych');
+  store.set('tle_next', '0');
   store.set('tle_text', text);
   store.set('tle_time', String(Date.now()));
   return text;
@@ -1051,10 +1075,14 @@ let openRows = new Set();
 let lastCalc = 0;
 let tleLoading = false;
 let tleRetry = 0, tleRetryTimer = 0;
-function scheduleTLERetry() {
+// kolejna próba po nieudanym pobraniu: 1, 2, 4 … do 60 min; termin zapisany w pamięci, więc odświeżenie
+// strony go nie skraca (wcześniej licznik co 15 s potrafił zaczynać pobieranie od nowa bez przerwy)
+const tleNextAt = () => +store.get('tle_next') || 0;
+function scheduleTLERetry(at) {
   clearTimeout(tleRetryTimer);
-  const wait = Math.min(600000, 30000 * Math.pow(2, tleRetry++));
-  tleRetryTimer = setTimeout(() => store.get('tle_text') ? refreshTLEQuietly() : loadTLE(true), wait);
+  const next = at || Date.now() + Math.min(3600000, 60000 * Math.pow(2, tleRetry++));
+  store.set('tle_next', String(next));
+  tleRetryTimer = setTimeout(() => store.get('tle_text') ? refreshTLEQuietly() : loadTLE(true), Math.max(0, next - Date.now()));
 }
 window.addEventListener('online', () => { if (tleRetry) { clearTimeout(tleRetryTimer); store.get('tle_text') ? refreshTLEQuietly() : loadTLE(true); } });   // trwa pobieranie danych TLE (ekran powitalny już je pobiera w tle)
 
@@ -2161,16 +2189,25 @@ async function loadTLE(force, silent) {
   // są zapisane dane, a odświeżenie nie jest wymuszone ręcznie: pokaż je od razu, nowe pobierz po cichu w tle
   if (cached && !force) {
     if (!Object.keys(tleDB).length) { tleDB = parseTLE(cached); calculate(); }
-    if (age >= TLE_MAX_AGE) refreshTLEQuietly();
+    if (age >= TLE_MAX_AGE && Date.now() >= tleNextAt()) refreshTLEQuietly();
     return;
   }
   if (cached && silent) { refreshTLEQuietly(); return; }
+  // brak danych, ale trwa przerwa po nieudanej próbie: nie pobieraj teraz, tylko zaplanuj próbę na właściwy termin
+  if (!force && Date.now() < tleNextAt()) {
+    tleRetry = Math.max(tleRetry, 1);
+    $('tlefail').hidden = false;
+    if (!$('fpanes').classList.contains('open')) setPanel('pan-tle');
+    scheduleTLERetry(tleNextAt());
+    calculate();
+    return;
+  }
   // brak danych (pierwsza wizyta) albo ręczne „Odśwież dane TLE”: pobieranie z komunikatem
   $('tleinfo').textContent = T('tleLoading');
   tleLoading = true;
   if (locator && !satrecs.length) draw();      // pokaż „pobieram…” zamiast „brak danych”
   let text;
-  try { text = await fetchTLE(); $('tlefail').hidden = true; tleRetry = 0; }
+  try { text = await fetchTLE(); $('tlefail').hidden = true; tleRetry = 0; clearTimeout(tleRetryTimer); }
   catch (e) {
     text = cached;
     $('tlefail').hidden = !!cached;
@@ -2488,7 +2525,7 @@ function snapStatic() {
   loadTLE(false);
   setInterval(() => {
     // przelicz co 30 min; odśwież TLE co 24 h; w międzyczasie tylko odśwież widok
-    if (Date.now() - (+store.get('tle_time') || 0) > TLE_MAX_AGE) loadTLE(false);
+    if (Date.now() - (+store.get('tle_time') || 0) > TLE_MAX_AGE && Date.now() >= tleNextAt() && !tleLoading && !tleQuietBusy) loadTLE(false);
     else if (Date.now() - lastCalc > 30 * 60 * 1000) calculate();
     else draw();
   }, 15000);
