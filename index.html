@@ -452,6 +452,8 @@
   .welcome { position: fixed; inset: 0; z-index: 50; background: var(--paper); display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden;
     padding: calc(21px + env(safe-area-inset-top, 0px)) 20px 0; border-bottom: 4px solid transparent; }
   .w-top { width: 100%; max-width: 350px; display: flex; align-items: center; height: 34px; flex: none; }
+  .welcome .w-close[hidden] { display: inline-flex !important; }   /* krzyżyk zawsze na miejscu; bez lokatora tylko drga */
+  .welcome.gps-done { opacity: 0 !important; pointer-events: none; }
   .w-close { order: -1; margin: 0 auto 0 -3px; width: 30px; height: 30px; padding: 0; border: 0; background: none; border-radius: 50%; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 0; }
   .w-close::before { content: ""; width: 17px; height: 17px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath  d='M1.5,0.1L17,15.6L15.6,17L0.1,1.5ZM15.6,0.1L17,1.5L1.5,17L0.1,15.6Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath  d='M1.5,0.1L17,15.6L15.6,17L0.1,1.5ZM15.6,0.1L17,1.5L1.5,17L0.1,15.6Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat; }
   @media (hover: hover) { .w-close:hover { color: var(--ink); background: var(--hover); } }
@@ -2356,10 +2358,15 @@ function setupWelcome() {
     if (!('geolocation' in navigator)) { setHint(T('wNoGps'), true); return; }
     const b = $('wGps'); b.disabled = true; setHint(T('wLocating'));
     navigator.geolocation.getCurrentPosition(pos => {
-      b.disabled = false;
+      // lokalizacja ustalona: od razu przejście do listy. Ekran startowy jest w tej chwili schowany pod
+      // animacją „Getting your location.”, więc znika bez ponownego pokazywania, a w jego miejsce wchodzi
+      // „Calculating passes.” i lista (kaskadą).
       inp.value = latLonToGrid(pos.coords.latitude, pos.coords.longitude);
       setHint(T('wFound')(inp.value));
-      $('wGo').focus();
+      $('welcome').classList.add('gps-done');
+      if (window.showBoot) window.showBoot(T('computingHtml'));
+      go();
+      b.disabled = false;
     }, err => {
       b.disabled = false;
       setHint(T(err && err.code === 1 ? 'wDenied' : 'wNoGps'), true);
@@ -2601,7 +2608,7 @@ function snapStatic() {
   openWelcome = function (...args) { const was = anims.length > 0; cancel(); if (was) { w.hidden = true; void w.offsetWidth; } return open0.apply(this, args); };
   closeWelcome = function () {
     document.body.style.overflow = '';
-    if (reduceMotion()) { cancel(); w.hidden = true; return; }
+    if (reduceMotion() || w.classList.contains('gps-done')) { cancel(); w.hidden = true; return; }
     cancel();
     const id = run;
     const items = [w.querySelector('.w-top'), ...w.querySelector('.w-card').children, w.querySelector('.w-copy')];
@@ -2654,6 +2661,8 @@ function snapStatic() {
   };
   new MutationObserver(sync).observe(list, { childList: true });
   new MutationObserver(sync).observe(welcome, { attributes: true, attributeFilter: ['hidden'] });
+  // pokazanie na żądanie (po GPS): zostaje co najmniej BOOT_MIN, potem znika jak zwykle, chyba że lista dalej się ładuje
+  window.showBoot = html => { show(html); requestAnimationFrame(() => { if (!list.querySelector(':scope > .empty.loading')) hide(); }); };
   sync();
 })();
 
@@ -2727,6 +2736,38 @@ function snapStatic() {
   };
   new MutationObserver(add).observe($('list'), { childList: true, subtree: true });
   add();
+})();
+
+// ekran startowy: krzyżyk zawsze widoczny (układ górnego paska się nie przesuwa). Bez lokatora nie zamyka
+// ekranu – tylko drga jak zablokowany filtr. Po GPS ekran znika natychmiast (klasa gps-done), bez animacji.
+(function welcomeClose() {
+  const x = $('wClose'), w = $('welcome');
+  const sync = () => x.setAttribute('aria-disabled', String(x.hidden));
+  new MutationObserver(sync).observe(x, { attributes: true, attributeFilter: ['hidden'] });
+  sync();
+  x.addEventListener('click', () => { if (x.hidden) nope(x); }, true);
+  new MutationObserver(() => { if (w.hidden) w.classList.remove('gps-done'); }).observe(w, { attributes: true, attributeFilter: ['hidden'] });
+})();
+
+// suwak min el na ekranach dotykowych: przesuwanie palcem z dowolnego miejsca paska (Safari/Chrome na iPadzie
+// przesuwa natywnie tylko wtedy, gdy palec trafi dokładnie w niewidoczny uchwyt)
+(function sliderTouch() {
+  const sl = $('minel'), THUMB = 14;
+  let id = null;
+  const setFromX = x => {
+    const r = sl.getBoundingClientRect(), min = +sl.min, max = +sl.max;
+    const p = Math.min(1, Math.max(0, (x - r.left - THUMB / 2) / (r.width - THUMB)));
+    const v = Math.round(min + p * (max - min));
+    if (+sl.value !== v) { sl.value = String(v); sl.dispatchEvent(new Event('input', { bubbles: true })); }
+  };
+  sl.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse') return;
+    id = e.pointerId; try { sl.setPointerCapture(id); } catch (err) {}
+    setFromX(e.clientX);
+  });
+  sl.addEventListener('pointermove', e => { if (e.pointerId === id) setFromX(e.clientX); });
+  const end = e => { if (e.pointerId === id) id = null; };
+  sl.addEventListener('pointerup', end); sl.addEventListener('pointercancel', end);
 })();
 
 // logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
