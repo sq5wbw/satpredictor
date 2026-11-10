@@ -497,6 +497,9 @@
   /* górny pasek tylko się rozjaśnia – jego położenie mierzy skrypt wyrównujący kartę do pełnych pikseli */
   @keyframes wfade { from { opacity: 0; } to { opacity: 1; } }
   .welcome > .w-top { animation-name: wfade; }
+  /* pole lokatora tylko się rozjaśnia: Safari/Chrome na iPadzie nie przesuwa tekstu wewnątrz pola razem z polem
+     i po animacji tekst przeskakiwał o 12 px */
+  .w-card > .w-input { animation-name: wfade; }
   @media (prefers-reduced-motion: reduce) { .welcome > .w-top, .w-card > *, .welcome > .w-copy { animation: none; } }
 
   @media (prefers-reduced-motion: reduce) {
@@ -2606,7 +2609,7 @@ function snapStatic() {
     w.style.pointerEvents = 'none';                       // strona pod spodem od razu reaguje
     // górny pasek (krzyżyk, motyw, język) tylko wygasa – bez ruchu, tak samo jak przy wejściu; reszta lekko opada
     items.forEach((el, i) => anims.push(el.animate(
-      el.classList.contains('w-top') ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 10px' }],
+      (el.classList.contains('w-top') || el.classList.contains('w-input')) ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 10px' }],
       { duration: DUR, delay: i * STEP, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' })));
     const bg = w.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, delay: total - 260, easing: 'ease-in', fill: 'forwards' });
     anims.push(bg);
