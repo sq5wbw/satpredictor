@@ -134,7 +134,7 @@
   .i-right { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 11.65'%3E%3Cpath  d='M13.541,4.717L8.824,0.000L8.117,0.707L12.733,5.324L0.000,5.324L0.000,6.324L12.735,6.324L8.117,10.941L8.824,11.648L13.541,6.932C13.837,6.636 14.000,6.242 14.000,5.824C14.000,5.406 13.837,5.012 13.541,4.718Z'/%3E%3C/svg%3E"); }
 
   /* ---------- układ strony: stopka zawsze na dole, pod nią magentowy pasek 4 px ---------- */
-  .wrap { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; border-bottom: 4px solid transparent; }   /* bez fioletowej linii; odstęp 4 px zostaje */
+  .wrap { overflow: clip; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; border-bottom: 4px solid transparent; }   /* bez fioletowej linii; odstęp 4 px zostaje */
   .wrap > main { flex: none; }
   footer.data { margin-top: auto; }
 
@@ -199,7 +199,7 @@
   #minel::-webkit-slider-runnable-track { height: 4px; border-radius: 999px; transition: height .25s cubic-bezier(.2, .7, .2, 1); background: linear-gradient(to right, var(--live) var(--pct), var(--pastel) var(--pct)); }
   #minel::-moz-range-track { height: 4px; border-radius: 999px; transition: height .25s cubic-bezier(.2, .7, .2, 1); background: linear-gradient(to right, var(--live) var(--pct), var(--pastel) var(--pct)); }
   #minel::-moz-range-progress { background: transparent; }
-  #minel::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 20px; margin-top: -8px; background: transparent; border: 0; }
+  #minel::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 20px; margin-top: -8px; background: transparent; border: 0; border-radius: 0; box-shadow: none; opacity: 0; }   /* iPadOS rysuje domyślny biały prostokąt – ukryty */
   #minel::-moz-range-thumb { width: 14px; height: 20px; background: transparent; border: 0; }
   @media (hover: hover) { #minel:hover::-webkit-slider-runnable-track { height: 8px; } #minel:hover::-moz-range-track { height: 8px; } #minel:hover::-webkit-slider-thumb { margin-top: -6px; } }
   #minel.held::-webkit-slider-runnable-track, #minel:focus-visible::-webkit-slider-runnable-track { height: 8px; }
@@ -223,7 +223,7 @@
 
   /* ---------- lista przelotów ---------- */
   .list { position: relative; border-top: 2px solid var(--rule); }
-  .list:has(> .empty) { border-top-color: transparent; }
+  .list.is-empty { border-top-color: transparent; }
   .cols { display: none; }
   .row { position: relative; cursor: pointer; border-bottom: 2px solid var(--rule); background: transparent; transition: background-color .2s ease; }
   .row::after { content: ""; position: absolute; inset: 0; background: var(--hover); opacity: 0; transition: opacity .3s ease; pointer-events: none; }
@@ -232,8 +232,12 @@
   .row.on { background: var(--surface); }
   .row[aria-expanded="true"] { background: var(--hover); border-bottom: 0; }
   .row.leaving { pointer-events: none; }
-  .row.on[aria-expanded="false"] { animation: rowpulse 1.2s ease-in-out infinite alternate; }
-  @keyframes rowpulse { from { background-color: var(--pulse-from); } to { background-color: var(--pulse); } }
+  /* puls aktywnego przelotu: animowane jest tylko krycie nakładki (płynne także w Safari/Chrome na iPadzie –
+     bez przemalowywania wiersza w każdej klatce) */
+  .row.on[aria-expanded="false"] { background: var(--pulse); }
+  .row.on[aria-expanded="false"]::after { background: var(--pulse-from); opacity: 1; transition: none; will-change: opacity;
+    animation: rowpulse 1.2s ease-in-out infinite alternate; animation-delay: inherit; }
+  @keyframes rowpulse { from { opacity: 1; } to { opacity: 0; } }
   @property --left { syntax: '<number>'; inherits: true; initial-value: 1; }
   .row.on { transition: background-color .2s ease, --left 1s linear; }
   .row.on::before { content: ""; z-index: 2; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 4px; border-radius: 2px;
@@ -322,7 +326,7 @@
   svg.polar .tick { r: 2.65px; fill: var(--tickbg); stroke: var(--plot); stroke-width: 2; }
   svg.polar .tlabel, svg.polar .ring, svg.polar .card { transition: opacity .45s cubic-bezier(.4, 0, .2, 1); }
   svg.polar .tlabel { fill: var(--tlabel); font-weight: 600; }
-  svg.polar .halo { fill: var(--live); fill-opacity: .3; stroke: var(--live); stroke-width: 1.2; stroke-opacity: .7; transform-box: fill-box; transform-origin: center; animation: pulse 1.8s cubic-bezier(.2, .6, .3, 1) infinite; }   /* jak przed redesignem: promień 8 j., wypełnienie i obwódka */
+  svg.polar .halo { fill: var(--live); fill-opacity: .3; stroke: var(--live); stroke-width: 1.2; stroke-opacity: .7; }   /* puls: animacja SMIL dodawana skryptem (CSS-owe skalowanie SVG nie działa w Safari/Chrome na iPadzie) */   /* jak przed redesignem: promień 8 j., wypełnienie i obwódka */
   @keyframes pulse { 0% { transform: scale(.6); opacity: .9; } 70% { transform: scale(2.1); opacity: 0; } 100% { transform: scale(2.1); opacity: 0; } }
   svg.polar .satdot { r: 3.31px; fill: var(--live); stroke: none; }   /* pełne kółko, średnica 10 px = zewnętrzna średnica kółek AOS / MAX / LOS */
   svg.polar .satname { fill: var(--satname); font-weight: 700; font-size: 11.93px; }
@@ -437,12 +441,12 @@
   header.top { position: relative; z-index: 5; }
   .locating .empty.loading { animation: lfade .35s cubic-bezier(.4, 0, .2, 1) both; }
   @keyframes lfade { from { opacity: 0; } to { opacity: 1; } }
-  body:has(.list > .empty.loading) .fbox { display: none; }
+  body.list-loading .fbox { display: none; }
   /* ustalanie lokalizacji (GPS z ekranu startowego): ekran startowy ustępuje miejsca komunikatowi z animacją */
   .locating { display: none; }
-  body:has(#wGps:disabled) .locating { display: block; }
-  body:has(#wGps:disabled) .welcome { opacity: 0; pointer-events: none; }
-  body:has(#wGps:disabled) .wrap > main, body:has(#wGps:disabled) .wrap > .more, body:has(#wGps:disabled) footer.data > :not(.copy) { visibility: hidden; }
+  body.gps-busy .locating { display: block; }
+  body.gps-busy .welcome { opacity: 0; pointer-events: none; }
+  body.gps-busy .wrap > main, body.gps-busy .wrap > .more, body.gps-busy footer.data > :not(.copy) { visibility: hidden; }
 
   /* ---------- ekran powitalny ---------- */
   .welcome { position: fixed; inset: 0; z-index: 50; background: var(--paper); display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden;
@@ -498,7 +502,8 @@
   @media (prefers-reduced-motion: reduce) {
     .det, .det-in, .reveal, .reveal .fpanel, .row, .row::after, .mode, .switch, .switch::after, .switch::before, .name .livepos, .theme .ic-half { transition: none !important; }
     #minel::-webkit-slider-runnable-track, #minel::-moz-range-track { transition: none; }
-    .row.on[aria-expanded="false"] { animation: none; }
+    .row.on[aria-expanded="false"] { background: var(--surface); }
+    .row.on[aria-expanded="false"]::after { animation: none; opacity: 0; }
     .eta .ec, .empty.loading::before, .empty.loading::after, .locating .empty.loading { animation: none; }
     .empty.loading::after { transform: rotateY(-180deg); }   /* bez ruchu: widać jedną połówkę, jak w projekcie */
     .boot { transition: none; }
@@ -565,7 +570,7 @@
     .where { order: 6; }
     #compasswrap { order: 7; margin-left: 20px; }
 
-    .list:has(> .cols) { border-top: 0; }
+    .list.has-cols { border-top: 0; }
     .list > .cols { display: grid; grid-template-columns: 47px minmax(0, 213fr) minmax(0, 108fr) minmax(0, 102fr) minmax(0, 151fr) minmax(0, 283fr) 60px; height: 37px; padding: 10px 20px 0; border-bottom: 2px solid var(--rule);
       color: var(--muted); font-weight: 700; font-size: 12px; line-height: 16px; text-transform: uppercase; }
     .cols span:nth-child(2), .cols span:nth-child(4), .cols span:nth-child(7) { color: var(--ink); }
@@ -2683,6 +2688,42 @@ function snapStatic() {
         { duration: 520, delay: 60 + row * 25, easing: EASE_IN, fill: 'backwards' }));
     }
   };
+})();
+
+// stany strony jako klasy (zamiast selektorów :has() na całej stronie, które w Safari/Chrome na iPadzie
+// przeliczały style całego dokumentu przy każdej zmianie odliczania i psuły płynność animacji)
+(function stateClasses() {
+  const list = $('list'), gps = $('wGps');
+  const syncList = () => {
+    list.classList.toggle('is-empty', !!list.querySelector(':scope > .empty'));
+    list.classList.toggle('has-cols', !!list.querySelector(':scope > .cols'));
+    document.body.classList.toggle('list-loading', !!list.querySelector(':scope > .empty.loading'));
+  };
+  const syncGps = () => document.body.classList.toggle('gps-busy', gps.disabled);
+  new MutationObserver(syncList).observe(list, { childList: true });
+  new MutationObserver(syncGps).observe(gps, { attributes: true, attributeFilter: ['disabled'] });
+  syncList(); syncGps();
+})();
+
+// puls wokół kropki satelity na wykresie: animacja SMIL (działa we wszystkich przeglądarkach, także WebKit na iPadzie)
+(function haloPulse() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const add = () => {
+    for (const h of document.querySelectorAll('svg.polar .halo:not([data-smil])')) {
+      h.setAttribute('data-smil', '');
+      const r0 = +h.getAttribute('r') || 8;
+      for (const [attr, values] of [['r', `${r0 * .6};${r0 * 2.1};${r0 * 2.1}`], ['opacity', '.9;0;0']]) {
+        const a = document.createElementNS(NS, 'animate');
+        a.setAttribute('attributeName', attr); a.setAttribute('values', values); a.setAttribute('keyTimes', '0;.7;1');
+        a.setAttribute('calcMode', 'spline'); a.setAttribute('keySplines', '.2 .6 .3 1;0 0 1 1');
+        a.setAttribute('dur', '1.8s'); a.setAttribute('repeatCount', 'indefinite');
+        h.appendChild(a);
+        if (a.beginElement) try { a.beginElement(); } catch (e) {}
+      }
+    }
+  };
+  new MutationObserver(add).observe($('list'), { childList: true, subtree: true });
+  add();
 })();
 
 // logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
