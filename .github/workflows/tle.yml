@@ -1,0 +1,48 @@
+# Kopia danych TLE dla SAT° Predictor: co 6 godzin pobiera dane z CelesTrak (i AMSAT) i zapisuje tle.txt
+# obok index.html. Aplikacja czyta ten plik z własnego serwera, więc użytkownicy nie pytają CelesTrak sami.
+name: Aktualizacja danych TLE
+
+on:
+  schedule:
+    - cron: '23 */6 * * *'     # 4 razy na dobę (CelesTrak aktualizuje dane co 2 h; nie częściej niż trzeba)
+  workflow_dispatch:             # ręczne uruchomienie: zakładka Actions → „Aktualizacja danych TLE” → Run workflow
+  push:
+    branches: [main]
+    paths: [index.html]          # zmiana listy satelitów w aplikacji → od razu nowa kopia
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tle-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Pobierz dane TLE
+        id: fetch
+        run: node scripts/update-tle.mjs
+        continue-on-error: true   # częściowy błąd: zapisz to, co się udało, a zadanie i tak oznacz jako błąd
+      - name: Zapisz zmiany
+        run: |
+          if [ -n "$(git status --porcelain tle.txt)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add tle.txt
+            git commit -m "Aktualizacja danych TLE"
+            git push
+          else
+            echo "Dane TLE bez zmian."
+          fi
+      - name: Zgłoś problem z pobieraniem
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "::error::Pobieranie danych TLE zakończyło się błędem – szczegóły w kroku „Pobierz dane TLE”."
+          exit 1
