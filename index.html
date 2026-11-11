@@ -260,6 +260,8 @@
     width: 14px; height: 11.65px; margin-right: 4px; vertical-align: -1.32px; }
   .livepos .earr.vert::before { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11.65 14.15'%3E%3Cpath  d='M11.648,5.327L6.931,0.610C6.321,0.001 5.327,0.000 4.717,0.610L0.000,5.328L0.707,6.035L5.324,1.418L5.324,14.152L6.324,14.152L6.324,1.417L10.941,6.035L11.648,5.328Z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11.65 14.15'%3E%3Cpath  d='M11.648,5.327L6.931,0.610C6.321,0.001 5.327,0.000 4.717,0.610L0.000,5.328L0.707,6.035L5.324,1.418L5.324,14.152L6.324,14.152L6.324,1.417L10.941,6.035L11.648,5.328Z'/%3E%3C/svg%3E"); width: 11.65px; height: 14.15px; margin-right: 4.05px; vertical-align: -1.5px; }
   .livepos .earr.vert { margin-left: -14.3px; }
+  .livepos .earr[data-d="↓"]::before { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11.65 14.15'%3E%3Cpath  d='M0.000,8.825L4.717,13.542C5.327,14.151 6.321,14.152 6.931,13.542L11.648,8.824L10.941,8.117L6.324,12.734L6.324,0.000L5.324,0.000L5.324,12.735L0.707,8.117L0.000,8.824Z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11.65 14.15'%3E%3Cpath  d='M0.000,8.825L4.717,13.542C5.327,14.151 6.321,14.152 6.931,13.542L11.648,8.824L10.941,8.117L6.324,12.734L6.324,0.000L5.324,0.000L5.324,12.735L0.707,8.117L0.000,8.824Z'/%3E%3C/svg%3E"); }   /* elewacja maleje */
+  .livepos .earr[data-d="←"]::before { transform: scaleX(-1); }                                            /* azymut maleje */
   .eta { color: var(--ink); font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-weight: 600; font-size: 18px; line-height: 23px; font-variant-numeric: tabular-nums; text-align: right; }
   .eta.on { color: var(--live); }
   .eta .ec { display: inline-block; animation: colonblink 1s linear infinite; }
@@ -2924,6 +2926,19 @@ function snapStatic() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden && !ws) connect(); });
   for (const b of document.querySelectorAll('.lang button')) b.addEventListener('click', () => setTimeout(paint, 0));
   addButtons(); connect();
+})();
+
+// strzałki przy bieżącym położeniu satelity (el ↑/↓, az →/←): kierunek idzie z tekstu do atrybutu,
+// bo w CSS strzałki są rysowane wektorowo (tekst jest ukryty) i bez tego zawsze wskazywały ↑ i →
+(function liveArrows() {
+  const mark = () => {
+    for (const a of document.querySelectorAll('.livepos .earr')) {
+      const d = a.textContent.trim();
+      if (a.dataset.d !== d) a.dataset.d = d;
+    }
+  };
+  new MutationObserver(mark).observe($('list'), { childList: true, subtree: true });
+  mark();
 })();
 
 // logo w nagłówku otwiera ekran startowy (tak samo jak pole Grid)
