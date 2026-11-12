@@ -358,16 +358,6 @@
   .fl-info:empty { display: none; }
   @media (prefers-reduced-motion: reduce) { .follow-btn, .fl-ring { transition: none; } .follow-btn.on .fl-ring::after, .follow-btn.on.waiting .fl-ring::before { animation: none; } }
 
-  /* kółko przy odliczaniu / QRV dostrajanego przelotu: stałe przed AOS, w trakcie korekty z falą – zbudowane
-     dokładnie jak kółko w przycisku Tune (pierścień + fala skalowana transformacją, więc animacja jest płynna) */
-  .row.tuned .eta { position: relative; padding-left: 18px; }
-  .row.tuned .eta::before, .row.tuned .eta::after { content: ""; position: absolute; left: 0; top: 5px; width: 12px; height: 12px;
-    border: 2px solid var(--live); border-radius: 50%; box-sizing: border-box; }
-  .row.tuned .eta::after { opacity: 0; }
-  .row.tuned.tuned-live .eta::after { animation: flwave 1.6s cubic-bezier(.2, .6, .3, 1) infinite; }
-  @media (min-width: 721px) { .row.tuned .eta::before, .row.tuned .eta::after { top: 6px; } }
-  @media (prefers-reduced-motion: reduce) { .row.tuned.tuned-live .eta::after { animation: none; } }
-
   /* zakładka „SDR++ Rigctl”: krótka instrukcja (tylko na komputerze) */
   #tab-sdr { display: none; }
   body.sdr-cap #tab-sdr { display: inline-flex; border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
@@ -2927,13 +2917,6 @@ function snapStatic() {
   // przyciski i podpowiedź obok nich
   function paint() {
     document.body.classList.toggle('sdr-cap', capable());
-    // kółko przy odliczaniu / QRV w wierszu dostrajanego przelotu
-    for (const e of rowEls.values()) {
-      const mine = !!tuning && e.p.sat.name === tuning.sat && Math.abs(e.p.start - tuning.start) < 120000;
-      const live = mine && tuning.state === 'active';
-      if (e.row.classList.contains('tuned') !== mine) e.row.classList.toggle('tuned', mine);
-      if (e.row.classList.contains('tuned-live') !== live) e.row.classList.toggle('tuned-live', live);
-    }
     document.body.classList.toggle('sdr-on', bridgeUp && rigUp);
     for (const b of document.querySelectorAll('.follow-btn')) {
       const on = isMine(b, tuning), info = b.parentElement.querySelector('.fl-info');
@@ -2974,7 +2957,6 @@ function snapStatic() {
     if (added) paint();
   };
   new MutationObserver(addButtons).observe($('list'), { childList: true, subtree: true });
-  new MutationObserver(() => { if (tuning) paint(); }).observe($('list'), { childList: true });
   matchMedia('(hover: hover) and (pointer: fine)').addEventListener('change', () => { paint(); if (capable()) { addButtons(); connect(); } else if (ws) ws.close(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden && !ws) connect(); });
   for (const b of document.querySelectorAll('.lang button')) b.addEventListener('click', () => setTimeout(paint, 0));
