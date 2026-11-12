@@ -328,7 +328,8 @@
   svg.polar .tick { r: 2.65px; fill: var(--tickbg); stroke: var(--plot); stroke-width: 2; }
   svg.polar .tlabel, svg.polar .ring, svg.polar .card { transition: opacity .45s cubic-bezier(.4, 0, .2, 1); }
   svg.polar .tlabel { fill: var(--tlabel); font-weight: 600; }
-  svg.polar .halo { fill: var(--live); fill-opacity: .3; stroke: var(--live); stroke-width: 1.2; stroke-opacity: .7; }   /* puls: animacja SMIL dodawana skryptem (CSS-owe skalowanie SVG nie działa w Safari/Chrome na iPadzie) */   /* jak przed redesignem: promień 8 j., wypełnienie i obwódka */
+  svg.polar .halo { fill: var(--live); fill-opacity: .3; stroke: var(--live); stroke-width: 1.2; stroke-opacity: .7; }
+  html:not(.smil-halo) svg.polar .halo { transform-box: fill-box; transform-origin: center; animation: pulse 1.8s cubic-bezier(.2, .6, .3, 1) infinite; }   /* Chrome/Edge/Firefox: animacja CSS */   /* puls: animacja SMIL dodawana skryptem (CSS-owe skalowanie SVG nie działa w Safari/Chrome na iPadzie) */   /* jak przed redesignem: promień 8 j., wypełnienie i obwódka */
   @keyframes pulse { 0% { transform: scale(.6); opacity: .9; } 70% { transform: scale(2.1); opacity: 0; } 100% { transform: scale(2.1); opacity: 0; } }
   svg.polar .satdot { r: 3.31px; fill: var(--live); stroke: none; }   /* pełne kółko, średnica 10 px = zewnętrzna średnica kółek AOS / MAX / LOS */
   svg.polar .satname { fill: var(--satname); font-weight: 700; font-size: 11.93px; }
@@ -341,7 +342,6 @@
     background: var(--field); color: var(--ink); cursor: pointer; font-family: var(--sans); font-weight: 600; font-size: 16px; line-height: 20px;
     transition: background-color .25s ease, border-color .25s ease, color .25s ease; }
   @media (hover: hover) { .follow-btn:not([aria-disabled="true"]):hover { border-color: var(--muted); } }
-  .follow-btn[aria-disabled="true"] { cursor: default; }
   .follow-btn.on { background: var(--live); border-color: var(--live); color: #fff; }
   @media (hover: hover) { .follow-btn.on:hover { border-color: var(--live); background: color-mix(in srgb, var(--live) 88%, #000); } }
   .fl-ring { position: relative; width: 12px; height: 12px; flex: none; color: var(--live); transition: color .25s ease; }
@@ -358,17 +358,15 @@
   .fl-info:empty { display: none; }
   @media (prefers-reduced-motion: reduce) { .follow-btn, .fl-ring { transition: none; } .follow-btn.on .fl-ring::after, .follow-btn.on.waiting .fl-ring::before { animation: none; } }
 
-  /* kółko przy odliczaniu / QRV dostrajanego przelotu: stałe przed AOS, miga w trakcie korekty Dopplera */
-  .row.tuned .eta::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: baseline;   /* jak w projekcie: 12 px, 7 px do litery Q, dół na linii pisma */
+  /* kółko przy odliczaniu / QRV dostrajanego przelotu: stałe przed AOS, w trakcie korekty z falą – zbudowane
+     dokładnie jak kółko w przycisku Tune (pierścień + fala skalowana transformacją, więc animacja jest płynna) */
+  .row.tuned .eta { position: relative; padding-left: 18px; }
+  .row.tuned .eta::before, .row.tuned .eta::after { content: ""; position: absolute; left: 0; top: 5px; width: 12px; height: 12px;
     border: 2px solid var(--live); border-radius: 50%; box-sizing: border-box; }
-  /* w trakcie korekty: dokładnie ta sama fala co w kółku przycisku Tune – pierścień rośnie od kółka do ×2,2,
-     obwódka 2 → 4,4 px, krycie .9 → 0 do 80 % cyklu 1,6 s (obrys liczony tak, żeby wymiary były identyczne) */
-  .row.tuned.tuned-live .eta::before { outline: 2px solid transparent; outline-offset: -2px; animation: qrvwave 1.6s cubic-bezier(.2, .6, .3, 1) infinite; }
-  @keyframes qrvwave {
-    0% { outline-offset: -2px; outline-width: 2px; outline-color: color-mix(in srgb, var(--live) 90%, transparent); }
-    80%, 100% { outline-offset: 2.8px; outline-width: 4.4px; outline-color: color-mix(in srgb, var(--live) 0%, transparent); }
-  }
-  @media (prefers-reduced-motion: reduce) { .row.tuned.tuned-live .eta::before { animation: none; } }
+  .row.tuned .eta::after { opacity: 0; }
+  .row.tuned.tuned-live .eta::after { animation: flwave 1.6s cubic-bezier(.2, .6, .3, 1) infinite; }
+  @media (min-width: 721px) { .row.tuned .eta::before, .row.tuned .eta::after { top: 6px; } }
+  @media (prefers-reduced-motion: reduce) { .row.tuned.tuned-live .eta::after { animation: none; } }
 
   /* zakładka „SDR++ Rigctl”: krótka instrukcja (tylko na komputerze) */
   #tab-sdr { display: none; }
@@ -661,8 +659,8 @@
     .times { margin-top: 49px; }
     dl.freq { margin-top: 20px; }
     figure.plot { grid-column: 2; grid-row: 1 / span 2; }
-    svg.polar { width: 483px; height: auto; margin: 39.5px -29px 14px -28px; }   /* górna krawędź „N” na linii górnej krawędzi „AOS” */   /* ten sam odstęp nad „N” i pod „S”, także gdy opis po lewej jest krótki */
-    figure.plot .level { right: -27px; top: 48.5px; }
+    svg.polar { width: 483px; height: auto; margin: 14px -29px 14px -28px; }   /* ten sam odstęp nad „N” i pod „S”, także gdy opis po lewej jest krótki */
+    figure.plot .level { right: -27px; top: 23px; }
     .tle { grid-column: 1; grid-row: 2; align-self: end; margin-top: 52px; padding: 18px 0 20px; }   /* zawsze przy dolnej krawędzi okienka */
 
     .more { padding-top: 20px; }
@@ -2805,6 +2803,13 @@ function snapStatic() {
 
 // puls wokół kropki satelity na wykresie: animacja SMIL (działa we wszystkich przeglądarkach, także WebKit na iPadzie)
 (function haloPulse() {
+  // SMIL tylko w WebKicie (Safari, wszystkie przeglądarki na iPadzie/iPhonie), gdzie animacja CSS na SVG nie działa.
+  // W Chrome/Edge/Firefoksie zostaje animacja CSS – SMIL powodował tam miganie kursora myszy nad stroną.
+  const ua = navigator.userAgent;
+  const webkit = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
+                 (/AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|OPR|Firefox/.test(ua));
+  if (!webkit) return;
+  document.documentElement.classList.add('smil-halo');
   const NS = 'http://www.w3.org/2000/svg';
   const add = () => {
     for (const h of document.querySelectorAll('svg.polar .halo:not([data-smil])')) {
