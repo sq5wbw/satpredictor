@@ -361,11 +361,12 @@
   /* kółko przy odliczaniu / QRV dostrajanego przelotu: stałe przed AOS, miga w trakcie korekty Dopplera */
   .row.tuned .eta::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: baseline;   /* jak w projekcie: 12 px, 7 px do litery Q, dół na linii pisma */
     border: 2px solid var(--live); border-radius: 50%; box-sizing: border-box; }
-  /* w trakcie korekty: ta sama fala co w kółku przycisku Tune (od kółka, 1,6 s, ×2,2, wygasa) */
-  .row.tuned.tuned-live .eta::before { outline: 2px solid transparent; animation: qrvwave 1.6s cubic-bezier(.2, .6, .3, 1) infinite; }
+  /* w trakcie korekty: dokładnie ta sama fala co w kółku przycisku Tune – pierścień rośnie od kółka do ×2,2,
+     obwódka 2 → 4,4 px, krycie .9 → 0 do 80 % cyklu 1,6 s (obrys liczony tak, żeby wymiary były identyczne) */
+  .row.tuned.tuned-live .eta::before { outline: 2px solid transparent; outline-offset: -2px; animation: qrvwave 1.6s cubic-bezier(.2, .6, .3, 1) infinite; }
   @keyframes qrvwave {
-    0% { outline-offset: 0; outline-width: 2px; outline-color: color-mix(in srgb, var(--live) 90%, transparent); }
-    80%, 100% { outline-offset: 7px; outline-width: 4px; outline-color: color-mix(in srgb, var(--live) 0%, transparent); }
+    0% { outline-offset: -2px; outline-width: 2px; outline-color: color-mix(in srgb, var(--live) 90%, transparent); }
+    80%, 100% { outline-offset: 2.8px; outline-width: 4.4px; outline-color: color-mix(in srgb, var(--live) 0%, transparent); }
   }
   @media (prefers-reduced-motion: reduce) { .row.tuned.tuned-live .eta::before { animation: none; } }
 
@@ -660,8 +661,8 @@
     .times { margin-top: 49px; }
     dl.freq { margin-top: 20px; }
     figure.plot { grid-column: 2; grid-row: 1 / span 2; }
-    svg.polar { width: 483px; height: auto; margin: 14px -29px 14px -28px; }   /* ten sam odstęp nad „N” i pod „S”, także gdy opis po lewej jest krótki */
-    figure.plot .level { right: -27px; top: 23px; }
+    svg.polar { width: 483px; height: auto; margin: 39.5px -29px 14px -28px; }   /* górna krawędź „N” na linii górnej krawędzi „AOS” */   /* ten sam odstęp nad „N” i pod „S”, także gdy opis po lewej jest krótki */
+    figure.plot .level { right: -27px; top: 48.5px; }
     .tle { grid-column: 1; grid-row: 2; align-self: end; margin-top: 52px; padding: 18px 0 20px; }   /* zawsze przy dolnej krawędzi okienka */
 
     .more { padding-top: 20px; }
