@@ -333,26 +333,45 @@
   svg.polar .satdot { r: 3.31px; fill: var(--live); stroke: none; }   /* pełne kółko, średnica 10 px = zewnętrzna średnica kółek AOS / MAX / LOS */
   svg.polar .satname { fill: var(--satname); font-weight: 700; font-size: 11.93px; }
 
-  /* ---------- śledzenie w SDR++ (tylko komputer, gdy mostek działa) ---------- */
-  .follow { display: grid; grid-template-rows: 0fr; opacity: 0; margin-top: 0;
-    transition: grid-template-rows .45s cubic-bezier(.2, .7, .2, 1), opacity .35s ease, margin-top .45s cubic-bezier(.2, .7, .2, 1); }
-  .follow > div { overflow: hidden; min-height: 0; padding: 0 2px 2px; margin: 0 -2px -2px; }
-  body.sdr-on .follow { grid-template-rows: 1fr; opacity: 1; margin-top: 26px; }
+  /* ---------- dostrajanie SDR++ (tylko komputer) ---------- */
+  .follow { display: none; margin-top: 26px; }
+  body.sdr-cap .follow { display: block; }
+  .follow > div { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 24px; }
   .follow-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border: 2px solid var(--rule); border-radius: 4px;
     background: var(--field); color: var(--ink); cursor: pointer; font-family: var(--sans); font-weight: 600; font-size: 16px; line-height: 20px;
     transition: background-color .25s ease, border-color .25s ease, color .25s ease; }
-  @media (hover: hover) { .follow-btn:hover { border-color: var(--muted); } }
+  @media (hover: hover) { .follow-btn:not([aria-disabled="true"]):hover { border-color: var(--muted); } }
+  .follow-btn[aria-disabled="true"] { cursor: default; }
   .follow-btn.on { background: var(--live); border-color: var(--live); color: #fff; }
   @media (hover: hover) { .follow-btn.on:hover { border-color: var(--live); background: color-mix(in srgb, var(--live) 88%, #000); } }
   .fl-ring { position: relative; width: 12px; height: 12px; flex: none; color: var(--live); transition: color .25s ease; }
   .fl-ring::before, .fl-ring::after { content: ""; position: absolute; inset: 0; border: 2px solid currentColor; border-radius: 50%; }
   .fl-ring::after { opacity: 0; }
   .follow-btn.on .fl-ring { color: #fff; }
-  /* śledzenie włączone: kółko „nadaje” – fala rozchodzi się z niego co 1,6 s */
+  /* dostrajanie trwa: z kółka rozchodzi się fala co 1,6 s; przed AOS kółko spokojnie „oddycha” */
   .follow-btn.on .fl-ring::after { animation: flwave 1.6s cubic-bezier(.2, .6, .3, 1) infinite; }
+  .follow-btn.on.waiting .fl-ring::after { animation: none; }
+  .follow-btn.on.waiting .fl-ring::before { animation: flbreath 2.4s ease-in-out infinite; }
   @keyframes flwave { 0% { opacity: .9; transform: scale(1); } 80%, 100% { opacity: 0; transform: scale(2.2); } }
-  @media (prefers-reduced-motion: reduce) { .follow, .follow-btn, .fl-ring { transition: none; } .follow-btn.on .fl-ring::after { animation: none; } }
-  @media (max-width: 720px) { .follow { display: none; } }
+  @keyframes flbreath { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  .fl-info { color: var(--muted); font-size: 16px; line-height: 20px; }
+  .fl-info:empty { display: none; }
+  @media (prefers-reduced-motion: reduce) { .follow-btn, .fl-ring { transition: none; } .follow-btn.on .fl-ring::after, .follow-btn.on.waiting .fl-ring::before { animation: none; } }
+
+  /* zakładka „SDR++ Rigctl”: krótka instrukcja (tylko na komputerze) */
+  #tab-sdr { display: none; }
+  body.sdr-cap #tab-sdr { display: inline-flex; border-left: 1px solid var(--rule); }
+  #pan-sdr { padding-top: 17px; padding-bottom: 25px; }
+  .sdr-intro { margin: 0; max-width: 640px; color: var(--muted); font-size: 16px; line-height: 24px; }
+  .sdr-intro b, .sdr-steps b { color: var(--ink); font-weight: 600; }
+  .sdr-steps { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 18px; max-width: 640px; }
+  .sdr-steps li { display: grid; grid-template-columns: 40px 1fr; align-items: start; }
+  .sdr-n { font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-weight: 600; font-size: 16px; line-height: 24px; color: var(--live); }
+  .sdr-steps p { margin: 0; color: var(--muted); font-size: 16px; line-height: 24px; }
+  .sdr-cmd { margin: 10px 0 12px; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border: 2px solid var(--rule); border-radius: 4px; background: var(--field); }
+  .sdr-cmd code { font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-size: 16px; color: var(--ink); user-select: all; -webkit-user-select: all; }
+  .sdr-steps li > div { display: flex; flex-direction: column; align-items: flex-start; }
+  .sdr-note { margin: 22px 0 0; max-width: 640px; color: var(--muted); font-size: 14px; line-height: 20px; }
 
   /* ---------- „pokaż kolejne” ---------- */
   .more { display: flex; flex-direction: column; align-items: center; }
@@ -639,6 +658,8 @@
     .ticker { margin: 26px -4px 0; }
     .fbox { margin-top: 24px; }
     #tab-tle { flex: none; width: 160px; padding-left: 20px; }
+    body.sdr-cap #tab-tle { width: auto; padding: 0 20px; }        /* trzy zakładki: każda dopasowana do treści */
+    body.sdr-cap .ftabs.has-open #tab-tle[aria-expanded="false"] { justify-content: center; }
     .fpanel { padding: 19px 19px 0; }
     .satgrid { columns: 4; column-gap: 16px; }
     #pan-tle { padding-top: 17px; }
@@ -648,6 +669,7 @@
     .satbulk { padding: 9.5px 0 24px; }
     .copy { margin-top: 26px; margin-bottom: 24px; }
   }
+  @media (max-width: 720px) { body.sdr-cap #tab-sdr { display: none; } }   /* wąskie okno: trzy zakładki się nie mieszczą; instrukcja w szerszym oknie */
 </style>
 </head>
 <body>
@@ -683,6 +705,7 @@
     <div class="ftabs" role="group">
       <button class="ftab" id="tab-sats" aria-expanded="false" aria-controls="pan-sats"><span data-i18n="tabSats"></span><span class="ftab-n" id="satcount"></span><span class="chev i-down" aria-hidden="true"></span></button>
       <button class="ftab" id="tab-tle" aria-expanded="false" aria-controls="pan-tle"><span data-i18n="tabTle"></span><span class="chev i-down" aria-hidden="true"></span></button>
+      <button class="ftab" id="tab-sdr" aria-expanded="false" aria-controls="pan-sdr"><span data-i18n="tabSdr"></span><span class="chev i-down" aria-hidden="true"></span></button>
     </div>
     <div class="reveal" id="fpanes"><div>
       <div class="fpanel" id="pan-tle" hidden>
@@ -701,6 +724,17 @@
             <li><span data-i18n="failStep2"></span> <input type="file" id="tlefile" multiple accept=".txt,.tle,text/plain"></li>
           </ol>
         </div>
+      </div>
+      <div class="fpanel" id="pan-sdr" hidden>
+        <p class="sdr-intro" data-i18n-html="sdrIntro"></p>
+        <ol class="sdr-steps">
+          <li><span class="sdr-n">01</span><p data-i18n-html="sdrS1"></p></li>
+          <li><span class="sdr-n">02</span><div><p data-i18n-html="sdrS2"></p>
+            <div class="sdr-cmd"><code>python3 sdrpp-bridge.py</code></div>
+            <a class="lnk3" href="sdrpp-bridge.py" download="sdrpp-bridge.py" data-i18n="sdrDl"></a></div></li>
+          <li><span class="sdr-n">03</span><p data-i18n-html="sdrS3"></p></li>
+        </ol>
+        <p class="sdr-note" data-i18n="sdrNote"></p>
       </div>
       <div class="fpanel" id="pan-sats" hidden>
         <div class="satgrid" id="satgrid" role="group" data-i18n-aria="satsAria"></div>
@@ -1019,6 +1053,14 @@ const I18N = {
     tkNow: ['ISS jest teraz nad Tobą!', 'Maks. el {el}° o {peak} / LOS {los}'], tkToday: ['Najbliższy przelot ISS', 'o {t} / maks. el {el}°'],
     tkTomorrow: ['ISS wróci jutro', 'o {t} / maks. el {el}°'], tkLater: ['ISS wróci', '{day} o {t} / maks. el {el}°'],
     tkFacts: [['ISS okrąża Ziemię', '16 razy na dobę'], ['ISS leci', 'z prędkością około 28\u202f000 km/h'], ['ISS pokonuje', 'około 8 km w każdej sekundzie']],
+    tabSdr: 'SDR++ Rigctl',
+    sdrIntro: 'Przycisk <b>Dostrój</b> w rozwiniętym przelocie ustawia SDR++ na częstotliwość satelity i przez cały przelot koryguje efekt Dopplera. Przy transponderach liniowych kliknij QSO na wodospadzie SDR++ – SAT° Predictor utrzyma tę stację.',
+    sdrS1: 'W SDR++ otwórz <b>Module Manager</b>, dodaj moduł <b>rigctl_server</b>, w jego panelu zaznacz <b>Tuning</b> i kliknij <b>Start</b> (port 4532).',
+    sdrS2: 'Pobierz mostek i uruchom go w terminalu (Python 3.8+, bez dodatkowych bibliotek):',
+    sdrS3: 'Rozwiń przelot i kliknij <b>Dostrój</b>. Korekta Dopplera zaczyna się o AOS i kończy o LOS; wszystkie komunikaty pokazuje terminal.',
+    sdrDl: 'Pobierz sdrpp-bridge.py',
+    sdrNote: 'Działa na komputerze w Chrome, Edge i Firefoksie; przeglądarka może raz zapytać o dostęp do urządzeń w sieci lokalnej.',
+    sdrNeedBridge: 'Uruchom SDRPP-Bridge.', sdrNeedRig: 'Włącz serwer Rigctl w SDR++.', sdrWaitAos: 'Korekta Dopplera od AOS o {t}.',
     tabTle: 'Dane TLE', tabSats: 'Satelity', satsAll: 'Zaznacz wszystkie', satsNone: 'Odznacz wszystkie', satsAria: 'Obserwowane satelity',
     tleRetrying: 'Nie udało się pobrać danych orbitalnych – serwery nie odpowiadają. Ponawiam automatycznie; możesz też wczytać plik TLE na dole strony.',
     minEl: 'min el', minElAria: 'Minimalna elewacja przelotu', showMore: n => `Pokaż kolejne ${n} ${plPasses(n)}`, showMoreLbl: 'Pokaż kolejne', passUnit: n => plPasses(n), shownOf: (a, b) => `${a} z ${b}`,
@@ -1053,6 +1095,14 @@ const I18N = {
     tkNow: ['ISS is above your sky now!', 'Max el {el}° at {peak} / LOS {los}'], tkToday: ['Next ISS pass', 'at {t} / max el {el}°'],
     tkTomorrow: ['ISS will be back tomorrow', 'at {t} / max el {el}°'], tkLater: ['ISS will be back', '{day} at {t} / max el {el}°'],
     tkFacts: [['ISS circles the Earth', '16 times a day'], ['ISS flies', 'about 28\u202f000 km/h'], ['ISS travels', 'about 8 km every second']],
+    tabSdr: 'SDR++ Rigctl',
+    sdrIntro: '<b>Tune</b> in an expanded pass sets SDR++ to the satellite frequency and corrects the Doppler shift for the whole pass. On linear transponders click a QSO on the SDR++ waterfall – SAT° Predictor will hold that station.',
+    sdrS1: 'In SDR++ open <b>Module Manager</b>, add the <b>rigctl_server</b> module, tick <b>Tuning</b> in its panel and click <b>Start</b> (port 4532).',
+    sdrS2: 'Download the bridge and run it in a terminal (Python 3.8+, no extra packages):',
+    sdrS3: 'Expand a pass and click <b>Tune</b>. Doppler correction starts at AOS and stops at LOS; all messages are shown in the terminal.',
+    sdrDl: 'Download sdrpp-bridge.py',
+    sdrNote: 'Works on desktop in Chrome, Edge and Firefox; the browser may ask once for access to devices on your local network.',
+    sdrNeedBridge: 'SDRPP-Bridge must be running.', sdrNeedRig: 'Start the Rigctl server in SDR++.', sdrWaitAos: 'Doppler correction starts at AOS {t}.',
     tabTle: 'TLE data', tabSats: 'Satellites', satsAll: 'Select all', satsNone: 'Clear all', satsAria: 'Watched satellites',
     tleRetrying: 'Could not download orbital data – the servers are not responding. Retrying automatically; you can also load a TLE file at the bottom of the page.',
     minEl: 'min el', minElAria: 'Minimum pass elevation', showMore: n => `Show next ${n} ${n === 1 ? 'pass' : 'passes'}`, showMoreLbl: 'Show next', passUnit: n => n === 1 ? 'pass' : 'passes', shownOf: (a, b) => `${a} of ${b}`,
@@ -2185,7 +2235,7 @@ function setPanel(name) {
   const box = $('fpanes'), inner = box.firstElementChild;
   const wasOpen = box.classList.contains('open');
   const h0 = inner.getBoundingClientRect().height;
-  for (const [id, pan] of [['tab-tle', 'pan-tle'], ['tab-sats', 'pan-sats']]) {
+  for (const [id, pan] of [['tab-tle', 'pan-tle'], ['tab-sats', 'pan-sats'], ['tab-sdr', 'pan-sdr']]) {
     const on = pan === name;
     if (name) $(pan).hidden = !on;            // przy zamykaniu zostaje ostatnia zawartość (zwija się razem z panelem)
     $(id).setAttribute('aria-expanded', String(on));
@@ -2528,13 +2578,14 @@ function snapStatic() {
       window.open(a.href, '_blank', 'noopener');
     }
   });
-  setPanel(['pan-tle', 'pan-sats'].includes(store.get('fpanel')) ? store.get('fpanel') : '');
+  setPanel(['pan-tle', 'pan-sats', 'pan-sdr'].includes(store.get('fpanel')) ? store.get('fpanel') : '');
   // pasek przesuwa się tylko, gdy jest widoczny na ekranie (oszczędność baterii)
   new IntersectionObserver(es => { ticker.visible = es[0].isIntersecting; if (ticker.visible) updateTicker(); }).observe($('ticker'));
   document.addEventListener('visibilitychange', () => { if (!document.hidden) updateTicker(); });
   const isOpen = id => $('fpanes').classList.contains('open') && !$(id).hidden;
   $('tab-tle').addEventListener('click', () => setPanel(isOpen('pan-tle') ? '' : 'pan-tle'));
   $('tab-sats').addEventListener('click', () => setPanel(isOpen('pan-sats') ? '' : 'pan-sats'));
+  $('tab-sdr').addEventListener('click', () => setPanel(isOpen('pan-sdr') ? '' : 'pan-sdr'));
   $('satgrid').addEventListener('click', e => {
     const b = e.target.closest('.satchip'); if (!b) return;
     const n = +b.dataset.norad;
@@ -2793,20 +2844,19 @@ function snapStatic() {
   sl.addEventListener('pointerup', end); sl.addEventListener('pointercancel', end);
 })();
 
-// ---------- śledzenie w SDR++ (korekta Dopplera) – tylko komputer ----------
-// Strona łączy się z mostkiem (bridge/sdrpp-bridge.py) na ws://127.0.0.1:4533, a mostek z serwerem Rigctl
-// w SDR++ (port 4532). Przycisk „Follow” pojawia się tylko wtedy, gdy mostek i SDR++ są gotowe.
-// Satelita FM: stała częstotliwość. Transponder liniowy: start na środku pasma, potem kliknięcie QSO na
-// wodospadzie SDR++ – aplikacja wykrywa przestrojenie, odejmuje Dopplera i trzyma tę stację przez cały przelot.
-(function sdrFollow() {
-  const BRIDGE = 'ws://127.0.0.1:4533', C = 299792.458, TICK = 500, TOL = 30;
-  const desktop = matchMedia('(min-width: 721px) and (hover: hover) and (pointer: fine)');
-  const L = () => lang === 'pl' ? { follow: 'Dostrój', following: 'Dostrajam', hint: 'Dostrajanie SDR++ z korektą Dopplera (aktywne w trakcie przelotu)' }
-                                : { follow: 'Tune', following: 'Tuning', hint: 'Tune SDR++ with Doppler correction (active during the pass)' };
-  let ws = null, retryT = 0, ready = false, seq = 0, follow = null;
-  const pending = new Map();
+// ---------- dostrajanie SDR++ (korekta Dopplera) – tylko komputer ----------
+// Strona łączy się z mostkiem sdrpp-bridge.py (ws://127.0.0.1:4533), a mostek z serwerem Rigctl SDR++ (port 4532).
+// Po kliknięciu „Tune” strona liczy z góry przebieg prędkości radialnej satelity dla całego przelotu
+// i wysyła go mostkowi – dalej korektę prowadzi mostek, więc działa też przy zakładce w tle czy zmniejszonym oknie.
+// Przed AOS mostek czeka, o LOS kończy. Transponder liniowy: kliknięcie QSO na wodospadzie SDR++ = nowa stacja.
+(function sdrTune() {
+  const BRIDGE = 'ws://127.0.0.1:4533', TOL = 30;
+  // komputer = mysz / gładzik z kursorem; iPad z klawiaturą też to zgłasza, więc wykluczamy go osobno
+  const isIPad = /Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1;
+  const capable = () => matchMedia('(hover: hover) and (pointer: fine)').matches && !isIPad && !/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+  const L = () => lang === 'pl' ? { tune: 'Dostrój', tuning: 'Dostrajam' } : { tune: 'Tune', tuning: 'Tuning' };
+  let ws = null, retryT = 0, bridgeUp = false, rigUp = false, tuning = null;   // tuning: { sat, start, end, state }
 
-  // częstotliwość odbioru z opisu: „145.960”, „435.670-610 USB”, „436.775” → Hz; zakres = transponder liniowy
   const parseDown = txt => {
     const m = String(txt || '').match(/(\d{2,4})\.(\d+)(?:\s*-\s*(\d+(?:\.\d+)?))?/);
     if (!m) return null;
@@ -2815,91 +2865,69 @@ function snapStatic() {
     const b = m[3].includes('.') ? parseFloat(m[3]) : parseFloat(`${m[1]}.${m[2].slice(0, m[2].length - m[3].length)}${m[3]}`);
     return { f: Math.round((a + b) / 2 * 1e6), linear: true };
   };
-  // prędkość radialna satelity względem stacji [km/s] (dodatnia = oddala się)
   const rangeAt = (satrec, t) => {
     const pv = satellite.propagate(satrec, new Date(t));
     if (!pv || !pv.position || typeof pv.position === 'boolean') return null;
     return satellite.ecfToLookAngles(observer, satellite.eciToEcf(pv.position, satellite.gstime(new Date(t)))).rangeSat;
   };
-  const rangeRate = (satrec, t) => { const a = rangeAt(satrec, t - 500), b = rangeAt(satrec, t + 500); return a == null || b == null ? 0 : b - a; };
-  const doppler = (f0, satrec) => Math.round(f0 * (1 - rangeRate(satrec, Date.now()) / C));
+  // prędkość radialna [km/s] co 1 s od AOS do LOS (dodatnia = satelita się oddala)
+  const samples = (satrec, start, end) => {
+    const out = [];
+    for (let t = Math.floor(start / 1000) * 1000; t <= end + 1000; t += 1000) {
+      const a = rangeAt(satrec, t - 500), b = rangeAt(satrec, t + 500);
+      if (a != null && b != null) out.push([t, +(b - a).toFixed(5)]);
+    }
+    return out;
+  };
 
-  const send = (obj, cb) => {
-    if (!ws || ws.readyState !== 1) return false;
-    if (cb) { obj.id = ++seq; pending.set(obj.id, cb); }
-    ws.send(JSON.stringify(obj));
-    return true;
-  };
-  const setReady = on => {
-    if (ready === on) return;
-    ready = on;
-    document.body.classList.toggle('sdr-on', on);
-    if (!on) stop(true);
-  };
+  const send = obj => { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(obj)); return true; } return false; };
   const connect = () => {
     clearTimeout(retryT);
-    if (!desktop.matches || ws) return;
+    if (ws || !capable()) return;
     try { ws = new WebSocket(BRIDGE); } catch (e) { ws = null; retryT = setTimeout(connect, 5000); return; }
-    ws.onopen = () => send({ type: 'hello', app: 'SAT Predictor' });
+    ws.onopen = () => { bridgeUp = true; send({ type: 'hello', app: 'SAT Predictor', version: 2 }); paint(); };
     ws.onmessage = ev => {
       let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
-      if (m.type === 'status') { setReady(!!m.rig); return; }
-      const cb = m.id && pending.get(m.id);
-      if (cb) { pending.delete(m.id); cb(m); }
+      if (m.type === 'status') { rigUp = !!m.rig; if ('tuning' in m) tuning = m.tuning || null; paint(); }
+      else if (m.type === 'tuning') { tuning = m.tuning || null; paint(); }
     };
-    ws.onclose = () => { ws = null; pending.clear(); setReady(false); if (desktop.matches) retryT = setTimeout(connect, document.hidden ? 15000 : 5000); };
+    ws.onclose = () => { ws = null; bridgeUp = false; rigUp = false; tuning = null; paint(); retryT = setTimeout(connect, document.hidden ? 15000 : 5000); };
     ws.onerror = () => {};
   };
 
-  const tick = () => {
-    if (!follow) return;
-    if (Date.now() >= follow.end) { stop(); return; }      // satelita zaszedł: koniec dostrajania
-    if (follow.busy) return;
-    const f = follow, target = doppler(f.f0, f.satrec), dop = target - f.f0;
-    f.busy = true;
-    const done = () => { f.busy = false; };
-    if (f.last == null) {
-      send({ type: 'set', freq: target, dop }, m => { done(); if (m.type === 'set') f.last = m.freq; });
-    } else {
-      send({ type: 'track', expect: f.last, target, tol: TOL, dop }, m => {
-        done();
-        if (m.type === 'set') f.last = m.freq;
-        else if (m.type === 'retuned') {                // kliknięcie na wodospadzie: nowa stacja, przelicz na satelitę
-          f.f0 = Math.round(m.freq / (1 - rangeRate(f.satrec, Date.now()) / C));
-          f.last = m.freq;
-          send({ type: 'retune', f0: f.f0 });
-        }
-      }) || done();
-    }
+  const tune = p => {
+    const r = satrecs.find(x => x.sat === p.sat), d = parseDown(p.sat.down);
+    if (!r || !d || !observer) return false;
+    tuning = { sat: p.sat.name, start: p.start, end: p.end, state: Date.now() < p.start ? 'waiting' : 'active' };
+    send({ type: 'tune', sat: p.sat.name, f0: d.f, linear: d.linear, start: p.start, end: p.end,
+           aos: hhmm(p.start), los: hhmm(p.end), samples: samples(r.satrec, p.start, p.end) });
+    paint();
+    return true;
   };
-  const start = (sat, end) => {
-    const r = satrecs.find(x => x.sat === sat), d = parseDown(sat.down);
-    if (!r || !d || !observer) return;
-    stop(true);
-    follow = { sat, end, satrec: r.satrec, f0: d.f, last: null, busy: false, timer: setInterval(tick, TICK) };
-    send({ type: 'follow', sat: sat.name, f0: d.f, linear: d.linear });
-    tick(); paint();
-  };
-  function stop(silent) {
-    if (!follow) return;
-    clearInterval(follow.timer);
-    if (!silent || ready) send({ type: 'unfollow' });
-    follow = null; paint();
-  }
+  const untune = () => { send({ type: 'untune' }); tuning = null; paint(); };
+  const isMine = (b, t) => !!t && t.sat === b.dataset.sat && Math.abs(t.start - +b.dataset.start) < 120000;
 
-  // przyciski w rozwiniętych przelotach
-  const rowOf = det => { for (const e of rowEls.values()) if (e.det === det) return e; return null; };
+  // przyciski i podpowiedź obok nich
   function paint() {
+    document.body.classList.toggle('sdr-cap', capable());
+    document.body.classList.toggle('sdr-on', bridgeUp && rigUp);
     for (const b of document.querySelectorAll('.follow-btn')) {
-      const on = !!follow && follow.sat.name === b.dataset.sat;
-      const txt = `${on ? L().following : L().follow} ${b.dataset.sat}`, t = b.querySelector('.fl-t');
+      const on = isMine(b, tuning), info = b.parentElement.querySelector('.fl-info');
+      const txt = `${on ? L().tuning : L().tune} ${b.dataset.sat}`, t = b.querySelector('.fl-t');
+      if (t.textContent !== txt) t.textContent = txt;
       if (b.classList.contains('on') !== on) b.classList.toggle('on', on);
+      const waiting = on && tuning.state === 'waiting';
+      if (b.classList.contains('waiting') !== waiting) b.classList.toggle('waiting', waiting);
       if (b.getAttribute('aria-pressed') !== String(on)) b.setAttribute('aria-pressed', String(on));
-      if (t.textContent !== txt) t.textContent = txt;          // tylko przy zmianie – obserwator listy nie zapętli się
+      const msg = !bridgeUp ? T('sdrNeedBridge') : !rigUp ? T('sdrNeedRig') : waiting ? T('sdrWaitAos').replace('{t}', hhmm(+b.dataset.start)) : '';
+      if (info.textContent !== msg) info.textContent = msg;
+      const dis = !(bridgeUp && rigUp);
+      if (b.getAttribute('aria-disabled') !== String(dis)) b.setAttribute('aria-disabled', String(dis));
     }
   }
+  const rowOf = det => { for (const e of rowEls.values()) if (e.det === det) return e; return null; };
   const addButtons = () => {
-    if (!desktop.matches) return;
+    if (!capable()) return;
     let added = false;
     for (const det of document.querySelectorAll('.det')) {
       const col = det.querySelector('.det-grid > div:first-child');
@@ -2907,14 +2935,12 @@ function snapStatic() {
       const e = rowOf(det); if (!e || !parseDown(e.p.sat.down)) continue;
       const wrap = document.createElement('div');
       wrap.className = 'follow';
-      wrap.innerHTML = `<div><button type="button" class="follow-btn" data-sat="${esc(e.p.sat.name)}" title="${esc(L().hint)}"><span class="fl-t"></span><span class="fl-ring" aria-hidden="true"></span></button></div>`;
+      wrap.innerHTML = `<div><button type="button" class="follow-btn" data-sat="${esc(e.p.sat.name)}" data-start="${e.p.start}"><span class="fl-t"></span><span class="fl-ring" aria-hidden="true"></span></button><span class="fl-info" aria-live="polite"></span></div>`;
       wrap.querySelector('button').addEventListener('click', ev => {
         ev.stopPropagation();
-        if (follow && follow.sat === e.p.sat) { stop(); return; }
-        // dostrajanie tylko w trakcie przelotu (satelita nad horyzontem); wcześniej i później przycisk tylko drga
-        const now = Date.now();
-        if (now < e.p.start || now >= e.p.end) { nope(ev.currentTarget); return; }
-        start(e.p.sat, e.p.end);
+        const b = ev.currentTarget;
+        if (isMine(b, tuning)) { untune(); return; }
+        if (!(bridgeUp && rigUp) || Date.now() >= e.p.end || !tune(e.p)) nope(b);   // bez mostka / po LOS: tylko drgnięcie
       });
       col.querySelector('dl.freq').after(wrap);
       added = true;
@@ -2922,10 +2948,11 @@ function snapStatic() {
     if (added) paint();
   };
   new MutationObserver(addButtons).observe($('list'), { childList: true, subtree: true });
-  desktop.addEventListener('change', () => { if (desktop.matches) { addButtons(); connect(); } else { stop(); if (ws) ws.close(); } });
+  matchMedia('(hover: hover) and (pointer: fine)').addEventListener('change', () => { paint(); if (capable()) { addButtons(); connect(); } else if (ws) ws.close(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden && !ws) connect(); });
   for (const b of document.querySelectorAll('.lang button')) b.addEventListener('click', () => setTimeout(paint, 0));
-  addButtons(); connect();
+  setInterval(() => { if (tuning) paint(); }, 15000);      // np. zmiana „czekam na AOS” → „dostrajam”
+  paint(); addButtons(); connect();
 })();
 
 // strzałki przy bieżącym położeniu satelity (el ↑/↓, az →/←): kierunek idzie z tekstu do atrybutu,
