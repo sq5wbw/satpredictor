@@ -361,8 +361,12 @@
   /* kółko przy odliczaniu / QRV dostrajanego przelotu: stałe przed AOS, miga w trakcie korekty Dopplera */
   .row.tuned .eta::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: baseline;   /* jak w projekcie: 12 px, 7 px do litery Q, dół na linii pisma */
     border: 2px solid var(--live); border-radius: 50%; box-sizing: border-box; }
-  .row.tuned.tuned-live .eta::before { animation: tunedblink 1s steps(1, end) infinite; }
-  @keyframes tunedblink { 0%, 60% { opacity: 1; } 60.01%, 100% { opacity: 0; } }
+  /* w trakcie korekty: ta sama fala co w kółku przycisku Tune (od kółka, 1,6 s, ×2,2, wygasa) */
+  .row.tuned.tuned-live .eta::before { outline: 2px solid transparent; animation: qrvwave 1.6s cubic-bezier(.2, .6, .3, 1) infinite; }
+  @keyframes qrvwave {
+    0% { outline-offset: 0; outline-width: 2px; outline-color: color-mix(in srgb, var(--live) 90%, transparent); }
+    80%, 100% { outline-offset: 7px; outline-width: 4px; outline-color: color-mix(in srgb, var(--live) 0%, transparent); }
+  }
   @media (prefers-reduced-motion: reduce) { .row.tuned.tuned-live .eta::before { animation: none; } }
 
   /* zakładka „SDR++ Rigctl”: krótka instrukcja (tylko na komputerze) */
