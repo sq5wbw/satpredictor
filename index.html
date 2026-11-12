@@ -239,7 +239,7 @@
     animation: rowpulse 1.2s ease-in-out infinite alternate; animation-delay: inherit; }
   @keyframes rowpulse { from { opacity: 1; } to { opacity: 0; } }
   @property --left { syntax: '<number>'; inherits: true; initial-value: 1; }
-  .row.on { transition: background-color .2s ease; }   /* pasek postępu przesuwa się skokowo co 1 s (ułamek piksela) – bez ciągłej animacji pod kursorem */
+  .row.on { transition: background-color .2s ease, --left 1s linear; }
   .row.on::before { content: ""; z-index: 2; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 4px; border-radius: 2px;
     background: linear-gradient(to top, var(--live) calc(var(--left, 1) * 100%), var(--pastel) calc(var(--left, 1) * 100%)); }
 
@@ -265,11 +265,9 @@
   .eta { color: var(--ink); font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-weight: 600; font-size: 18px; line-height: 23px; font-variant-numeric: tabular-nums; text-align: right; }
   .eta.on { color: var(--live); }
   .eta .ec { display: inline-block; animation: colonblink 1s linear infinite; }
-  /* Chrome na Macu potrafi przy nieruchomej myszy pokazywać strzałkę zamiast rączki, gdy pod kursorem
-     cały czas coś się animuje – w wierszu pod kursorem puls i miganie dwukropka zatrzymują się */
+  /* w wierszu pod kursorem puls tła zatrzymuje się w połowie jasności */
   @media (hover: hover) {
-    .row:hover .eta .ec, .row.on[aria-expanded="false"]:hover::after { animation-play-state: paused; }
-    .row.on[aria-expanded="false"]:hover::after { opacity: .5; }
+    .row.on[aria-expanded="false"]:hover::after { animation-play-state: paused; opacity: .5; }
   }
   @keyframes colonblink { 0%, 45% { opacity: 1; } 50%, 95% { opacity: 0; } 100% { opacity: 1; } }
   .info { color: var(--muted); font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-size: 14px; line-height: 20px; white-space: nowrap; }
