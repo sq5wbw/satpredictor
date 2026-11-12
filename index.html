@@ -354,13 +354,20 @@
   .follow-btn.on.waiting .fl-ring::before { animation: flbreath 2.4s ease-in-out infinite; }
   @keyframes flwave { 0% { opacity: .9; transform: scale(1); } 80%, 100% { opacity: 0; transform: scale(2.2); } }
   @keyframes flbreath { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-  .fl-info { color: var(--muted); font-size: 16px; line-height: 20px; }
+  .fl-info { color: var(--muted); font-size: 14px; line-height: 20px; }   /* jak linia „TLE: …, data age …” */
   .fl-info:empty { display: none; }
   @media (prefers-reduced-motion: reduce) { .follow-btn, .fl-ring { transition: none; } .follow-btn.on .fl-ring::after, .follow-btn.on.waiting .fl-ring::before { animation: none; } }
 
+  /* kółko przy odliczaniu / QRV dostrajanego przelotu: stałe przed AOS, miga w trakcie korekty Dopplera */
+  .row.tuned .eta::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: baseline;   /* jak w projekcie: 12 px, 7 px do litery Q, dół na linii pisma */
+    border: 2px solid var(--live); border-radius: 50%; box-sizing: border-box; }
+  .row.tuned.tuned-live .eta::before { animation: tunedblink 1s steps(1, end) infinite; }
+  @keyframes tunedblink { 0%, 60% { opacity: 1; } 60.01%, 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .row.tuned.tuned-live .eta::before { animation: none; } }
+
   /* zakładka „SDR++ Rigctl”: krótka instrukcja (tylko na komputerze) */
   #tab-sdr { display: none; }
-  body.sdr-cap #tab-sdr { display: inline-flex; border-left: 1px solid var(--rule); }
+  body.sdr-cap #tab-sdr { display: inline-flex; border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
   #pan-sdr { padding-top: 17px; padding-bottom: 25px; }
   .sdr-intro { margin: 0; max-width: 640px; color: var(--muted); font-size: 16px; line-height: 24px; }
   .sdr-intro b, .sdr-steps b { color: var(--ink); font-weight: 600; }
@@ -1057,10 +1064,10 @@ const I18N = {
     sdrIntro: 'Przycisk <b>Dostrój</b> w rozwiniętym przelocie ustawia SDR++ na częstotliwość satelity i przez cały przelot koryguje efekt Dopplera. Przy transponderach liniowych kliknij QSO na wodospadzie SDR++ – SAT° Predictor utrzyma tę stację.',
     sdrS1: 'W SDR++ otwórz <b>Module Manager</b>, dodaj moduł <b>rigctl_server</b>, w jego panelu zaznacz <b>Tuning</b> i kliknij <b>Start</b> (port 4532).',
     sdrS2: 'Pobierz mostek i uruchom go w terminalu (Python 3.8+, bez dodatkowych bibliotek):',
-    sdrS3: 'Rozwiń przelot i kliknij <b>Dostrój</b>. Korekta Dopplera zaczyna się o AOS i kończy o LOS; wszystkie komunikaty pokazuje terminal.',
+    sdrS3: 'Rozwiń przelot i kliknij <b>Dostrój</b>, gdy satelita jest nad horyzontem (od AOS). Korekta Dopplera kończy się sama o LOS; wszystkie komunikaty pokazuje terminal.',
     sdrDl: 'Pobierz sdrpp-bridge.py',
     sdrNote: 'Działa na komputerze w Chrome, Edge i Firefoksie; przeglądarka może raz zapytać o dostęp do urządzeń w sieci lokalnej.',
-    sdrNeedBridge: 'Uruchom SDRPP-Bridge.', sdrNeedRig: 'Włącz serwer Rigctl w SDR++.', sdrWaitAos: 'Korekta Dopplera od AOS o {t}.',
+    sdrNeedBridge: 'Uruchom SDRPP-Bridge.', sdrNeedRig: 'Włącz serwer Rigctl w SDR++.', sdrWaitAos: 'Dostępne od AOS {t}.',
     tabTle: 'Dane TLE', tabSats: 'Satelity', satsAll: 'Zaznacz wszystkie', satsNone: 'Odznacz wszystkie', satsAria: 'Obserwowane satelity',
     tleRetrying: 'Nie udało się pobrać danych orbitalnych – serwery nie odpowiadają. Ponawiam automatycznie; możesz też wczytać plik TLE na dole strony.',
     minEl: 'min el', minElAria: 'Minimalna elewacja przelotu', showMore: n => `Pokaż kolejne ${n} ${plPasses(n)}`, showMoreLbl: 'Pokaż kolejne', passUnit: n => plPasses(n), shownOf: (a, b) => `${a} z ${b}`,
@@ -1099,10 +1106,10 @@ const I18N = {
     sdrIntro: '<b>Tune</b> in an expanded pass sets SDR++ to the satellite frequency and corrects the Doppler shift for the whole pass. On linear transponders click a QSO on the SDR++ waterfall – SAT° Predictor will hold that station.',
     sdrS1: 'In SDR++ open <b>Module Manager</b>, add the <b>rigctl_server</b> module, tick <b>Tuning</b> in its panel and click <b>Start</b> (port 4532).',
     sdrS2: 'Download the bridge and run it in a terminal (Python 3.8+, no extra packages):',
-    sdrS3: 'Expand a pass and click <b>Tune</b>. Doppler correction starts at AOS and stops at LOS; all messages are shown in the terminal.',
+    sdrS3: 'Expand a pass and click <b>Tune</b> once the satellite is above the horizon (from AOS). Doppler correction stops by itself at LOS; all messages are shown in the terminal.',
     sdrDl: 'Download sdrpp-bridge.py',
     sdrNote: 'Works on desktop in Chrome, Edge and Firefox; the browser may ask once for access to devices on your local network.',
-    sdrNeedBridge: 'SDRPP-Bridge must be running.', sdrNeedRig: 'Start the Rigctl server in SDR++.', sdrWaitAos: 'Doppler correction starts at AOS {t}.',
+    sdrNeedBridge: 'SDRPP-Bridge must be running.', sdrNeedRig: 'Start the Rigctl server in SDR++.', sdrWaitAos: 'Available from AOS {t}.',
     tabTle: 'TLE data', tabSats: 'Satellites', satsAll: 'Select all', satsNone: 'Clear all', satsAria: 'Watched satellites',
     tleRetrying: 'Could not download orbital data – the servers are not responding. Retrying automatically; you can also load a TLE file at the bottom of the page.',
     minEl: 'min el', minElAria: 'Minimum pass elevation', showMore: n => `Show next ${n} ${n === 1 ? 'pass' : 'passes'}`, showMoreLbl: 'Show next', passUnit: n => n === 1 ? 'pass' : 'passes', shownOf: (a, b) => `${a} of ${b}`,
@@ -2910,6 +2917,13 @@ function snapStatic() {
   // przyciski i podpowiedź obok nich
   function paint() {
     document.body.classList.toggle('sdr-cap', capable());
+    // kółko przy odliczaniu / QRV w wierszu dostrajanego przelotu
+    for (const e of rowEls.values()) {
+      const mine = !!tuning && e.p.sat.name === tuning.sat && Math.abs(e.p.start - tuning.start) < 120000;
+      const live = mine && tuning.state === 'active';
+      if (e.row.classList.contains('tuned') !== mine) e.row.classList.toggle('tuned', mine);
+      if (e.row.classList.contains('tuned-live') !== live) e.row.classList.toggle('tuned-live', live);
+    }
     document.body.classList.toggle('sdr-on', bridgeUp && rigUp);
     for (const b of document.querySelectorAll('.follow-btn')) {
       const on = isMine(b, tuning), info = b.parentElement.querySelector('.fl-info');
@@ -2919,7 +2933,8 @@ function snapStatic() {
       const waiting = on && tuning.state === 'waiting';
       if (b.classList.contains('waiting') !== waiting) b.classList.toggle('waiting', waiting);
       if (b.getAttribute('aria-pressed') !== String(on)) b.setAttribute('aria-pressed', String(on));
-      const msg = !bridgeUp ? T('sdrNeedBridge') : !rigUp ? T('sdrNeedRig') : waiting ? T('sdrWaitAos').replace('{t}', hhmm(+b.dataset.start)) : '';
+      const early = Date.now() < +b.dataset.start;               // przed AOS dostrajanie jest niedostępne
+      const msg = !bridgeUp ? T('sdrNeedBridge') : !rigUp ? T('sdrNeedRig') : (early && !on) ? T('sdrWaitAos').replace('{t}', hhmm(+b.dataset.start)) : '';
       if (info.textContent !== msg) info.textContent = msg;
       const dis = !(bridgeUp && rigUp);
       if (b.getAttribute('aria-disabled') !== String(dis)) b.setAttribute('aria-disabled', String(dis));
@@ -2940,7 +2955,8 @@ function snapStatic() {
         ev.stopPropagation();
         const b = ev.currentTarget;
         if (isMine(b, tuning)) { untune(); return; }
-        if (!(bridgeUp && rigUp) || Date.now() >= e.p.end || !tune(e.p)) nope(b);   // bez mostka / po LOS: tylko drgnięcie
+        const now = Date.now();
+        if (!(bridgeUp && rigUp) || now < e.p.start || now >= e.p.end || !tune(e.p)) nope(b);   // bez mostka, przed AOS, po LOS: tylko drgnięcie
       });
       col.querySelector('dl.freq').after(wrap);
       added = true;
@@ -2948,10 +2964,11 @@ function snapStatic() {
     if (added) paint();
   };
   new MutationObserver(addButtons).observe($('list'), { childList: true, subtree: true });
+  new MutationObserver(() => { if (tuning) paint(); }).observe($('list'), { childList: true });
   matchMedia('(hover: hover) and (pointer: fine)').addEventListener('change', () => { paint(); if (capable()) { addButtons(); connect(); } else if (ws) ws.close(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden && !ws) connect(); });
   for (const b of document.querySelectorAll('.lang button')) b.addEventListener('click', () => setTimeout(paint, 0));
-  setInterval(() => { if (tuning) paint(); }, 15000);      // np. zmiana „czekam na AOS” → „dostrajam”
+  setInterval(() => { if (tuning || document.querySelector('.follow-btn')) paint(); }, 2000);   // napis „od AOS” znika sam o AOS
   paint(); addButtons(); connect();
 })();
 
