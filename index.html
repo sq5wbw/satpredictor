@@ -186,7 +186,8 @@
   .lang button[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
   @media (hover: hover) { .lang button:hover { color: var(--ink); } }
 
-  .lang-top { margin-right: 19.2px; }
+  .lang-top { margin-right: 19px; }
+  .where > span { display: inline-block; width: 33px; text-align: right; }   /* „Grid” na pełnych pikselach – kreska PL | EN ostra */
   .where { margin: 0; display: inline-flex; align-items: center; gap: 10px; color: var(--muted); font-size: 16px; line-height: 20px; white-space: nowrap; }
   .loc { height: 28px; min-width: 56px; border: 2px solid var(--rule); background: var(--field); border-radius: 4px; padding: 0 4px 0 4.8px; cursor: pointer; color: var(--ink);
     font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-weight: 600; font-size: 18px; line-height: 24px; transition: border-color .15s ease; }
@@ -504,7 +505,7 @@
   .w-close::before { content: ""; width: 17px; height: 17px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath  d='M1.5,0.1L17,15.6L15.6,17L0.1,1.5ZM15.6,0.1L17,1.5L1.5,17L0.1,15.6Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath  d='M1.5,0.1L17,15.6L15.6,17L0.1,1.5ZM15.6,0.1L17,1.5L1.5,17L0.1,15.6Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat; }
   @media (hover: hover) { .w-close:hover { color: var(--ink); background: var(--hover); } }
   .w-top .theme { margin: 0 10px 0 -6px; }
-  .lang-w { padding-top: 2px; margin-right: -0.8px; }
+  .lang-w { padding-top: 2px; margin-right: 0; }
   .lang-w button { font-size: 16px; text-transform: uppercase; }
   .lang-w button + button { margin-left: 22px; }
   .lang-w button + button::before { left: -12px; }
@@ -611,13 +612,13 @@
     .wrap > header, .wrap > main, .wrap > .more, .wrap > footer { width: 100%; max-width: 1044px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }
     header.top { display: flex; align-items: center; height: 76px; }
     .hrow, .hgrp { display: contents; }
-    h1.brand { order: 1; align-self: flex-start; margin: 16px 0 0 1px; }
-    .seg { order: 2; margin-left: 26.74px; }
+    h1.brand { order: 1; align-self: flex-start; margin: 16px 0 0 1px; width: 42px; }   /* pełne piksele: filtr zaczyna się na x całkowitym */
+    .seg { order: 2; margin-left: 26px; }
     .elrow { order: 3; margin-left: 40px; }
     #minel { width: 260px; top: 0; }
     .elval { position: relative; top: -1px; }
     .theme-h { order: 4; margin: 0 34px 0 auto; }
-    .lang-top { order: 5; margin-right: 39.2px; }
+    .lang-top { order: 5; margin-right: 39px; }
     .where { order: 6; }
     #compasswrap { order: 7; margin-left: 20px; }
 
@@ -674,6 +675,17 @@
     .copy { margin-top: 26px; margin-bottom: 24px; }
   }
   @media (max-width: 720px) { body.sdr-cap #tab-sdr { display: none; } }   /* wąskie okno: trzy zakładki się nie mieszczą; instrukcja w szerszym oknie */
+
+  /* ostre krawędzie na ekranach 1×: wyśrodkowane bloki zaczynają się zawsze na pełnym pikselu
+     (przy nieparzystej szerokości okna środek wypadał na pół piksela i rozmywał logo, ikony i ramki) */
+  @supports (width: round(down, 1.5px, 1px)) {
+    @media (min-width: 721px) {
+      .wrap > header, .wrap > main, .wrap > .more, .wrap > footer { margin-left: max(0px, round(down, (100% - 1044px) / 2, 1px)); margin-right: 0; }
+    }
+    .welcome { align-items: flex-start; }
+    .welcome > .w-top, .welcome > .w-card { align-self: flex-start; margin-left: max(0px, round(down, (100% - 350px) / 2, 1px)); }
+    .welcome > .w-copy { align-self: stretch; }
+  }
 </style>
 </head>
 <body>
