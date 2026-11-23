@@ -848,6 +848,9 @@ const SATS = [
     note: 'W trakcie uruchamiania.' },
   { name: 'CroCube',    norad: 62394, mode: 'DIG', type: 'UHF Digi',       up: '436.775',          down: '436.775',          beacon: '9k6 G3RUH, via 9A0CC' },
   { name: 'GRBBeta',    norad: 60237, mode: 'DIG', type: 'VHF/UHF Digi',   up: '145.935 / 436.785', down: '145.935 / 436.785', beacon: '9k6 G3RUH, via HA2GRB' },
+  { name: 'KNACKSAT-2', norad: 67683, mode: 'DIG', type: 'APRS',           up: '145.825',          down: '145.825',          beacon: '9k6 FSK APRS, via HS0K',
+    note: 'Digipeater włączany według harmonogramu (zwykle w weekendy). Wypuszczony z ISS – niska orbita.' },
+  { name: 'KOSTKA',     norad: 69935, mode: 'DIG', type: 'UHF Digi',       up: '436.870',          down: '436.870',          beacon: '9k6 GFSK, via OK0KST' },
   { name: 'LASARsat',   norad: 62391, mode: 'DIG', type: 'UHF Digi',       up: '436.925',          down: '436.925',          beacon: '9k6 G3RUH, via OK0LSR' },
   { name: 'Marina',     norad: 69920, mode: 'DIG', type: 'VHF/UHF Digi, SSDV', up: '145.925 / 436.680', down: '145.925 / 436.680', beacon: '9k6 G3RUH, via OM9MAR' },
   { name: 'NO-44',      norad: 26931, mode: 'DIG', type: 'APRS',           up: '145.825',          down: '145.825',          beacon: '1k2 AFSK, via W3ADO-1' },
@@ -862,7 +865,6 @@ const SATS = [
   // --- telemetria (tylko odbiór) ---
   { name: 'CAS-2T',     norad: 41847, mode: 'DIG', type: 'TLM',            up: '-',                down: '-',                beacon: '435.710 CW',
     note: 'Transponder FM (145.925/435.615) nie działa, nadaje tylko beacon.' },
-  { name: 'LO-19',      norad: 20442, mode: 'DIG', type: 'TLM',            up: '-',                down: '-',                beacon: '437.125 CW (nośna)' },
   { name: 'UO-11',      norad: 14781, mode: 'DIG', type: 'TLM',            up: '-',                down: '145.825 / 435.025', beacon: '-',
     note: 'Satelita z 1984 r., telemetria słyszana sporadycznie.' },
 ];
