@@ -363,6 +363,9 @@
   .fl-info:empty { display: none; }
   @media (prefers-reduced-motion: reduce) { .follow-btn, .fl-ring { transition: none; } .follow-btn.on .fl-ring::after, .follow-btn.on.waiting .fl-ring::before { animation: none; } }
 
+  /* dostrajany przelot w liście: etykieta trybu na magentowym tle (płynne przejście koloru jak w aktywnym wierszu) */
+  .row.tuned .mode { color: #fff; background: var(--live); border-color: var(--live); }
+
   /* zakładka „SDR++ Rigctl”: krótka instrukcja (tylko na komputerze) */
   #tab-sdr { display: none; }
   body.sdr-cap #tab-sdr { display: inline-flex; border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
@@ -2758,38 +2761,52 @@ function snapStatic() {
   sync();
 })();
 
-// panel „Satellites”: satelity wchodzą i wychodzą kaskadą, tak jak elementy ekranu startowego.
-// Opóźnienie liczone wg wiersza na ekranie (obie kolumny w tym samym wierszu ruszają razem).
-(function satsCascade() {
-  const pane = $('pan-sats'), EASE_IN = 'cubic-bezier(.2, .7, .2, 1)', EASE_OUT = 'cubic-bezier(.4, 0, 1, 1)';
+// panele stopki („Satellites”, „TLE data”, „SDR++ Rigctl”): treść wchodzi i wychodzi kaskadą, jak ekran startowy.
+// W „Satellites” opóźnienie liczone wg wiersza (obie kolumny w tym samym wierszu ruszają razem), w pozostałych
+// panelach – kolejne bloki od góry: opis, przyciski, linki, kroki instrukcji.
+(function panelCascade() {
+  const EASE_IN = 'cubic-bezier(.2, .7, .2, 1)', EASE_OUT = 'cubic-bezier(.4, 0, 1, 1)';
+  const PANES = ['pan-sats', 'pan-tle', 'pan-sdr'];
   let anims = [], timer = 0;
   const stop = () => { clearTimeout(timer); timer = 0; anims.forEach(a => a.cancel()); anims = []; };
-  const items = () => {
-    const chips = [...pane.querySelectorAll('.satchip')], tops = [...new Set(chips.map(c => c.offsetTop))].sort((a, b) => a - b);
-    const out = chips.map(c => [c, tops.indexOf(c.offsetTop)]);
-    const bulk = pane.querySelector('.satbulk'); if (bulk) out.push([bulk, tops.length]);
-    return out;
+  const openPane = () => $('fpanes').classList.contains('open') ? PANES.map(id => $(id)).find(p => p && !p.hidden) || null : null;
+  const visible = el => el && !el.hidden && el.getClientRects().length;
+  const items = pane => {
+    if (!pane) return [];
+    if (pane.id === 'pan-sats') {
+      const chips = [...pane.querySelectorAll('.satchip')], tops = [...new Set(chips.map(c => c.offsetTop))].sort((a, b) => a - b);
+      const out = chips.map(c => [c, tops.indexOf(c.offsetTop)]);
+      const bulk = pane.querySelector('.satbulk'); if (bulk) out.push([bulk, tops.length]);
+      return out;
+    }
+    const els = pane.id === 'pan-tle'
+      ? [$('tleinfo'), pane.querySelector('.btn2'), pane.querySelector('.links'), $('tlefail')]
+      : [pane.querySelector('.sdr-intro'), ...pane.querySelectorAll('.sdr-steps > li'), pane.querySelector('.sdr-note')];
+    return els.filter(visible).map((e, i) => [e, i]);
   };
+  const steps = pane => pane && pane.id === 'pan-sats' ? { inn: 25, out: 12 } : { inn: 60, out: 30 };
   const open0 = setPanel;
   setPanel = function (name) {
-    const wasSats = !pane.hidden && $('fpanes').classList.contains('open');
+    const cur = openPane();
     if (!name && timer) {                               // drugie kliknięcie w trakcie zamykania = rozmyślenie się: panel zostaje
       stop();
-      for (const [el] of items()) anims.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: EASE_IN }));
+      for (const [el] of items(cur)) anims.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: EASE_IN }));
       return;
     }
     stop();
     if (reduceMotion()) return open0(name);
-    if (!name && wasSats) {                               // zamykanie: od góry do dołu, lekkie opadanie, potem zwinięcie panelu
-      for (const [el, row] of items()) anims.push(el.animate([{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 10px' }],
-        { duration: 200, delay: row * 12, easing: EASE_OUT, fill: 'forwards' }));
+    if (!name && cur) {                                 // zamykanie: od góry do dołu, lekkie opadanie, potem zwinięcie panelu
+      const st = steps(cur);
+      for (const [el, i] of items(cur)) anims.push(el.animate([{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 10px' }],
+        { duration: 200, delay: i * st.out, easing: EASE_OUT, fill: 'forwards' }));
       timer = setTimeout(() => { timer = 0; open0(''); setTimeout(() => { if (!timer) { anims.forEach(a => a.cancel()); anims = []; } }, 340); }, 180);
       return;
     }
     open0(name);
-    if (name === 'pan-sats' && !wasSats) {              // otwieranie: od góry, wysunięcie od dołu
-      for (const [el, row] of items()) anims.push(el.animate([{ opacity: 0, translate: '0 12px' }, { opacity: 1, translate: '0 0' }],
-        { duration: 520, delay: 60 + row * 25, easing: EASE_IN, fill: 'backwards' }));
+    if (name && (!cur || cur.id !== name)) {            // otwieranie lub przełączenie zakładki: od góry, wysunięcie od dołu
+      const pane = $(name), st = steps(pane);
+      for (const [el, i] of items(pane)) anims.push(el.animate([{ opacity: 0, translate: '0 12px' }, { opacity: 1, translate: '0 0' }],
+        { duration: 520, delay: 60 + i * st.inn, easing: EASE_IN, fill: 'backwards' }));
     }
   };
 })();
@@ -2936,6 +2953,11 @@ function snapStatic() {
   function paint() {
     document.body.classList.toggle('sdr-cap', capable());
     document.body.classList.toggle('sdr-on', bridgeUp && rigUp);
+    // wiersz dostrajanego przelotu: magentowa etykieta trybu (FM / SSB / DIG)
+    for (const e of rowEls.values()) {
+      const mine = !!tuning && e.p.sat.name === tuning.sat && Math.abs(e.p.start - tuning.start) < 120000;
+      if (e.row.classList.contains('tuned') !== mine) e.row.classList.toggle('tuned', mine);
+    }
     for (const b of document.querySelectorAll('.follow-btn')) {
       const on = isMine(b, tuning), info = b.parentElement.querySelector('.fl-info');
       const txt = `${on ? L().tuning : L().tune} ${b.dataset.sat}`, t = b.querySelector('.fl-t');
@@ -2975,6 +2997,7 @@ function snapStatic() {
     if (added) paint();
   };
   new MutationObserver(addButtons).observe($('list'), { childList: true, subtree: true });
+  new MutationObserver(() => { if (tuning) paint(); }).observe($('list'), { childList: true });   // nowe wiersze po przeliczeniu listy
   matchMedia('(hover: hover) and (pointer: fine)').addEventListener('change', () => { paint(); if (capable()) { addButtons(); connect(); } else if (ws) ws.close(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden && !ws) connect(); });
   for (const b of document.querySelectorAll('.lang button')) b.addEventListener('click', () => setTimeout(paint, 0));
