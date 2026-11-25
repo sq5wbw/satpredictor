@@ -2997,7 +2997,19 @@ function snapStatic() {
     if (added) paint();
   };
   new MutationObserver(addButtons).observe($('list'), { childList: true, subtree: true });
-  new MutationObserver(() => { if (tuning) paint(); }).observe($('list'), { childList: true });   // nowe wiersze po przeliczeniu listy
+  // nowe wiersze po przeliczeniu listy; gdy dostrajany przelot zniknął z listy (filtr trybu, odznaczony satelita,
+  // wyższa minimalna elewacja), dostrajanie się kończy – bez wiersza nie byłoby jak go zatrzymać
+  let goneT = 0;
+  new MutationObserver(() => {
+    if (!tuning) return;
+    paint();
+    clearTimeout(goneT);
+    goneT = setTimeout(() => {
+      if (!tuning) return;
+      const shown = [...rowEls.values()].some(e => e.p.sat.name === tuning.sat && Math.abs(e.p.start - tuning.start) < 120000 && document.body.contains(e.row));
+      if (!shown) untune();
+    }, 1000);
+  }).observe($('list'), { childList: true });
   matchMedia('(hover: hover) and (pointer: fine)').addEventListener('change', () => { paint(); if (capable()) { addButtons(); connect(); } else if (ws) ws.close(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden && !ws) connect(); });
   for (const b of document.querySelectorAll('.lang button')) b.addEventListener('click', () => setTimeout(paint, 0));
