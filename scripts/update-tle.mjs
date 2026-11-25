@@ -6,7 +6,6 @@
 // człowiekowi. Dlatego: jedno zapytanie zbiorcze, pojedyncze satelity po kolei z przerwą, a przy odmowie
 // skrypt kończy się błędem (GitHub wyśle e-mail), zostawiając poprzedni plik bez zmian.
 import { readFile, writeFile } from 'node:fs/promises';
-import { execSync } from 'node:child_process';
 
 const CELESTRAK = 'https://celestrak.org/NORAD/elements/gp.php';
 const AMSAT = 'https://www.amsat.org/tle/current/nasabare.txt';
@@ -55,12 +54,11 @@ const network = [];   // brak odpowiedzi (sieć, limit czasu) – zwykle chwilow
 const problem = (who, r) => (r.status ? refused : network).push(`${who}: ${r.status ? `HTTP ${r.status}` : 'brak odpowiedzi'} ${r.text.slice(0, 160).trim()}`);
 let text = '';
 
-// uruchomienie po wgraniu index.html, a dane pobrane mniej niż 2 h temu: CelesTrak i tak ich jeszcze nie zmienił
-// (powtórne zapytanie skończyłoby się odmową) – dociągamy tylko satelity, których w pliku jeszcze nie ma
-let recentMin = Infinity;
-try { recentMin = (Date.now() / 1000 - +execSync('git log -1 --format=%ct -- tle.txt', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim()) / 60; } catch { /* brak historii */ }
-const onlyMissing = process.env.GITHUB_EVENT_NAME === 'push' && recentMin < 120;
-if (onlyMissing) console.log(`tle.txt zaktualizowany ${Math.round(recentMin)} min temu – pobieram tylko brakujące satelity.`);
+// uruchomienie po wgraniu index.html: nigdy nie pytamy o całą grupę (pełne odświeżenie robi harmonogram co 6 h),
+// dociągamy tylko satelity, których jeszcze nie ma w tle.txt – po pierwszym udanym pobraniu kolejne wgrania
+// nie wysyłają do CelesTrak żadnego zapytania
+const onlyMissing = process.env.GITHUB_EVENT_NAME === 'push';
+if (onlyMissing) console.log('Uruchomienie po zmianie index.html – pobieram tylko satelity, których nie ma jeszcze w tle.txt.');
 
 // 1) CelesTrak – plik zbiorczy (przy braku odpowiedzi jedna ponowna próba po 30 s; odmowy HTTP nie ponawiamy)
 let group = { status: 0, text: 'pominięto' };
